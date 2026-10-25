@@ -1,0 +1,37 @@
+---
+- name: Promote an existing Africa Media Hub account
+  hosts: all
+  become: true
+  vars:
+    media_admin_email: dobcalldemo@gmail.com
+    media_database: /var/lib/africa-media/media.db
+  tasks:
+    - name: Grant highest platform role while preserving the password
+      become_user: africa-media
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/python3
+          - -c
+          - |
+            import sqlite3, sys, time, json
+            email = sys.argv[1].strip().lower()
+            connection = sqlite3.connect('file:' + sys.argv[2] + '?mode=rw', uri=True)
+            with connection:
+                user = connection.execute('SELECT id,role,active FROM users WHERE lower(email)=?', (email,)).fetchall()
+                if len(user) != 1:
+                    raise SystemExit('Exactly one existing account is required; no account or password was created')
+                uid, role, active = user[0]
+                changed = role != 'admin' or active != 1
+                if changed:
+                    connection.execute("UPDATE users SET role='admin',active=1 WHERE id=?", (uid,))
+                    connection.execute('DELETE FROM sessions WHERE user_id=?', (uid,))
+                    connection.execute('INSERT INTO audit(user_id,action,created) VALUES(?,?,?)', (uid,'Server administrator promoted existing account',int(time.time())))
+                print(json.dumps({'email':email,'role':'admin','changed':changed,'password_preserved':True}))
+            connection.close()
+          - '{{ media_admin_email }}'
+          - '{{ media_database }}'
+      register: promotion
+      changed_when: (promotion.stdout | from_json).changed | bool
+    - name: Show promotion result
+      ansible.builtin.debug:
+        msg: '{{ promotion.stdout | from_json }}'
