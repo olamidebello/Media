@@ -203,3 +203,6 @@ This is URL normalization, not a media proxy or TLS service for remote servers. 
 
 ### Open provider links externally
 Provider panels include **Open externally** to open the HTTPS destination in a browser tab, the desktop default browser, or a supported provider app through the mobile OS. The Android and iOS wrappers also offer **View inside app**. Use external viewing when a provider blocks embedded viewing, requires its own app, or uses an incompatible sign-in flow. Provider access and subscription rules still apply. Native wrapper changes require rebuilding and installing updated packages; web changes apply after deployment.
+
+### Remote channel numbers
+Enable **TV mode** (or launch with `?tv=1`). On Home, the guide, or live playback, type a channel number on the remote, then press OK/Enter, or wait 1.8 seconds to tune. Backspace corrects the number; Back/Escape cancels pending entry. Top-row digits, numpad digits, and legacy remote numeric keycodes are supported. Text-entry fields and provider dialogs keep their own keys. Channel numbers appear in the guide and Home live rail and correspond to persistent channel IDs, so category filters and newly imported channels do not renumber existing channels. Disabled or missing channels show an unavailable message. Channel +/- continues to cycle through enabled channels.

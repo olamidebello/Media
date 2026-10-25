@@ -197,7 +197,7 @@ def app(env, respond):
                     result=country_channels(q.get('country',[''])[0])
                 elif path=='/api/guide':
                     if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
-                    result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
+                    result={'channels':rows(c,'SELECT *,id AS number FROM channels WHERE enabled=1 ORDER BY id'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
                 elif path=='/api/studio' and method=='GET':
                     need(); result=rows(c,'SELECT * FROM videos WHERE owner_id=? ORDER BY created DESC',(user,))
                 elif path=='/api/studio' and method=='POST':
