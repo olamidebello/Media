@@ -11,7 +11,7 @@ LIMIT=12*1024*1024
 def normalize_media_url(value):
     """Preserve HTTP/HTTPS source URLs; playback uses the platform relay."""
     value=value.strip()
-    if any(ord(ch)<32 or ord(ch)==127 for ch in value):
+    if any(ord(ch)<32 or ord(ch)==127 for ch in value) or "\\" in value:
         raise ValueError('Invalid media URL')
     p=urlparse(value)
     if p.scheme not in ('http','https') or not p.hostname or p.username or p.password:

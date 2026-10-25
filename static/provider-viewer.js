@@ -3,7 +3,7 @@
  let returnFocus;
  async function openProvider(url,label){
   try{const response=await fetch("/api/config");if(!response.ok)throw Error();const flags=await response.json();if(!flags.provider_links){alert("Provider viewing is disabled by the administrator.");return;}}catch{alert("Unable to check provider availability. Please retry.");return;}
-  const u=new URL(url);if(u.protocol!=='https:')return;
+  const u=new URL(platformHTTPS(url));if(u.protocol!=='https:')return;
   if(window.MediaNative?.openProvider){window.MediaNative.openProvider(u.href);return;}
   if(window.webkit?.messageHandlers?.mediaProvider){window.webkit.messageHandlers.mediaProvider.postMessage(u.href);return;}
   if(/Electron\//.test(navigator.userAgent)){window.open(u.href,'_blank');return;}
@@ -19,6 +19,6 @@
   else frame.src=u.href;
   viewer.append(toolbar,message,frame);viewer.onclose=()=>{frame.src='about:blank';if(returnFocus?.isConnected)returnFocus.focus();};viewer.showModal();close.focus();
  }
- document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;let url;try{url=new URL(link.href,location.href);}catch{return;}if(url.protocol==='https:'&&url.origin!==location.origin){e.preventDefault();e.stopImmediatePropagation();openProvider(url.href,link.closest('article')?.querySelector('h3')?.textContent||link.textContent.replace('↗','').trim());}},true);
+ document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;let url;try{url=new URL(link.href,location.href);}catch{return;}if(['http:','https:'].includes(url.protocol)&&url.origin!==location.origin){e.preventDefault();e.stopImmediatePropagation();openProvider(url.href,link.closest('article')?.querySelector('h3')?.textContent||link.textContent.replace('↗','').trim());}},true);
  document.addEventListener('keydown',e=>{const viewer=document.querySelector('#provider-viewer[open]');if(viewer&&['Escape','BrowserBack','Backspace'].includes(e.key)){e.preventDefault();e.stopImmediatePropagation();viewer.close();}},true);
 })();

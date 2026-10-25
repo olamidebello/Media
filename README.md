@@ -183,18 +183,8 @@ Admin now includes media creation/editing, audience and visibility controls, M3U
 
 ## Supplied Al Jazeera feeds
 
-All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The HTTPS importer skips the seven HTTP alternatives, which are not upgraded or proxied automatically. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
+All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The importer preserves HTTP sources for signed-in playback through the platform relay. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
 
-
-### HTTP media links
-
-Manual channel creation, creator submissions, and M3U imports accept public HTTP
-and HTTPS URLs. HTTP URLs are internally normalized to HTTPS before storage and
-duplicate detection. Explicit port 80 becomes the default HTTPS port; other
-ports, paths and signed query strings are preserved. Private/local addresses and
-embedded credentials remain rejected. This is a URL upgrade, not a relay:
-the upstream must serve valid HTTPS, including HTTPS HLS segments and keys.
-HTTP-only origins require a separately configured HTTPS media relay.
 
 ### HTTP sources inside the HTTPS platform
 
