@@ -122,6 +122,19 @@
       ansible.builtin.debug:
         msg: '{{ media_roku_import.stdout }}'
       when: media_refresh_channels | bool
+    - name: Import supplied international channels before stream verification
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, international]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_international_import
+      changed_when: media_international_import.rc == 0 and (media_international_import.stdout | from_json).added | int > 0
+    - name: Report international channel import
+      ansible.builtin.debug:
+        msg: '{{ media_international_import.stdout }}'
+      when: media_refresh_channels | bool
     - name: Verify enabled streams and clean unavailable channels
       become_user: africa-media
       ansible.builtin.command:

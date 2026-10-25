@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 BASE='https://iptv-org.github.io/iptv/'
-SOURCES={'roku':'bundled/Roku_Supplied.m3u','samsung':'bundled/Samsung_TV_Plus_Supplied.m3u','uploaded':'bundled/Uploaded_Channels.m3u','aljazeera':'bundled/Al_Jazeera_Sources.m3u','working':'bundled/Working_Channels.m3u',**{x:'countries/'+x+'.m3u' for x in ['dz', 'ao', 'bj', 'bw', 'bf', 'bi', 'cv', 'cm', 'cf', 'td', 'km', 'cg', 'cd', 'ci', 'dj', 'eg', 'gq', 'er', 'sz', 'et', 'ga', 'gm', 'gh', 'gn', 'gw', 'ke', 'ls', 'lr', 'ly', 'mg', 'mw', 'ml', 'mr', 'mu', 'ma', 'mz', 'na', 'ne', 'ng', 'rw', 'st', 'sn', 'sc', 'sl', 'so', 'za', 'ss', 'sd', 'tz', 'tg', 'tn', 'ug', 'zm', 'zw', 'us', 'gb', 'ca', 'fr', 'de', 'es', 'pt', 'it', 'au', 'in', 'br', 'jp']},'all':'index.m3u',**{x:'categories/'+x+'.m3u' for x in ['animation', 'auto', 'business', 'classic', 'comedy', 'cooking', 'culture', 'documentary', 'education', 'entertainment', 'family', 'general', 'interactive', 'kids', 'legislative', 'lifestyle', 'movies', 'music', 'news', 'outdoor', 'public', 'relax', 'religious', 'science', 'series', 'shop', 'sports', 'travel', 'weather', 'undefined']},**{x:'languages/'+x+'.m3u' for x in ['eng','fra','ara']}}
+SOURCES={'international':'bundled/International_Supplied.m3u','roku':'bundled/Roku_Supplied.m3u','samsung':'bundled/Samsung_TV_Plus_Supplied.m3u','uploaded':'bundled/Uploaded_Channels.m3u','aljazeera':'bundled/Al_Jazeera_Sources.m3u','working':'bundled/Working_Channels.m3u',**{x:'countries/'+x+'.m3u' for x in ['dz', 'ao', 'bj', 'bw', 'bf', 'bi', 'cv', 'cm', 'cf', 'td', 'km', 'cg', 'cd', 'ci', 'dj', 'eg', 'gq', 'er', 'sz', 'et', 'ga', 'gm', 'gh', 'gn', 'gw', 'ke', 'ls', 'lr', 'ly', 'mg', 'mw', 'ml', 'mr', 'mu', 'ma', 'mz', 'na', 'ne', 'ng', 'rw', 'st', 'sn', 'sc', 'sl', 'so', 'za', 'ss', 'sd', 'tz', 'tg', 'tn', 'ug', 'zm', 'zw', 'us', 'gb', 'ca', 'fr', 'de', 'es', 'pt', 'it', 'au', 'in', 'br', 'jp']},'all':'index.m3u',**{x:'categories/'+x+'.m3u' for x in ['animation', 'auto', 'business', 'classic', 'comedy', 'cooking', 'culture', 'documentary', 'education', 'entertainment', 'family', 'general', 'interactive', 'kids', 'legislative', 'lifestyle', 'movies', 'music', 'news', 'outdoor', 'public', 'relax', 'religious', 'science', 'series', 'shop', 'sports', 'travel', 'weather', 'undefined']},**{x:'languages/'+x+'.m3u' for x in ['eng','fra','ara']}}
 LIMIT=12*1024*1024
 
 def normalize_media_url(value):
@@ -34,8 +34,8 @@ class SameHostRedirect(HTTPRedirectHandler):
 
 def download(key):
     if key not in SOURCES:raise ValueError('Unknown playlist source')
-    if key in ('working','aljazeera','uploaded','samsung','roku'):
-        filename={'roku':'Roku_Supplied.m3u','samsung':'Samsung_TV_Plus_Supplied.m3u','working':'Working_Channels.m3u','aljazeera':'Al_Jazeera_Sources.m3u','uploaded':'Uploaded_Channels.m3u'}[key]
+    if key in ('working','aljazeera','uploaded','samsung','roku','international'):
+        filename={'international':'International_Supplied.m3u','roku':'Roku_Supplied.m3u','samsung':'Samsung_TV_Plus_Supplied.m3u','working':'Working_Channels.m3u','aljazeera':'Al_Jazeera_Sources.m3u','uploaded':'Uploaded_Channels.m3u'}[key]
         return (Path(__file__).parent/'data'/filename).read_text(encoding='utf-8')
     req=Request(BASE+SOURCES[key],headers={'User-Agent':'AfricaMediaHub/1.0'})
     try:
@@ -68,7 +68,7 @@ def refresh(c,key='all',text=None):
     added=existing=0
     for item in items:
         if c.execute('SELECT id FROM channels WHERE url=?',(item['url'],)).fetchone():existing+=1;continue
-        category=item['category'] if key in ('all','eng','fra','ara','working','aljazeera','uploaded','samsung','roku') else key.title()
+        category=item['category'] if key in ('all','eng','fra','ara','working','aljazeera','uploaded','samsung','roku','international') else key.title()
         c.execute('INSERT INTO channels(name,url,category,enabled) VALUES(?,?,?,?)',(item['name'],item['url'],category,0 if key=='uploaded' else 1));added+=1
     result={'source':key,'added':added,'existing':existing,'skipped':skipped,'updated':int(time.time())}
     c.execute('INSERT OR REPLACE INTO settings(key,value) VALUES(?,?)',('iptv_last_refresh',json.dumps(result)))

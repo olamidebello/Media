@@ -1,0 +1,114 @@
+[
+  {
+    "name": "ABC News Albania",
+    "category": "Albania",
+    "url": "https://www.twitch.tv/abcnewsal",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Euronews Albania",
+    "category": "Albania",
+    "url": "https://www.youtube.com/@EuronewsAlbania/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Top News",
+    "category": "Albania",
+    "url": "https://www.twitch.tv/topnewsal",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "TN Todo Noticias",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/todonoticias/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Encuentro",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/user/encuentro/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Pakapaka",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/user/CanalPakapaka/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Televisión Pública",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/user/TVPublicaArgentina/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Crónica TV",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/cronicatv/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Argentina 12",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/IPNoticiasEnVivo/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "El Destape",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/eldestapetv/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "C5N",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/c5n/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "LN+",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/LaNacionMas/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Barricada TV",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/channel/UC6YundoLrEuBJaPp_oEPWaA/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Urbana Tevé",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/channel/UCTnbbQUGmWEKeCq9wWoyN0g/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "Comarca TV",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/ComarcaTV/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  },
+  {
+    "name": "A24",
+    "category": "Argentina",
+    "url": "https://www.youtube.com/c/A24com/live",
+    "detail": "Supplied provider live page · availability varies",
+    "kids": false
+  }
+]
