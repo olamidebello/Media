@@ -132,3 +132,7 @@ Local Channels offers opt-in browser geolocation and manual country selection. R
 ## Additional uploaded channels
 
 Imported the supplied `All_Working_Channels.m3u`: one entry, MBC+ Drama, added to the bundled Working Channels playlist. The source file is retained in `data/All_Working_Channels.m3u`. The merged playlist now contains 107 entries; this addition has not been independently playback-tested. Deployment automatically imports the expanded bundled list with URL deduplication.
+
+## Television landing page
+
+Home now presents a cinematic brand hero, real imported channel cards, horizontally scrollable discovery rows, published-content cards, category shortcuts and a local-channel callout. Buttons connect to playback, guide, movies, location discovery and help. Channel initials are used where no logo is stored; no synthetic thumbnails are presented as real movie artwork. Empty catalogs and unavailable guides display explicit states. Mobile layouts and visible keyboard focus are included. JavaScript syntax and the ten existing backend tests pass; browser visual QA and live playback are not verified.
