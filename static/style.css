@@ -22,3 +22,8 @@
  document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link)return;let url;try{url=new URL(link.href,location.href);}catch{return;}if(url.protocol==='https:'&&url.origin!==location.origin){e.preventDefault();e.stopImmediatePropagation();openProvider(url.href,link.closest('article')?.querySelector('h3')?.textContent||link.textContent.replace('↗','').trim());}},true);
  document.addEventListener('keydown',e=>{const viewer=document.querySelector('#provider-viewer[open]');if(viewer&&['Escape','BrowserBack','Backspace'].includes(e.key)){e.preventDefault();e.stopImmediatePropagation();viewer.close();}},true);
 })();
+
+/* Reduce decorative downloads on constrained connections. */
+.low-data-mode .tv-feature>img,.low-data-mode .hero-artwork{display:none}
+.low-data-mode .tv-feature{background:#101c24}
+.network-playback{padding:1rem;border:1px solid #52616b;border-radius:.75rem;margin:.75rem 0}.network-playback select,.network-playback button{margin:.4rem}.network-playback p{margin:.5rem 0}
