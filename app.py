@@ -44,6 +44,8 @@ def init():
         support.init(c)
         import activity
         activity.init(c)
+        import advertising
+        advertising.init(c)
         # Upgrade existing platform media records on deployment without fetching sources.
         from iptv import normalize_media_url
         for table in ('videos', 'channels'):
@@ -96,7 +98,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -115,7 +117,7 @@ def app(env, respond):
                     origin = env.get('HTTP_ORIGIN')
                     if origin and urlparse(origin).netloc != env.get('HTTP_HOST'): raise PermissionError('Cross-origin request rejected')
                     body = json.loads(env['wsgi.input'].read(length) or '{}')
-                    if path not in ('/api/register','/api/login','/api/legal/request'):
+                    if path not in ('/api/register','/api/login','/api/legal/request','/api/ads/event'):
                         if not sess: raise PermissionError('Sign in required')
                         if not hmac.compare_digest(env.get('HTTP_X_CSRF_TOKEN',''),sess['csrf']): raise PermissionError('Refresh and try again')
                 def need():
@@ -136,7 +138,19 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/admin/activity':
+                if path=='/api/admin/advertising':
+                    admin()
+                    from advertising import admin as ad_admin
+                    result=ad_admin(c,user,method,body,audit)
+                elif path=='/api/ads':
+                    from advertising import serve
+                    child=bool(owned_profile()['kids']) if user and profile else True
+                    result=serve(c,q.get('placement',[''])[0],child) if method=='GET' else None
+                elif path=='/api/ads/event':
+                    if method!='POST':raise ValueError('POST required')
+                    from advertising import event
+                    result=event(c,body)
+                elif path=='/api/admin/activity':
                     admin()
                     from activity import manage
                     result=manage(c,user,method,body,q,audit)
