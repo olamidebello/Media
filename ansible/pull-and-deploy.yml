@@ -135,6 +135,19 @@
       ansible.builtin.debug:
         msg: '{{ media_international_import.stdout }}'
       when: media_refresh_channels | bool
+    - name: Import supplied Pluto TV channels before stream verification
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, pluto]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_pluto_import
+      changed_when: media_pluto_import.rc == 0 and (media_pluto_import.stdout | from_json).added | int > 0
+    - name: Report Pluto TV import
+      ansible.builtin.debug:
+        msg: '{{ media_pluto_import.stdout }}'
+      when: media_refresh_channels | bool
     - name: Verify enabled streams and clean unavailable channels
       become_user: africa-media
       ansible.builtin.command:
