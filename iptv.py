@@ -9,7 +9,7 @@ SOURCES={'aljazeera':'bundled/Al_Jazeera_Sources.m3u','working':'bundled/Working
 LIMIT=12*1024*1024
 
 def normalize_media_url(value):
-    """Accept HTTP input and store HTTPS, preserving path and signed query."""
+    """Preserve HTTP/HTTPS source URLs; playback uses the platform relay."""
     value=value.strip()
     if any(ord(ch)<32 or ord(ch)==127 for ch in value):
         raise ValueError('Invalid media URL')
@@ -17,10 +17,6 @@ def normalize_media_url(value):
     if p.scheme not in ('http','https') or not p.hostname or p.username or p.password:
         raise ValueError('Use a public HTTP or HTTPS media URL')
     port=p.port
-    if p.scheme=='http':
-        host='['+p.hostname+']' if ':' in p.hostname else p.hostname
-        netloc=host if port in (None,80) else host+':'+str(port)
-        value=p._replace(scheme='https',netloc=netloc).geturl()
     if not stream_url(value):
         raise ValueError('Use a public HTTP or HTTPS media URL')
     return value
@@ -28,7 +24,7 @@ def normalize_media_url(value):
 def stream_url(value):
     try:
         p=urlparse(value)
-        if p.scheme!='https' or not p.hostname or p.username or p.password or (p.port is not None and not 1<=p.port<=65535): return False
+        if p.scheme not in ('http','https') or not p.hostname or p.username or p.password or (p.port is not None and not 1<=p.port<=65535): return False
         if p.hostname.lower() in ('localhost','localhost.localdomain') or p.hostname.lower().endswith(('.local','.internal')): return False
         try:
             if not ipaddress.ip_address(p.hostname).is_global:return False
@@ -73,7 +69,7 @@ def parse(text):
 def refresh(c,key='all',text=None):
     if key not in SOURCES:raise ValueError('Unknown playlist source')
     items,skipped=parse(download(key) if text is None else text)
-    if not items:raise ValueError('Playlist contained no usable HTTPS channels; existing channels were preserved')
+    if not items:raise ValueError('Playlist contained no usable HTTP or HTTPS channels; existing channels were preserved')
     added=existing=0
     for item in items:
         if c.execute('SELECT id FROM channels WHERE url=?',(item['url'],)).fetchone():existing+=1;continue

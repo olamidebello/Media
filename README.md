@@ -195,3 +195,27 @@ ports, paths and signed query strings are preserved. Private/local addresses and
 embedded credentials remain rejected. This is a URL upgrade, not a relay:
 the upstream must serve valid HTTPS, including HTTPS HLS segments and keys.
 HTTP-only origins require a separately configured HTTPS media relay.
+
+### HTTP sources inside the HTTPS platform
+
+HTTP and HTTPS origins are preserved during import; changing a source's scheme
+without verifying its TLS support can break it. Signed-in viewers receive
+same-origin playback URLs for live channels and HTTP video sources. The relay
+fetches HTTP upstream internally while the browser/app uses the platform's HTTPS
+connection. HLS variant, audio, subtitle, segment and key URI references are
+rewritten to user-bound signed resource URLs. Host the site with TLS enabled.
+
+Relay links expire after 12 hours and require an active platform session. Each
+request rechecks channel visibility and feature controls. URLs cannot be supplied
+freely to the relay: they must come from approved channel/video records or the
+configured country directory, or from their signed playlists. Redirect targets
+are revalidated, DNS answers must all be public, and connections pin the validated
+address while retaining TLS certificate verification. No permissive CORS is added.
+
+The relay buffers up to 32 MiB per response and limits open-ended byte ranges to
+8 MiB when the origin supports ranges. Large HTTP files on origins without range
+support, HLS variable substitution, DRM licensing, and unsupported browser codecs
+may require a dedicated media gateway. Native HLS browser support is still
+required. Existing URLs changed by earlier versions cannot be reliably restored;
+refresh the relevant source to import its original URLs. This change does not
+make unavailable or region-restricted streams accessible.

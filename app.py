@@ -38,6 +38,7 @@ def init():
         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
+        c.execute("INSERT OR IGNORE INTO settings(key,value) VALUES('media_relay_secret',?)",(secrets.token_hex(32),))
 
 def password(p, salt=None):
     salt = salt or secrets.token_hex(16)
@@ -114,7 +115,43 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/config':
+                def relay_secret():
+                    row=c.execute("SELECT value FROM settings WHERE key='media_relay_secret'").fetchone()
+                    if row:return row[0]
+                    c.execute("INSERT OR IGNORE INTO settings(key,value) VALUES('media_relay_secret',?)",(secrets.token_hex(32),))
+                    return c.execute("SELECT value FROM settings WHERE key='media_relay_secret'").fetchone()[0]
+                def playback_link(url, scope):
+                    from media_relay import sign
+                    secret=relay_secret()
+                    return sign(secret,url,user,scope) if user else ''
+                def playback_rows(items, kind):
+                    for item in items:
+                        item['playback_url']=(item['url'] if kind=='video' and item['url'].startswith('https://') else playback_link(item['url'],kind+':'+str(item['id'])))
+                    return items
+                if path=='/api/playback/resource' and method=='GET':
+                    need()
+                    if env.get('HTTP_SEC_FETCH_SITE')=='cross-site': raise PermissionError('Platform playback only')
+                    origin=env.get('HTTP_ORIGIN')
+                    if origin and urlparse(origin).netloc!=env.get('HTTP_HOST'):raise PermissionError('Platform playback only')
+                    from media_relay import verify, relay
+                    secret=relay_secret()
+                    upstream,scope=verify(secret,q.get('token',[''])[0],user)
+                    kind,identifier=scope.split(':',1)
+                    if kind=='channel':
+                        if not enabled(c,'live_tv') or not c.execute('SELECT id FROM channels WHERE id=? AND enabled=1',(identifier,)).fetchone():raise PermissionError('Channel unavailable')
+                    elif kind=='country':
+                        from location_channels import COUNTRIES
+                        if not enabled(c,'live_tv') or identifier not in COUNTRIES:raise PermissionError('Channel unavailable')
+                    elif kind=='video':
+                        if not enabled(c,'catalog'):raise PermissionError('Catalog unavailable')
+                        video_access(int(identifier))
+                    else:raise PermissionError('Invalid playback scope')
+                    media,code,fields=relay(upstream,secret,user,scope,env.get('HTTP_RANGE',''))
+                    response_headers=[('Content-Type',fields.get('Content-Type','application/octet-stream')),('Content-Length',str(len(media))),('Cache-Control','private, no-store'),('X-Content-Type-Options','nosniff'),('Cross-Origin-Resource-Policy','same-origin')]
+                    response_headers.extend((k,v) for k,v in fields.items() if k!='Content-Type')
+                    respond('206 Partial Content' if code==206 else '200 OK',response_headers)
+                    return [media]
+                elif path=='/api/config':
                     result={key:enabled(c,key) for key in FEATURES}
                 elif path=='/api/admin/console' and method=='POST':
                     admin()
@@ -170,7 +207,7 @@ def app(env, respond):
                     if profile and owned_profile()['kids']: sql+=' AND kids=1'
                     search=q.get('q',[''])[0]
                     if search: sql+=' AND (title LIKE ? OR category LIKE ?)'; args += ['%'+search+'%']*2
-                    result=rows(c,sql+' ORDER BY created DESC',args)
+                    result=playback_rows(rows(c,sql+' ORDER BY created DESC',args),'video')
                 elif path=='/api/admin/iptv' and method=='GET':
                     admin()
                     from iptv import SOURCES, BASE
@@ -187,10 +224,11 @@ def app(env, respond):
                 elif path=='/api/location/channels':
                     if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
                     from location_channels import country_channels
-                    result=country_channels(q.get('country',[''])[0])
+                    result=dict(country_channels(q.get('country',[''])[0]))
+                    result['channels']=[{**item,'playback_url':playback_link(item['url'],'country:'+result['country'])} for item in result['channels']]
                 elif path=='/api/guide':
                     if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
-                    result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
+                    result={'channels':playback_rows(rows(c,'SELECT * FROM channels WHERE enabled=1'),'channel'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
                 elif path=='/api/studio' and method=='GET':
                     need(); result=rows(c,'SELECT * FROM videos WHERE owner_id=? ORDER BY created DESC',(user,))
                 elif path=='/api/studio' and method=='POST':
@@ -203,6 +241,7 @@ def app(env, respond):
                     audit(c,user,'submitted content for moderation'); result={'ok':True,'status':'draft'}
                 elif path=='/api/library':
                     owned_profile(); result={'saved':rows(c,'SELECT v.* FROM saved s JOIN videos v ON v.id=s.video_id WHERE s.profile_id=? AND v.visibility="public"'+(' AND v.kids=1' if owned_profile()['kids'] else ''),(profile,)), 'history':rows(c,'SELECT v.*,h.position FROM history h JOIN videos v ON v.id=h.video_id WHERE h.profile_id=? AND v.visibility="public"'+(' AND v.kids=1' if owned_profile()['kids'] else '')+' ORDER BY h.updated DESC',(profile,)), 'recordings':rows(c,'SELECT r.*,p.title FROM recording_requests r JOIN programs p ON p.id=r.program_id WHERE r.profile_id=?',(profile,)), 'playlists':rows(c,'SELECT * FROM playlists WHERE profile_id=?',(profile,))}
+                    for key in ('saved','history'):playback_rows(result[key],'video')
                 elif path=='/api/playlist' and method=='POST':
                     owned_profile(); name=str(body.get('name','')).strip()[:100]
                     if not name: raise ValueError('Name required')
