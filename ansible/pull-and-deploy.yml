@@ -148,17 +148,6 @@
       ansible.builtin.debug:
         msg: '{{ media_pluto_import.stdout }}'
       when: media_refresh_channels | bool
-    - name: Verify enabled streams and clean unavailable channels
-      become_user: africa-media
-      ansible.builtin.command:
-        argv: [/usr/bin/python3, '{{ media_root }}/tools/prune_channels.py', --database, /var/lib/africa-media/media.db, --apply]
-      when: media_prune_channels | default(true) | bool
-      register: media_prune
-      changed_when: media_prune.rc == 0 and ((media_prune.stdout | from_json).removed | int > 0 or (media_prune.stdout | from_json).disabled | int > 0)
-    - name: Report channel cleanup and backup paths
-      ansible.builtin.debug:
-        msg: '{{ media_prune.stdout }}'
-      when: media_prune_channels | default(true) | bool
     - name: Install service
       ansible.builtin.copy:
         dest: /etc/systemd/system/africa-media.service
@@ -248,6 +237,19 @@
       retries: 10
       delay: 2
       until: health.status == 200 and health.json.service | default('') == 'Africa Media Hub'
+    - name: Verify enabled streams and clean unavailable channels
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/tools/prune_channels.py', --database, /var/lib/africa-media/media.db, --apply]
+      async: 900
+      poll: 15
+      when: media_prune_channels | default(true) | bool
+      register: media_prune
+      changed_when: media_prune.rc == 0 and ((media_prune.stdout | from_json).removed | int > 0 or (media_prune.stdout | from_json).disabled | int > 0)
+    - name: Report channel cleanup and backup paths
+      ansible.builtin.debug:
+        msg: '{{ media_prune.stdout }}'
+      when: media_prune_channels | default(true) | bool
     - name: Show administrator setup command
       ansible.builtin.debug:
         msg: 'Run: sudo -u africa-media env MEDIA_DB=/var/lib/africa-media/media.db python3 {{ media_root }}/app.py admin --email YOUR_EMAIL'
