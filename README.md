@@ -120,3 +120,7 @@ The user-supplied playlist is bundled at `data/Working_Channels.m3u`, with origi
 Deployment imports the bundled playlist after refreshing the directory. HTTP-only original entries are retained in the downloadable M3U but skipped by the HTTPS website importer. Duplicate stream URLs and disabled settings are preserved. To import only this list, choose **Admin → IPTV playlists → WORKING CHANNELS — expanded list**, or run `app.py refresh-channels --source working` using the database environment shown above. Country sources for Nigeria, South Africa, Ghana, Kenya, Tanzania, Uganda, Egypt, Morocco, Ethiopia and Senegal are also available.
 
 Current expansion: **89 additions, 106 total entries**; 180 candidates checked. Seven tests passed.
+
+## Complete category directory
+
+The administrator IPTV selector includes All channels and all 30 requested categories: animation, auto, business, classic, comedy, cooking, culture, documentary, education, entertainment, family, general, interactive, kids, legislative, lifestyle, movies, music, news, outdoor, public, relax, religious, science, series, shop, sports, travel, weather, undefined. Select a category and Refresh channels to import it. All channels remains the deployment default and includes the combined directory; category imports deduplicate by stream URL. These are configured directory sources, not claims that every listed stream has been playback-tested. Existing Working Channels and country/language sources remain available.

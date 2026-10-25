@@ -12,6 +12,12 @@ http://example.com/live.m3u8
 https://127.0.0.1/live.m3u8
 '''
 class Imports(unittest.TestCase):
+ def test_complete_requested_category_directory(self):
+  from iptv import SOURCES
+  categories=['animation', 'auto', 'business', 'classic', 'comedy', 'cooking', 'culture', 'documentary', 'education', 'entertainment', 'family', 'general', 'interactive', 'kids', 'legislative', 'lifestyle', 'movies', 'music', 'news', 'outdoor', 'public', 'relax', 'religious', 'science', 'series', 'shop', 'sports', 'travel', 'weather', 'undefined']
+  self.assertEqual(SOURCES['all'],'index.m3u')
+  for category in categories:self.assertEqual(SOURCES[category],'categories/'+category+'.m3u')
+
  def test_parser_and_safety(self):
   items,skipped=parse(SAMPLE)
   self.assertEqual(len(items),1);self.assertEqual(skipped,2);self.assertEqual(items[0]['category'],'Sports')
