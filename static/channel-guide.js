@@ -13,3 +13,17 @@ liveGuide=async function(){
  $('#channel-search').oninput=()=>{limit=100;draw();};$('#reload-guide').onclick=run(()=>liveGuide());$('#more-channels').onclick=()=>{limit+=100;draw();};draw();
 };
 (()=>{const bar=document.createElement('nav');bar.className='mobile-bottom';bar.setAttribute('aria-label','Main navigation');bar.innerHTML=[['Home','⌂'],['Live TV','◉'],['Search','⌕'],['Account','◎']].map(([name,icon])=>'<button data-bottom="'+name+'"><span aria-hidden="true">'+icon+'</span>'+name+'</button>').join('');document.body.append(bar);bar.querySelectorAll('button').forEach(b=>b.onclick=run(async()=>{const n=b.dataset.bottom;if(n==='Account')auth();else{await navigate(n);if(n==='Search')$('#search').focus();}}));})();
+
+// Start in the same user gesture, after player preferences and recovery listeners attach.
+(()=>{
+ const openPlayer=watch;
+ watch=function(item,live=false){
+  openPlayer(item,live);
+  const video=document.querySelector('#modal video');
+  if(!video)return;
+  const feedback=document.createElement('p');feedback.setAttribute('role','status');video.after(feedback);
+  const start=()=>{try{const pending=video.play();if(pending&&pending.catch)pending.catch(()=>{if(video.isConnected&&document.querySelector('#modal[open]'))feedback.textContent='Press Play to start. Your browser or this source prevented automatic playback.';});}catch{feedback.textContent='Press Play to start playback.';}};
+  video.addEventListener('playing',()=>{feedback.textContent='';});
+  start();
+ };
+})();
