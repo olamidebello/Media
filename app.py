@@ -241,9 +241,9 @@ def app(env, respond):
                     result=rows(c,sql+' ORDER BY created DESC',args)
                 elif path=='/api/admin/iptv' and method=='GET':
                     admin()
-                    from iptv import SOURCES, BASE
+                    from iptv import SOURCES, BASE, source_url
                     last=c.execute("SELECT value FROM settings WHERE key='iptv_last_refresh'").fetchone()
-                    result={'sources':[{'key':k,'url':('Bundled '+v.split('/')[-1] if k in ('working','aljazeera') else BASE+v)} for k,v in SOURCES.items()], 'last':json.loads(last[0]) if last else None}
+                    result={'sources':[{'key':k,'url':('Bundled '+v.split('/')[-1] if v.startswith('bundled/') else source_url(k))} for k,v in SOURCES.items()], 'last':json.loads(last[0]) if last else None}
                 elif path=='/api/admin/iptv' and method=='POST':
                     admin()
                     from iptv import refresh as refresh_channels

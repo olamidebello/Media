@@ -1,0 +1,24 @@
+---
+- name: Deploy current platform before importing channels
+  ansible.builtin.import_playbook: deploy-support.yml
+  vars:
+    media_refresh_channels: false
+    media_prune_channels: false
+
+- name: Import requested channel playlists
+  hosts: all
+  become: true
+  tasks:
+    - name: Import feeds with progress and bounded execution
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, /opt/africa-media/tools/import_requested_sources.py]
+      become_user: africa-media
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      async: 1500
+      poll: 15
+      register: requested_import
+      changed_when: true
+    - name: Report source totals and individual failures
+      ansible.builtin.debug:
+        var: requested_import.stdout_lines
