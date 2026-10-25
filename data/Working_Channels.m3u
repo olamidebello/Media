@@ -214,3 +214,12 @@ https://pb-wm04vonaerv0k.akamaized.net/billi.m3u8
 
 #EXTINF:-1 group-title="Movies",MBC+ Drama (1080p)
 https://shd-gcp-live.edgenextcdn.net/live/bitmovin-mbc-plus-drama/e37251ec2aac8f6c98f75cd0fa37cd28/index.m3u8
+
+#EXTINF:-1 group-title="News",Al Jazeera English
+https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8
+
+#EXTINF:-1 group-title="News",Al Jazeera Arabic
+https://live-hls-apps-aja-fa.getaj.net/AJA/01.m3u8
+
+#EXTINF:-1 group-title="News",Al Jazeera Balkans
+https://live-hls-web-ajb.getaj.net/AJB/index.m3u8

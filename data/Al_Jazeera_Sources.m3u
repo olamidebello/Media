@@ -1,0 +1,21 @@
+#EXTM3U
+#EXTINF:-1 group-title="News",Al Jazeera English
+https://live-hls-apps-aje-fa.getaj.net/AJE/index.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera English — Level3 alternative
+http://aljazeera-eng-hd-live.hls.adaptive.level3.net/aljazeera/english2/index.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera English — Ucom alternative
+http://ott-cdn.ucom.am/s23/index.m3u8?fluxustv.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera English — supplied alternative
+http://stream.mcquack.net/131/index.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Arabic
+https://live-hls-apps-aja-fa.getaj.net/AJA/01.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Arabic — Level3 alternative
+http://aljazeera-ara-apple-live.adaptive.level3.net/apple/aljazeera/arabic/800.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Arabic — supplied IP alternative
+http://199.167.151.237:1935/live/sp15_1.stream/gmswf.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Arabic — Ucom alternative
+http://ott-cdn.ucom.am/s69/index.m3u8?fluxustv.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Balkans
+https://live-hls-web-ajb.getaj.net/AJB/index.m3u8
+#EXTINF:-1 group-title="News",Al Jazeera Balkans — Level3 alternative
+http://aljazeera-balkans-apple-live.adaptive.level3.net/apple/aljazeera/balkans/800.m3u8
