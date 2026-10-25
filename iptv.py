@@ -67,7 +67,12 @@ def refresh(c,key='all',text=None):
     if not items:raise ValueError('Playlist contained no usable HTTPS channels; existing channels were preserved')
     added=existing=0
     for item in items:
-        if c.execute('SELECT id FROM channels WHERE url=?',(item['url'],)).fetchone():existing+=1;continue
+        old=c.execute('SELECT id,category FROM channels WHERE url=?',(item['url'],)).fetchone()
+        if old:
+            # Refine only the old generic US group; retain administrator categories and status.
+            if key=='pluto' and old[1]=='United States' and item['category']!='United States':
+                c.execute('UPDATE channels SET category=? WHERE id=?',(item['category'],old[0]))
+            existing+=1;continue
         category=item['category'] if key in ('all','eng','fra','ara','working','aljazeera','uploaded','samsung','roku','international','pluto') else key.title()
         c.execute('INSERT INTO channels(name,url,category,enabled) VALUES(?,?,?,?)',(item['name'],item['url'],category,0 if key=='uploaded' else 1));added+=1
     result={'source':key,'added':added,'existing':existing,'skipped':skipped,'updated':int(time.time())}

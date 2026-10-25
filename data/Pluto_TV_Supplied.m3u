@@ -1,7 +1,8 @@
 #EXTM3U url-tvg="https://github.com/matthuisman/i.mjh.nz/raw/master/PlutoTV/all.xml.gz"
-#EXTINF:-1 channel-id="62ba60f059624e000781c436-us" tvg-id="62ba60f059624e000781c436" tvg-chno="160" tvg-name="00s Replay" group-title="United States",00s Replay
+# Supplied US genre metadata EPG: https://github.com/matthuisman/i.mjh.nz/raw/master/PlutoTV/us.xml.gz
+#EXTINF:-1 channel-id="62ba60f059624e000781c436-us" tvg-id="62ba60f059624e000781c436" tvg-chno="160" tvg-country="US" tvg-name="00s Replay" group-title="Movies",00s Replay
 https://jmp2.uk/plu-62ba60f059624e000781c436.m3u8
-#EXTINF:-1 channel-id="6176f39e709f160007ec61c3-us" tvg-id="6176f39e709f160007ec61c3" tvg-chno="1260" tvg-name="48 Hours" group-title="United States",48 Hours
+#EXTINF:-1 channel-id="6176f39e709f160007ec61c3-us" tvg-id="6176f39e709f160007ec61c3" tvg-chno="1260" tvg-country="US" tvg-name="48 Hours" group-title="True Crime",48 Hours
 https://jmp2.uk/plu-6176f39e709f160007ec61c3.m3u8
 #EXTINF:-1 channel-id="62e925bc68d18a00077bb990-ca" tvg-id="62e925bc68d18a00077bb990" tvg-chno="460" tvg-name="48 Hours" group-title="Canada",48 Hours
 https://jmp2.uk/plu-62e925bc68d18a00077bb990.m3u8
@@ -13,83 +14,83 @@ https://jmp2.uk/plu-63c1384e829c850007922ca4.m3u8
 https://jmp2.uk/plu-5ddf901280e3550009139c86.m3u8
 #EXTINF:-1 channel-id="656df2849d5ac400083be647-gb" tvg-id="656df2849d5ac400083be647" tvg-chno="703" tvg-name="5 Trucking Hell" group-title="United Kingdom",5 Trucking Hell
 https://jmp2.uk/plu-656df2849d5ac400083be647.m3u8
-#EXTINF:-1 channel-id="68487fb3f212bedacf5a53e3-us" tvg-id="68487fb3f212bedacf5a53e3" tvg-chno="2050" tvg-name="50 Cent Action" group-title="United States",50 Cent Action
+#EXTINF:-1 channel-id="68487fb3f212bedacf5a53e3-us" tvg-id="68487fb3f212bedacf5a53e3" tvg-chno="2050" tvg-country="US" tvg-name="50 Cent Action" group-title="Entertainment",50 Cent Action
 https://jmp2.uk/plu-68487fb3f212bedacf5a53e3.m3u8
 #EXTINF:-1 channel-id="68c8203efef6d8a2a6f13906-gb" tvg-id="68c8203efef6d8a2a6f13906" tvg-chno="701" tvg-name="60 Days in Jail" group-title="United Kingdom",60 Days in Jail
 https://jmp2.uk/plu-68c8203efef6d8a2a6f13906.m3u8
-#EXTINF:-1 channel-id="66b646f9cd0d3100086af83c-us" tvg-id="66b646f9cd0d3100086af83c" tvg-chno="3095" tvg-name="60 Minutes" group-title="United States",60 Minutes
+#EXTINF:-1 channel-id="66b646f9cd0d3100086af83c-us" tvg-id="66b646f9cd0d3100086af83c" tvg-chno="3095" tvg-country="US" tvg-name="60 Minutes" group-title="History + Science",60 Minutes
 https://jmp2.uk/plu-66b646f9cd0d3100086af83c.m3u8
-#EXTINF:-1 channel-id="5f4d878d3d19b30007d2e782-us" tvg-id="5f4d878d3d19b30007d2e782" tvg-chno="190" tvg-name="70s Cinema" group-title="United States",70s Cinema
+#EXTINF:-1 channel-id="5f4d878d3d19b30007d2e782-us" tvg-id="5f4d878d3d19b30007d2e782" tvg-chno="190" tvg-country="US" tvg-name="70s Cinema" group-title="Movies",70s Cinema
 https://jmp2.uk/plu-5f4d878d3d19b30007d2e782.m3u8
 #EXTINF:-1 channel-id="6a56ae45c868f8fd9818d59a-ca" tvg-id="6a56ae45c868f8fd9818d59a" tvg-chno="639" tvg-name="7th Heaven" group-title="Canada",7th Heaven
 https://jmp2.uk/plu-6a56ae45c868f8fd9818d59a.m3u8
-#EXTINF:-1 channel-id="5ca525b650be2571e3943c63-us" tvg-id="5ca525b650be2571e3943c63" tvg-chno="180" tvg-name="80s Rewind" group-title="United States",80s Rewind
+#EXTINF:-1 channel-id="5ca525b650be2571e3943c63-us" tvg-id="5ca525b650be2571e3943c63" tvg-chno="180" tvg-country="US" tvg-name="80s Rewind" group-title="Movies",80s Rewind
 https://jmp2.uk/plu-5ca525b650be2571e3943c63.m3u8
-#EXTINF:-1 channel-id="6452c814939a590008567a3b-us" tvg-id="6452c814939a590008567a3b" tvg-chno="3785" tvg-name="90's Kids" group-title="United States",90's Kids
+#EXTINF:-1 channel-id="6452c814939a590008567a3b-us" tvg-id="6452c814939a590008567a3b" tvg-chno="3785" tvg-country="US" tvg-name="90's Kids" group-title="Kids",90's Kids
 https://jmp2.uk/plu-6452c814939a590008567a3b.m3u8
-#EXTINF:-1 channel-id="6452c77ed3fdde00080eb3a8-us" tvg-id="6452c77ed3fdde00080eb3a8" tvg-chno="3787" tvg-name="90s Kids TV 2" group-title="United States",90s Kids TV 2
+#EXTINF:-1 channel-id="6452c77ed3fdde00080eb3a8-us" tvg-id="6452c77ed3fdde00080eb3a8" tvg-chno="3787" tvg-country="US" tvg-name="90s Kids TV 2" group-title="Kids",90s Kids TV 2
 https://jmp2.uk/plu-6452c77ed3fdde00080eb3a8.m3u8
-#EXTINF:-1 channel-id="5f4d86f519358a00072b978e-us" tvg-id="5f4d86f519358a00072b978e" tvg-chno="170" tvg-name="90s Throwback" group-title="United States",90s Throwback
+#EXTINF:-1 channel-id="5f4d86f519358a00072b978e-us" tvg-id="5f4d86f519358a00072b978e" tvg-chno="170" tvg-country="US" tvg-name="90s Throwback" group-title="Movies",90s Throwback
 https://jmp2.uk/plu-5f4d86f519358a00072b978e.m3u8
 #EXTINF:-1 channel-id="64ff1d92d545e9000877fba4-gb" tvg-id="64ff1d92d545e9000877fba4" tvg-chno="401" tvg-name="A Haunting" group-title="United Kingdom",A Haunting
 https://jmp2.uk/plu-64ff1d92d545e9000877fba4.m3u8
 #EXTINF:-1 channel-id="6852854bce36f0644f37d765-gb" tvg-id="6852854bce36f0644f37d765" tvg-chno="840" tvg-name="A New Life in the Sun" group-title="United Kingdom",A New Life in the Sun
 https://jmp2.uk/plu-6852854bce36f0644f37d765.m3u8
-#EXTINF:-1 channel-id="6000a5a9e767980007b497ca-us" tvg-id="6000a5a9e767980007b497ca" tvg-chno="1330" tvg-name="A&E Crime 360" group-title="United States",A&E Crime 360
+#EXTINF:-1 channel-id="6000a5a9e767980007b497ca-us" tvg-id="6000a5a9e767980007b497ca" tvg-chno="1330" tvg-country="US" tvg-name="A&E Crime 360" group-title="True Crime",A&E Crime 360
 https://jmp2.uk/plu-6000a5a9e767980007b497ca.m3u8
-#EXTINF:-1 channel-id="6aab1ec6f2eaa8924745678e-us" tvg-id="6aab1ec6f2eaa8924745678e" tvg-chno="1239" tvg-name="A&E Live PD: Greatest Shifts" group-title="United States",A&E Live PD: Greatest Shifts
+#EXTINF:-1 channel-id="6aab1ec6f2eaa8924745678e-us" tvg-id="6aab1ec6f2eaa8924745678e" tvg-chno="1239" tvg-country="US" tvg-name="A&E Live PD: Greatest Shifts" group-title="True Crime",A&E Live PD: Greatest Shifts
 https://jmp2.uk/plu-6aab1ec6f2eaa8924745678e.m3u8
-#EXTINF:-1 channel-id="6aab1ea02cfd341eb5036c5a-us" tvg-id="6aab1ea02cfd341eb5036c5a" tvg-chno="1395" tvg-name="A&E’s Alaska State Troopers" group-title="United States",A&E’s Alaska State Troopers
+#EXTINF:-1 channel-id="6aab1ea02cfd341eb5036c5a-us" tvg-id="6aab1ea02cfd341eb5036c5a" tvg-chno="1395" tvg-country="US" tvg-name="A&E’s Alaska State Troopers" group-title="Reality",A&E’s Alaska State Troopers
 https://jmp2.uk/plu-6aab1ea02cfd341eb5036c5a.m3u8
-#EXTINF:-1 channel-id="6508be683a0d700008c534e4-us" tvg-id="6508be683a0d700008c534e4" tvg-chno="2532" tvg-name="ABC News Live" group-title="United States",ABC News Live
+#EXTINF:-1 channel-id="6508be683a0d700008c534e4-us" tvg-id="6508be683a0d700008c534e4" tvg-chno="2532" tvg-country="US" tvg-name="ABC News Live" group-title="News + Opinion",ABC News Live
 https://jmp2.uk/plu-6508be683a0d700008c534e4.m3u8
-#EXTINF:-1 channel-id="6793ea255225b515b4ba91a7-us" tvg-id="6793ea255225b515b4ba91a7" tvg-chno="2103" tvg-name="ALLBLK Gems" group-title="United States",ALLBLK Gems
+#EXTINF:-1 channel-id="6793ea255225b515b4ba91a7-us" tvg-id="6793ea255225b515b4ba91a7" tvg-chno="2103" tvg-country="US" tvg-name="ALLBLK Gems" group-title="Entertainment",ALLBLK Gems
 https://jmp2.uk/plu-6793ea255225b515b4ba91a7.m3u8
 #EXTINF:-1 channel-id="682456eb31bbd3e002d8c06b-gb" tvg-id="682456eb31bbd3e002d8c06b" tvg-chno="25" tvg-name="AMC Reality" group-title="United Kingdom",AMC Reality
 https://jmp2.uk/plu-682456eb31bbd3e002d8c06b.m3u8
-#EXTINF:-1 channel-id="6793eaa4bc03978b9bc63db1-us" tvg-id="6793eaa4bc03978b9bc63db1" tvg-chno="3992" tvg-name="ANIME x HIDIVE" group-title="United States",ANIME x HIDIVE
+#EXTINF:-1 channel-id="6793eaa4bc03978b9bc63db1-us" tvg-id="6793eaa4bc03978b9bc63db1" tvg-chno="3992" tvg-country="US" tvg-name="ANIME x HIDIVE" group-title="Anime",ANIME x HIDIVE
 https://jmp2.uk/plu-6793eaa4bc03978b9bc63db1.m3u8
 #EXTINF:-1 channel-id="68b9afd66985e192657a2b7f-ca" tvg-id="68b9afd66985e192657a2b7f" tvg-chno="43" tvg-name="APTN Beyond" group-title="Canada",APTN Beyond
 https://jmp2.uk/plu-68b9afd66985e192657a2b7f.m3u8
-#EXTINF:-1 channel-id="682e43b21295f98347710917-us" tvg-id="682e43b21295f98347710917" tvg-chno="2900" tvg-name="AWSN" group-title="United States",AWSN
+#EXTINF:-1 channel-id="682e43b21295f98347710917-us" tvg-id="682e43b21295f98347710917" tvg-chno="2900" tvg-country="US" tvg-name="AWSN" group-title="Sports",AWSN
 https://jmp2.uk/plu-682e43b21295f98347710917.m3u8
 #EXTINF:-1 channel-id="66fd37885049580008d295b6-gb" tvg-id="66fd37885049580008d295b6" tvg-chno="61" tvg-name="AWSN" group-title="United Kingdom",AWSN
 https://jmp2.uk/plu-66fd37885049580008d295b6.m3u8
 #EXTINF:-1 channel-id="66fd394e9269330008413302-ca" tvg-id="66fd394e9269330008413302" tvg-chno="1325" tvg-name="AWSN" group-title="Canada",AWSN
 https://jmp2.uk/plu-66fd394e9269330008413302.m3u8
-#EXTINF:-1 channel-id="64dab1f835425100080e1e7b-us" tvg-id="64dab1f835425100080e1e7b" tvg-chno="4340" tvg-name="Acapulco Shore" group-title="United States",Acapulco Shore
+#EXTINF:-1 channel-id="64dab1f835425100080e1e7b-us" tvg-id="64dab1f835425100080e1e7b" tvg-chno="4340" tvg-country="US" tvg-name="Acapulco Shore" group-title="En Español",Acapulco Shore
 https://jmp2.uk/plu-64dab1f835425100080e1e7b.m3u8
 #EXTINF:-1 channel-id="66ba1f16cd0d3100086dcf22-gb" tvg-id="66ba1f16cd0d3100086dcf22" tvg-chno="2838" tvg-name="Alien Files Unsealed" group-title="United Kingdom",Alien Files Unsealed
 https://jmp2.uk/plu-66ba1f16cd0d3100086dcf22.m3u8
 #EXTINF:-1 channel-id="69b03041cafd86d9dc5763c3-ca" tvg-id="69b03041cafd86d9dc5763c3" tvg-chno="637" tvg-name="All My Children" group-title="Canada",All My Children
 https://jmp2.uk/plu-69b03041cafd86d9dc5763c3.m3u8
-#EXTINF:-1 channel-id="5e82530945600e0007ca076c-us" tvg-id="5e82530945600e0007ca076c" tvg-chno="1810" tvg-name="All Reality WE tv" group-title="United States",All Reality WE tv
+#EXTINF:-1 channel-id="5e82530945600e0007ca076c-us" tvg-id="5e82530945600e0007ca076c" tvg-chno="1810" tvg-country="US" tvg-name="All Reality WE tv" group-title="Reality",All Reality WE tv
 https://jmp2.uk/plu-5e82530945600e0007ca076c.m3u8
 #EXTINF:-1 channel-id="6a205abba7b5a6c560b8ac25-ca" tvg-id="6a205abba7b5a6c560b8ac25" tvg-chno="737" tvg-name="All Reality We TV" group-title="Canada",All Reality We TV
 https://jmp2.uk/plu-6a205abba7b5a6c560b8ac25.m3u8
-#EXTINF:-1 channel-id="69eaa34817801c84fca05d94-us" tvg-id="69eaa34817801c84fca05d94" tvg-chno="450" tvg-name="Always Funny" group-title="United States",Always Funny
+#EXTINF:-1 channel-id="69eaa34817801c84fca05d94-us" tvg-id="69eaa34817801c84fca05d94" tvg-chno="450" tvg-country="US" tvg-name="Always Funny" group-title="Comedy",Always Funny
 https://jmp2.uk/plu-69eaa34817801c84fca05d94.m3u8
-#EXTINF:-1 channel-id="691cf0410a78a9ce61ad2121-us" tvg-id="691cf0410a78a9ce61ad2121" tvg-chno="385" tvg-name="America's Funniest Home Videos" group-title="United States",America's Funniest Home Videos
+#EXTINF:-1 channel-id="691cf0410a78a9ce61ad2121-us" tvg-id="691cf0410a78a9ce61ad2121" tvg-chno="385" tvg-country="US" tvg-name="America's Funniest Home Videos" group-title="Comedy",America's Funniest Home Videos
 https://jmp2.uk/plu-691cf0410a78a9ce61ad2121.m3u8
 #EXTINF:-1 channel-id="69172f1699758a0f03459c5b-ca" tvg-id="69172f1699758a0f03459c5b" tvg-chno="145" tvg-name="America's Funniest Home Videos" group-title="Canada",America's Funniest Home Videos
 https://jmp2.uk/plu-69172f1699758a0f03459c5b.m3u8
-#EXTINF:-1 channel-id="68757c45759366af05b3b199-us" tvg-id="68757c45759366af05b3b199" tvg-chno="1873" tvg-name="America's Next Top Model" group-title="United States",America's Next Top Model
+#EXTINF:-1 channel-id="68757c45759366af05b3b199-us" tvg-id="68757c45759366af05b3b199" tvg-chno="1873" tvg-country="US" tvg-name="America's Next Top Model" group-title="Competition Reality",America's Next Top Model
 https://jmp2.uk/plu-68757c45759366af05b3b199.m3u8
 #EXTINF:-1 channel-id="68679fc6bb46d0bdd38ac9a4-ca" tvg-id="68679fc6bb46d0bdd38ac9a4" tvg-chno="810" tvg-name="America's Next Top Model" group-title="Canada",America's Next Top Model
 https://jmp2.uk/plu-68679fc6bb46d0bdd38ac9a4.m3u8
-#EXTINF:-1 channel-id="5e84f54a82f05300080e6746-us" tvg-id="5e84f54a82f05300080e6746" tvg-chno="3490" tvg-name="America's Test Kitchen" group-title="United States",America's Test Kitchen
+#EXTINF:-1 channel-id="5e84f54a82f05300080e6746-us" tvg-id="5e84f54a82f05300080e6746" tvg-chno="3490" tvg-country="US" tvg-name="America's Test Kitchen" group-title="Home + Food",America's Test Kitchen
 https://jmp2.uk/plu-5e84f54a82f05300080e6746.m3u8
-#EXTINF:-1 channel-id="5e1f7da4bc7d740009831259-us" tvg-id="5e1f7da4bc7d740009831259" tvg-chno="2690" tvg-name="America's Voice News" group-title="United States",America's Voice News
+#EXTINF:-1 channel-id="5e1f7da4bc7d740009831259-us" tvg-id="5e1f7da4bc7d740009831259" tvg-chno="2690" tvg-country="US" tvg-name="America's Voice News" group-title="News + Opinion",America's Voice News
 https://jmp2.uk/plu-5e1f7da4bc7d740009831259.m3u8
-#EXTINF:-1 channel-id="65492fc7056b9700088560b5-us" tvg-id="65492fc7056b9700088560b5" tvg-chno="1240" tvg-name="American Crimes" group-title="United States",American Crimes
+#EXTINF:-1 channel-id="65492fc7056b9700088560b5-us" tvg-id="65492fc7056b9700088560b5" tvg-chno="1240" tvg-country="US" tvg-name="American Crimes" group-title="True Crime",American Crimes
 https://jmp2.uk/plu-65492fc7056b9700088560b5.m3u8
 #EXTINF:-1 channel-id="6408ae8f9b39550008caf94f-ca" tvg-id="6408ae8f9b39550008caf94f" tvg-chno="705" tvg-name="American Pickers" group-title="Canada",American Pickers
 https://jmp2.uk/plu-6408ae8f9b39550008caf94f.m3u8
-#EXTINF:-1 channel-id="6565413e4261ca0008215320-us" tvg-id="6565413e4261ca0008215320" tvg-chno="1465" tvg-name="American Pickers Plus by History" group-title="United States",American Pickers Plus by History
+#EXTINF:-1 channel-id="6565413e4261ca0008215320-us" tvg-id="6565413e4261ca0008215320" tvg-chno="1465" tvg-country="US" tvg-name="American Pickers Plus by History" group-title="Reality",American Pickers Plus by History
 https://jmp2.uk/plu-6565413e4261ca0008215320.m3u8
-#EXTINF:-1 channel-id="6887a8fd8e92b5e0a7244e88-us" tvg-id="6887a8fd8e92b5e0a7244e88" tvg-chno="1405" tvg-name="Ancient Aliens" group-title="United States",Ancient Aliens
+#EXTINF:-1 channel-id="6887a8fd8e92b5e0a7244e88-us" tvg-id="6887a8fd8e92b5e0a7244e88" tvg-chno="1405" tvg-country="US" tvg-name="Ancient Aliens" group-title="Reality",Ancient Aliens
 https://jmp2.uk/plu-6887a8fd8e92b5e0a7244e88.m3u8
-#EXTINF:-1 channel-id="66c638726838ee00085ac20d-us" tvg-id="66c638726838ee00085ac20d" tvg-chno="875" tvg-name="Andromeda" group-title="United States",Andromeda
+#EXTINF:-1 channel-id="66c638726838ee00085ac20d-us" tvg-id="66c638726838ee00085ac20d" tvg-chno="875" tvg-country="US" tvg-name="Andromeda" group-title="Sci-Fi",Andromeda
 https://jmp2.uk/plu-66c638726838ee00085ac20d.m3u8
 #EXTINF:-1 channel-id="5e8db96bccae160007c71eec-gb" tvg-id="5e8db96bccae160007c71eec" tvg-chno="282" tvg-name="Andromeda" group-title="United Kingdom",Andromeda
 https://jmp2.uk/plu-5e8db96bccae160007c71eec.m3u8
@@ -97,17 +98,17 @@ https://jmp2.uk/plu-5e8db96bccae160007c71eec.m3u8
 https://jmp2.uk/plu-6850335b5965a2fd49f7e36d.m3u8
 #EXTINF:-1 channel-id="65cf8bdaa25d5e00081e1e5d-ca" tvg-id="65cf8bdaa25d5e00081e1e5d" tvg-chno="130" tvg-name="Anger Management" group-title="Canada",Anger Management
 https://jmp2.uk/plu-65cf8bdaa25d5e00081e1e5d.m3u8
-#EXTINF:-1 channel-id="6aaadf258cc64f2b2b7dbe3c-us" tvg-id="6aaadf258cc64f2b2b7dbe3c" tvg-chno="3989" tvg-name="Ani-Monsters" group-title="United States",Ani-Monsters
+#EXTINF:-1 channel-id="6aaadf258cc64f2b2b7dbe3c-us" tvg-id="6aaadf258cc64f2b2b7dbe3c" tvg-chno="3989" tvg-country="US" tvg-name="Ani-Monsters" group-title="Anime",Ani-Monsters
 https://jmp2.uk/plu-6aaadf258cc64f2b2b7dbe3c.m3u8
 #EXTINF:-1 channel-id="69173ce8abd4703b27f71d44-ca" tvg-id="69173ce8abd4703b27f71d44" tvg-chno="1135" tvg-name="Anthony Bourdain: Parts Unknown" group-title="Canada",Anthony Bourdain: Parts Unknown
 https://jmp2.uk/plu-69173ce8abd4703b27f71d44.m3u8
 #EXTINF:-1 channel-id="638e10de75c3a30007092693-ca" tvg-id="638e10de75c3a30007092693" tvg-chno="1100" tvg-name="Antiques Road Show UK" group-title="Canada",Antiques Road Show UK
 https://jmp2.uk/plu-638e10de75c3a30007092693.m3u8
-#EXTINF:-1 channel-id="615b8ec39e878900073f419a-us" tvg-id="615b8ec39e878900073f419a" tvg-chno="3420" tvg-name="Antiques Road Trip" group-title="United States",Antiques Road Trip
+#EXTINF:-1 channel-id="615b8ec39e878900073f419a-us" tvg-id="615b8ec39e878900073f419a" tvg-chno="3420" tvg-country="US" tvg-name="Antiques Road Trip" group-title="Home + Food",Antiques Road Trip
 https://jmp2.uk/plu-615b8ec39e878900073f419a.m3u8
 #EXTINF:-1 channel-id="66f135b45e4a6e0008b80606-gb" tvg-id="66f135b45e4a6e0008b80606" tvg-chno="836" tvg-name="Antiques Road Trip" group-title="United Kingdom",Antiques Road Trip
 https://jmp2.uk/plu-66f135b45e4a6e0008b80606.m3u8
-#EXTINF:-1 channel-id="5ce44810b421747ae467b7cd-us" tvg-id="5ce44810b421747ae467b7cd" tvg-chno="3410" tvg-name="Antiques Roadshow UK" group-title="United States",Antiques Roadshow UK
+#EXTINF:-1 channel-id="5ce44810b421747ae467b7cd-us" tvg-id="5ce44810b421747ae467b7cd" tvg-chno="3410" tvg-country="US" tvg-name="Antiques Roadshow UK" group-title="Home + Food",Antiques Roadshow UK
 https://jmp2.uk/plu-5ce44810b421747ae467b7cd.m3u8
 #EXTINF:-1 channel-id="65cf8b9328730900087c5324-ca" tvg-id="65cf8b9328730900087c5324" tvg-chno="135" tvg-name="Are We There Yet?" group-title="Canada",Are We There Yet?
 https://jmp2.uk/plu-65cf8b9328730900087c5324.m3u8
@@ -121,7 +122,71 @@ https://jmp2.uk/plu-62ac50e92c48f900071444c9.m3u8
 https://jmp2.uk/plu-656df599c0fc8800089c75ab.m3u8
 #EXTINF:-1 channel-id="6540fe4bbdf3cf0008aa2cdd-ca" tvg-id="6540fe4bbdf3cf0008aa2cdd" tvg-chno="720" tvg-name="Ax Men" group-title="Canada",Ax Men
 https://jmp2.uk/plu-6540fe4bbdf3cf0008aa2cdd.m3u8
-#EXTINF:-1 channel-id="656535fc2c46f30008870fae-us" tvg-id="656535fc2c46f30008870fae" tvg-chno="3560" tvg-name="BBC Earth" group-title="United States",BBC Earth
+#EXTINF:-1 channel-id="656535fc2c46f30008870fae-us" tvg-id="656535fc2c46f30008870fae" tvg-chno="3560" tvg-country="US" tvg-name="BBC Earth" group-title="Animals + Nature",BBC Earth
 https://jmp2.uk/plu-656535fc2c46f30008870fae.m3u8
-#EXTINF:-1 channel-id="65d92a8c8b24c80008e285c0-us" tvg-id="65d92a8c8b24c80008e285c0" tvg-chno="2629" tvg-name="BBC News" group-title="United States",BBC News
+#EXTINF:-1 channel-id="65d92a8c8b24c80008e285c0-us" tvg-id="65d92a8c8b24c80008e285c0" tvg-chno="2629" tvg-country="US" tvg-name="BBC News" group-title="News + Opinion",BBC News
 https://jmp2.uk/plu-65d92a8c8b24c80008e285c0.m3u8
+#EXTINF:-1 channel-id="58af4c093a41ca9d4ecabe96-us" tvg-id="58af4c093a41ca9d4ecabe96" tvg-chno="100" tvg-country="US" tvg-name="BET Cinema" group-title="Movies",BET Cinema
+https://jmp2.uk/plu-58af4c093a41ca9d4ecabe96.m3u8
+#EXTINF:-1 channel-id="60f85644a9493e0007a1f035-us" tvg-id="60f85644a9493e0007a1f035" tvg-chno="530" tvg-country="US" tvg-name="BET Classics" group-title="Classic TV",BET Classics
+https://jmp2.uk/plu-60f85644a9493e0007a1f035.m3u8
+#EXTINF:-1 channel-id="68c32d88f56983aba40052bd-us" tvg-id="68c32d88f56983aba40052bd" tvg-chno="105" tvg-country="US" tvg-name="BET Comedy Movies" group-title="Movies",BET Comedy Movies
+https://jmp2.uk/plu-68c32d88f56983aba40052bd.m3u8
+#EXTINF:-1 channel-id="5ca670f6593a5d78f0e85aed-us" tvg-id="5ca670f6593a5d78f0e85aed" tvg-chno="2040" tvg-country="US" tvg-name="BET Pluto TV" group-title="Entertainment",BET Pluto TV
+https://jmp2.uk/plu-5ca670f6593a5d78f0e85aed.m3u8
+#EXTINF:-1 channel-id="61326275b3c86a00078e4833-us" tvg-id="61326275b3c86a00078e4833" tvg-chno="320" tvg-country="US" tvg-name="BET Throwbacks" group-title="Comedy",BET Throwbacks
+https://jmp2.uk/plu-61326275b3c86a00078e4833.m3u8
+#EXTINF:-1 channel-id="663946c1b18d700008d9c168-us" tvg-id="663946c1b18d700008d9c168" tvg-chno="110" tvg-country="US" tvg-name="BET Visionaries" group-title="Movies",BET Visionaries
+https://jmp2.uk/plu-663946c1b18d700008d9c168.m3u8
+#EXTINF:-1 channel-id="666b265722acab000885c6aa-us" tvg-id="666b265722acab000885c6aa" tvg-chno="325" tvg-country="US" tvg-name="BET x Tyler Perry Comedy" group-title="Comedy",BET x Tyler Perry Comedy
+https://jmp2.uk/plu-666b265722acab000885c6aa.m3u8
+#EXTINF:-1 channel-id="666b38a5efa2a10008b15b3a-us" tvg-id="666b38a5efa2a10008b15b3a" tvg-chno="1015" tvg-country="US" tvg-name="BET x Tyler Perry Drama" group-title="Drama",BET x Tyler Perry Drama
+https://jmp2.uk/plu-666b38a5efa2a10008b15b3a.m3u8
+#EXTINF:-1 channel-id="5812bfbe4ced4f7b601b12e6-us" tvg-id="5812bfbe4ced4f7b601b12e6" tvg-chno="2340" tvg-country="US" tvg-name="BUZZR" group-title="Daytime + Game Shows",BUZZR
+https://jmp2.uk/plu-5812bfbe4ced4f7b601b12e6.m3u8
+#EXTINF:-1 channel-id="60faffc3fbbc120007fc4376-us" tvg-id="60faffc3fbbc120007fc4376" tvg-chno="3760" tvg-country="US" tvg-name="Baby Shark TV" group-title="Kids",Baby Shark TV
+https://jmp2.uk/plu-60faffc3fbbc120007fc4376.m3u8
+#EXTINF:-1 channel-id="654932fa4d6d8f00084c4723-us" tvg-id="654932fa4d6d8f00084c4723" tvg-chno="1800" tvg-country="US" tvg-name="Bad Girls Club" group-title="Reality",Bad Girls Club
+https://jmp2.uk/plu-654932fa4d6d8f00084c4723.m3u8
+#EXTINF:-1 channel-id="60a3d889a5b3690008dc7fe8-us" tvg-id="60a3d889a5b3690008dc7fe8" tvg-chno="1460" tvg-country="US" tvg-name="Bar Rescue" group-title="Reality",Bar Rescue
+https://jmp2.uk/plu-60a3d889a5b3690008dc7fe8.m3u8
+#EXTINF:-1 channel-id="69d7ebff029c431826bd328e-us" tvg-id="69d7ebff029c431826bd328e" tvg-chno="858" tvg-country="US" tvg-name="Battlestar Galactica" group-title="Sci-Fi",Battlestar Galactica
+https://jmp2.uk/plu-69d7ebff029c431826bd328e.m3u8
+#EXTINF:-1 channel-id="68bb162bb3900870ec364cbe-us" tvg-id="68bb162bb3900870ec364cbe" tvg-chno="3340" tvg-country="US" tvg-name="Beach Day" group-title="Home + Food",Beach Day
+https://jmp2.uk/plu-68bb162bb3900870ec364cbe.m3u8
+#EXTINF:-1 channel-id="5ebc8688f3697d00072f7cf8-us" tvg-id="5ebc8688f3697d00072f7cf8" tvg-chno="2870" tvg-country="US" tvg-name="Bellator MMA" group-title="Sports",Bellator MMA
+https://jmp2.uk/plu-5ebc8688f3697d00072f7cf8.m3u8
+#EXTINF:-1 channel-id="68bb167e00a2f063fdf7ee8f-us" tvg-id="68bb167e00a2f063fdf7ee8f" tvg-chno="3450" tvg-country="US" tvg-name="Best of Bobby Flay by Food Network" group-title="Home + Food",Best of Bobby Flay by Food Network
+https://jmp2.uk/plu-68bb167e00a2f063fdf7ee8f.m3u8
+#EXTINF:-1 channel-id="60f760bbdf090700075d7bfe-us" tvg-id="60f760bbdf090700075d7bfe" tvg-chno="2430" tvg-country="US" tvg-name="Best of Dr. Phil" group-title="Daytime + Game Shows",Best of Dr. Phil
+https://jmp2.uk/plu-60f760bbdf090700075d7bfe.m3u8
+#EXTINF:-1 channel-id="5f7796e470510900070d4e3d-us" tvg-id="5f7796e470510900070d4e3d" tvg-chno="570" tvg-country="US" tvg-name="Beverly Hillbillies" group-title="Classic TV",Beverly Hillbillies
+https://jmp2.uk/plu-5f7796e470510900070d4e3d.m3u8
+#EXTINF:-1 channel-id="5f4d83e0a382c00007bc02e7-us" tvg-id="5f4d83e0a382c00007bc02e7" tvg-chno="1150" tvg-country="US" tvg-name="Beverly Hills 90210" group-title="Drama",Beverly Hills 90210
+https://jmp2.uk/plu-5f4d83e0a382c00007bc02e7.m3u8
+#EXTINF:-1 channel-id="687ff00ff6bc08130f16ab81-us" tvg-id="687ff00ff6bc08130f16ab81" tvg-chno="2435" tvg-country="US" tvg-name="Beyond the Gates" group-title="Daytime + Game Shows",Beyond the Gates
+https://jmp2.uk/plu-687ff00ff6bc08130f16ab81.m3u8
+#EXTINF:-1 channel-id="6a3c5fa46276c42ac6726b27-us" tvg-id="6a3c5fa46276c42ac6726b27" tvg-chno="4032" tvg-country="US" tvg-name="Big A Anime" group-title="Anime",Big A Anime
+https://jmp2.uk/plu-6a3c5fa46276c42ac6726b27.m3u8
+#EXTINF:-1 channel-id="6661f11a41af6400080e90d8-us" tvg-id="6661f11a41af6400080e90d8" tvg-chno="1940" tvg-country="US" tvg-name="Big Brother" group-title="Competition Reality",Big Brother
+https://jmp2.uk/plu-6661f11a41af6400080e90d8.m3u8
+#EXTINF:-1 channel-id="686d61503484d6073283059d-us" tvg-id="686d61503484d6073283059d" tvg-chno="327" tvg-country="US" tvg-name="Black Family Sitcoms" group-title="Comedy",Black Family Sitcoms
+https://jmp2.uk/plu-686d61503484d6073283059d.m3u8
+#EXTINF:-1 channel-id="5d51e2bceca5b4b2c0e06c50-us" tvg-id="5d51e2bceca5b4b2c0e06c50" tvg-chno="1680" tvg-country="US" tvg-name="Black Ink Crew" group-title="Reality",Black Ink Crew
+https://jmp2.uk/plu-5d51e2bceca5b4b2c0e06c50.m3u8
+#EXTINF:-1 channel-id="5e46fba0c43b0d00096e5ac1-us" tvg-id="5e46fba0c43b0d00096e5ac1" tvg-chno="2680" tvg-country="US" tvg-name="Blaze Live" group-title="News + Opinion",Blaze Live
+https://jmp2.uk/plu-5e46fba0c43b0d00096e5ac1.m3u8
+#EXTINF:-1 channel-id="54ff7ba69222cb1c2624c584-us" tvg-id="54ff7ba69222cb1c2624c584" tvg-chno="2640" tvg-country="US" tvg-name="Bloomberg TV+" group-title="News + Opinion",Bloomberg TV+
+https://jmp2.uk/plu-54ff7ba69222cb1c2624c584.m3u8
+#EXTINF:-1 channel-id="61b3b8c645b45d0007a9bb8d-us" tvg-id="61b3b8c645b45d0007a9bb8d" tvg-chno="1000" tvg-country="US" tvg-name="Blue Bloods" group-title="Drama",Blue Bloods
+https://jmp2.uk/plu-61b3b8c645b45d0007a9bb8d.m3u8
+#EXTINF:-1 channel-id="68e9913c4a666b9054849832-us" tvg-id="68e9913c4a666b9054849832" tvg-chno="797" tvg-country="US" tvg-name="Bonanza" group-title="Westerns",Bonanza
+https://jmp2.uk/plu-68e9913c4a666b9054849832.m3u8
+#EXTINF:-1 channel-id="696997049889f8db34c936c2-us" tvg-id="696997049889f8db34c936c2" tvg-chno="4022" tvg-country="US" tvg-name="Boruto: Naruto Next Generations" group-title="Anime",Boruto: Naruto Next Generations
+https://jmp2.uk/plu-696997049889f8db34c936c2.m3u8
+#EXTINF:-1 channel-id="6176fd25e83a5f0007a464c9-us" tvg-id="6176fd25e83a5f0007a464c9" tvg-chno="2100" tvg-country="US" tvg-name="Bounce XL" group-title="Entertainment",Bounce XL
+https://jmp2.uk/plu-6176fd25e83a5f0007a464c9.m3u8
+#EXTINF:-1 channel-id="6549310a53fc97000838fcc9-us" tvg-id="6549310a53fc97000838fcc9" tvg-chno="1780" tvg-country="US" tvg-name="Bravo Vault" group-title="Reality",Bravo Vault
+https://jmp2.uk/plu-6549310a53fc97000838fcc9.m3u8
+#EXTINF:-1 channel-id="60f5d389985a0c0007357304-us" tvg-id="60f5d389985a0c0007357304" tvg-chno="1090" tvg-country="US" tvg-name="BritBox Mysteries" group-title="Drama",BritBox Mysteries
+https://jmp2.uk/plu-60f5d389985a0c0007357304.m3u8
