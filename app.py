@@ -46,9 +46,8 @@ def password(p, salt=None):
 def rows(c, sql, args=()): return [dict(r) for r in c.execute(sql, args)]
 def audit(c,u,action): c.execute('INSERT INTO audit(user_id,action,created) VALUES(?,?,?)',(u,action,int(time.time())))
 def valid_url(s):
-    p = urlparse(s)
-    if p.scheme != 'https' or not p.hostname or p.username or p.password: raise ValueError('Use a public HTTPS media URL')
-    return s
+    from iptv import normalize_media_url
+    return normalize_media_url(s)
 
 def app(env, respond):
     status = '200 OK'; headers = [('Content-Type','application/json; charset=utf-8'),('X-Content-Type-Options','nosniff'),('Referrer-Policy','same-origin'),('Cache-Control','no-store')]
@@ -289,4 +288,5 @@ if __name__=='__main__':
         from iptv import refresh as refresh_channels
         with db() as c: print(json.dumps(refresh_channels(c,args.source)))
     elif args.command=='serve': make_server('127.0.0.1',int(os.environ.get('PORT','18840')),app).serve_forever()
+
 

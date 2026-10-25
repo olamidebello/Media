@@ -20,8 +20,14 @@ class Imports(unittest.TestCase):
 
  def test_parser_and_safety(self):
   items,skipped=parse(SAMPLE)
-  self.assertEqual(len(items),1);self.assertEqual(skipped,2);self.assertEqual(items[0]['category'],'Sports')
+  self.assertEqual(len(items),2);self.assertEqual(skipped,1);self.assertEqual(items[0]['category'],'Sports')
   for value in ['file:///etc/passwd','https://localhost/a','https://[::1]/a','https://user:pass@example.com/a']:self.assertFalse(stream_url(value))
+ def test_http_upgrade(self):
+  from iptv import normalize_media_url
+  self.assertEqual(normalize_media_url('http://example.com:80/a.m3u8?token=a%2Fb&x=1'),'https://example.com/a.m3u8?token=a%2Fb&x=1')
+  self.assertEqual(normalize_media_url('http://example.com:8080/a'),'https://example.com:8080/a')
+  for url in ['http://127.0.0.1/a','http://localhost/a','http://user:pass@example.com/a','http://example.com:bad/a']:
+   with self.assertRaises(ValueError):normalize_media_url(url)
  def test_bundled_source_does_not_fetch_remote(self):
   with patch('iptv.Path.read_text',return_value=SAMPLE), patch('iptv.build_opener') as network:
    self.assertEqual(download('working'),SAMPLE)
@@ -31,8 +37,9 @@ class Imports(unittest.TestCase):
   self.assertEqual(refresh(c,'sports',SAMPLE)['added'],1)
   c.execute('UPDATE channels SET enabled=0')
   result=refresh(c,'sports',SAMPLE)
-  self.assertEqual(result['added'],0);self.assertEqual(result['existing'],1)
+  self.assertEqual(result['added'],0);self.assertEqual(result['existing'],2)
   self.assertEqual(c.execute('SELECT enabled FROM channels').fetchone()[0],0)
   with self.assertRaises(ValueError):refresh(c,'sports','#EXTM3U')
   self.assertEqual(c.execute('SELECT count(*) FROM channels').fetchone()[0],1)
 if __name__=='__main__':unittest.main()
+
