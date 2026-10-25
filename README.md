@@ -150,3 +150,7 @@ This is browser-level remote support, not an exact Samsung/LG/Android TV operati
 ## Al Jazeera and YouTube Live
 
 YouTube Live navigation contains a searchable starting directory of ten broadcaster channel live destinations, the YouTube Live discovery page and Al Jazeera’s official live website. These are external destinations, not direct media streams or a complete inventory of YouTube broadcasts. Current live status and all channel destination redirects are not verified. Existing Ansible update-and-deploy installs these changes without additional credentials.
+
+## Device detection and installation
+
+The header links to `/install`, which detects mobile, tablet, desktop and common TV user agents, offers manual correction and displays device-specific browser installation instructions. A manifest, 192/512px icons and service worker provide an installable web-app foundation with a static offline notice; video and account responses are not cached. Installation prompts depend on HTTPS, browser support and engagement rules. iOS uses manual Safari Add to Home Screen; native Android/iOS/Tizen/webOS/Fire TV/desktop packages and casting are not yet built or published. Device detection is heuristic. This release does not claim native apps for every device.
