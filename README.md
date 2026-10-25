@@ -136,3 +136,7 @@ Imported the supplied `All_Working_Channels.m3u`: one entry, MBC+ Drama, added t
 ## Television landing page
 
 Home now presents a cinematic brand hero, real imported channel cards, horizontally scrollable discovery rows, published-content cards, category shortcuts and a local-channel callout. Buttons connect to playback, guide, movies, location discovery and help. Channel initials are used where no logo is stored; no synthetic thumbnails are presented as real movie artwork. Empty catalogs and unavailable guides display explicit states. Mobile layouts and visible keyboard focus are included. JavaScript syntax and the ten existing backend tests pass; browser visual QA and live playback are not verified.
+
+## Free streaming discovery
+
+Home and Movies include official external links to Tubi, Pluto TV and Plex. These are outbound provider links, not embedded streams, account integrations or a redistribution arrangement. Movies also displays imported channels categorized Movies and offers administrators a one-click Movies playlist refresh. The configured source is https://iptv-org.github.io/iptv/categories/movies.m3u. Provider login, availability and playback remain on their websites.
