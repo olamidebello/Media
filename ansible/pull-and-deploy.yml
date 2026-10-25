@@ -70,6 +70,19 @@
       ansible.builtin.debug:
         msg: '{{ media_import.stdout | default(media_import.stderr, true) }}'
       when: media_refresh_channels | bool
+    - name: Import expanded Working Channels playlist
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, working]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_working_import
+      changed_when: media_working_import.rc == 0 and (media_working_import.stdout | from_json).added | int > 0
+    - name: Report Working Channels import
+      ansible.builtin.debug:
+        msg: '{{ media_working_import.stdout }}'
+      when: media_refresh_channels | bool
     - name: Install service
       ansible.builtin.copy:
         dest: /etc/systemd/system/africa-media.service

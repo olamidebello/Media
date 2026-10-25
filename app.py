@@ -132,7 +132,7 @@ def app(env, respond):
                     admin()
                     from iptv import SOURCES, BASE
                     last=c.execute("SELECT value FROM settings WHERE key='iptv_last_refresh'").fetchone()
-                    result={'sources':[{'key':k,'url':BASE+v} for k,v in SOURCES.items()], 'last':json.loads(last[0]) if last else None}
+                    result={'sources':[{'key':k,'url':('Bundled Working_Channels.m3u' if k=='working' else BASE+v)} for k,v in SOURCES.items()], 'last':json.loads(last[0]) if last else None}
                 elif path=='/api/admin/iptv' and method=='POST':
                     admin()
                     from iptv import refresh as refresh_channels

@@ -112,3 +112,11 @@ sudo ansible-pull \
 ```
 
 Replace `YOUR_EMAIL` with your certificate contact email. The deployment pulls into `/opt/africa-media`, restarts `africa-media.service` when code changes, validates Nginx, obtains HTTPS, imports channels and verifies application identity at `/api/health`. Channel download failures are reported without stopping the web service deployment.
+
+## Expanded Working Channels playlist
+
+The user-supplied playlist is bundled at `data/Working_Channels.m3u`, with original entries preserved and additional HTTPS channels selected from African country, news, sports, music and children’s directories. `data/channel-checks.json` records the checks performed on additions. Validation means the HLS manifest and one media segment were accessible from the checking environment at the recorded time; decoding, continuous playback, device compatibility and regional availability were not established. Original entries were preserved without being certified as working.
+
+Deployment imports the bundled playlist after refreshing the directory. HTTP-only original entries are retained in the downloadable M3U but skipped by the HTTPS website importer. Duplicate stream URLs and disabled settings are preserved. To import only this list, choose **Admin → IPTV playlists → WORKING CHANNELS — expanded list**, or run `app.py refresh-channels --source working` using the database environment shown above. Country sources for Nigeria, South Africa, Ghana, Kenya, Tanzania, Uganda, Egypt, Morocco, Ethiopia and Senegal are also available.
+
+Current expansion: **89 additions, 106 total entries**; 180 candidates checked. Seven tests passed.
