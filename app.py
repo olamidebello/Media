@@ -33,6 +33,7 @@ def init():
         CREATE TABLE IF NOT EXISTS playlist_items(playlist_id INTEGER REFERENCES playlists(id) ON DELETE CASCADE,video_id INTEGER REFERENCES videos(id) ON DELETE CASCADE,PRIMARY KEY(playlist_id,video_id));
         CREATE TABLE IF NOT EXISTS reports(id INTEGER PRIMARY KEY,user_id INTEGER REFERENCES users(id),video_id INTEGER REFERENCES videos(id),reason TEXT,status TEXT DEFAULT 'open');
         CREATE TABLE IF NOT EXISTS recording_requests(id INTEGER PRIMARY KEY,profile_id INTEGER REFERENCES profiles(id) ON DELETE CASCADE,program_id INTEGER REFERENCES programs(id) ON DELETE CASCADE,status TEXT DEFAULT 'awaiting_recorder',UNIQUE(profile_id,program_id));
+        CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
 
@@ -96,6 +97,7 @@ def app(env, respond):
                     email = str(body.get('email','')).strip().lower(); pw = str(body.get('password',''))
                     if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email) or len(pw)<12: raise ValueError('Valid email and a password of at least 12 characters required')
                     if path.endswith('register'):
+                        if any(r[0]=='off' for r in c.execute("SELECT value FROM settings WHERE key='registration'")): raise PermissionError('Registration disabled')
                         try:
                             cur=c.execute('INSERT INTO users(email,password) VALUES(?,?)',(email,password(pw)))
                         except sqlite3.IntegrityError: raise ValueError('Account cannot be created with this email')
@@ -170,6 +172,10 @@ def app(env, respond):
                     owned_profile(); prog=c.execute('SELECT * FROM programs WHERE id=? AND recordable=1',(int(body['program_id']),)).fetchone()
                     if not prog: raise ValueError('Recording is not enabled for this program')
                     c.execute('INSERT OR IGNORE INTO recording_requests(profile_id,program_id) VALUES(?,?)',(profile,prog['id'])); result={'ok':True,'status':'awaiting_recorder','message':'Request saved. Recorder integration is required; no media has been recorded.'}
+                elif path=='/api/admin/manage':
+                    admin()
+                    from admin_controls import manage
+                    result=manage(c,user,method,body,password,valid_url,audit)
                 elif path=='/api/admin' and method=='GET':
                     admin(); result={'users':rows(c,'SELECT id,email,role,active FROM users'),'videos':rows(c,'SELECT * FROM videos'),'channels':rows(c,'SELECT * FROM channels'),'reports':rows(c,'SELECT * FROM reports'),'audit':rows(c,'SELECT * FROM audit ORDER BY id DESC LIMIT 100'),'counts':{'users':c.execute('SELECT count(*) FROM users').fetchone()[0],'videos':c.execute('SELECT count(*) FROM videos').fetchone()[0]}}
                 elif path=='/api/admin' and method=='POST':
@@ -215,3 +221,4 @@ if __name__=='__main__':
             if not c.execute('SELECT id FROM profiles WHERE user_id=?',(uid,)).fetchone(): c.execute('INSERT INTO profiles(user_id,name) VALUES(?,?)',(uid,'Administrator'))
         print('Administrator configured')
     elif args.command=='serve': make_server('127.0.0.1',int(os.environ.get('PORT','18840')),app).serve_forever()
+
