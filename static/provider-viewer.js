@@ -1,7 +1,8 @@
 'use strict';
 (()=>{
  let returnFocus;
- function openProvider(url,label){
+ async function openProvider(url,label){
+  try{const response=await fetch("/api/config");if(!response.ok)throw Error();const flags=await response.json();if(!flags.provider_links){alert("Provider viewing is disabled by the administrator.");return;}}catch{alert("Unable to check provider availability. Please retry.");return;}
   const u=new URL(url);if(u.protocol!=='https:')return;
   if(window.MediaNative?.openProvider){window.MediaNative.openProvider(u.href);return;}
   if(window.webkit?.messageHandlers?.mediaProvider){window.webkit.messageHandlers.mediaProvider.postMessage(u.href);return;}

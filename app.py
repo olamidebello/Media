@@ -55,6 +55,9 @@ def app(env, respond):
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
         if path.startswith('/downloads/'):
+            from admin_console import enabled
+            with db() as c:
+                if not enabled(c,'downloads'): raise PermissionError('Downloads disabled by administrator')
             from device_packages import ROOT as PACKAGE_ROOT, PACKAGES
             key=path.rsplit('/',1)[-1]
             if key not in PACKAGES: raise LookupError('Package unavailable')
@@ -72,7 +75,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -111,7 +114,14 @@ def app(env, respond):
                     if not v or (v['visibility']!='public' and v['owner_id']!=user and (not sess or sess['role']!='admin')): raise LookupError('Video unavailable')
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
-                if path == '/api/legal/request' and method=='POST':
+                from admin_console import enabled, FEATURES
+                if path=='/api/config':
+                    result={key:enabled(c,key) for key in FEATURES}
+                elif path=='/api/admin/console' and method=='POST':
+                    admin()
+                    from admin_console import operate
+                    result=operate(c,user,body,valid_url,audit)
+                elif path == '/api/legal/request' and method=='POST':
                     email=str(body.get('email','')).strip().lower();topic=str(body.get('topic',''));message=str(body.get('message','')).strip()
                     if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email) or len(email)>254 or topic not in ('Privacy','Copyright','Terms','Operator details') or not 20<=len(message)<=5000: raise ValueError('Valid email, topic and a message of 20–5000 characters required')
                     if c.execute('SELECT count(*) FROM legal_requests WHERE email=? AND created>?',(email,int(time.time())-3600)).fetchone()[0]>=5:raise ValueError('Request limit reached. Try again later.')
@@ -122,7 +132,7 @@ def app(env, respond):
                     admin();result=rows(c,'SELECT * FROM legal_requests ORDER BY id DESC LIMIT 200')
                 elif path == '/api/downloads':
                     from device_packages import available
-                    result=available()
+                    result=available() if enabled(c,'downloads') else []
                 elif path == '/api/health': result = {'ok': True,'service':'Africa Media Hub'}
                 elif path in ('/api/register','/api/login','/api/legal/request') and method=='POST':
                     email = str(body.get('email','')).strip().lower(); pw = str(body.get('password',''))
@@ -156,6 +166,7 @@ def app(env, respond):
                     if c.execute('SELECT count(*) FROM profiles WHERE user_id=?',(user,)).fetchone()[0]>=6: raise ValueError('Six profile limit')
                     c.execute('INSERT INTO profiles(user_id,name,kids) VALUES(?,?,?)',(user,name,int(bool(body.get('kids'))))); result={'ok':True}
                 elif path=='/api/catalog':
+                    if not enabled(c,'catalog'): raise PermissionError('Catalog disabled by administrator')
                     args=[]; sql="SELECT id,title,description,kind,category,url,kids FROM videos WHERE visibility='public'"
                     if profile and owned_profile()['kids']: sql+=' AND kids=1'
                     search=q.get('q',[''])[0]
@@ -175,12 +186,16 @@ def app(env, respond):
                     from location_channels import COUNTRIES
                     result=COUNTRIES
                 elif path=='/api/location/channels':
+                    if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
                     from location_channels import country_channels
                     result=country_channels(q.get('country',[''])[0])
-                elif path=='/api/guide': result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
+                elif path=='/api/guide':
+                    if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
+                    result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
                 elif path=='/api/studio' and method=='GET':
                     need(); result=rows(c,'SELECT * FROM videos WHERE owner_id=? ORDER BY created DESC',(user,))
                 elif path=='/api/studio' and method=='POST':
+                    if not enabled(c,'creator_submissions'): raise PermissionError('Creator submissions disabled by administrator')
                     need(); title=str(body.get('title','')).strip()[:200]
                     if not title: raise ValueError('Title required')
                     kind=body.get('kind','video')
@@ -210,6 +225,7 @@ def app(env, respond):
                     else: raise ValueError('Unknown action')
                     result={'ok':True}
                 elif path=='/api/comments':
+                    if not enabled(c,'comments'): raise PermissionError('Comments disabled by administrator')
                     vid=int(body.get('video_id') or q.get('video_id',[0])[0]); v=video_access(vid)
                     if v['kids']: raise PermissionError('Comments disabled on children’s content')
                     if method=='POST':

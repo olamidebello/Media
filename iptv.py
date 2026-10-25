@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 
 BASE='https://iptv-org.github.io/iptv/'
-SOURCES={'working':'bundled/Working_Channels.m3u',**{x:'countries/'+x+'.m3u' for x in ['ng','za','gh','ke','tz','ug','eg','ma','et','sn']},'all':'index.m3u',**{x:'categories/'+x+'.m3u' for x in ['animation', 'auto', 'business', 'classic', 'comedy', 'cooking', 'culture', 'documentary', 'education', 'entertainment', 'family', 'general', 'interactive', 'kids', 'legislative', 'lifestyle', 'movies', 'music', 'news', 'outdoor', 'public', 'relax', 'religious', 'science', 'series', 'shop', 'sports', 'travel', 'weather', 'undefined']},**{x:'languages/'+x+'.m3u' for x in ['eng','fra','ara']}}
+SOURCES={'working':'bundled/Working_Channels.m3u',**{x:'countries/'+x+'.m3u' for x in ['dz', 'ao', 'bj', 'bw', 'bf', 'bi', 'cv', 'cm', 'cf', 'td', 'km', 'cg', 'cd', 'ci', 'dj', 'eg', 'gq', 'er', 'sz', 'et', 'ga', 'gm', 'gh', 'gn', 'gw', 'ke', 'ls', 'lr', 'ly', 'mg', 'mw', 'ml', 'mr', 'mu', 'ma', 'mz', 'na', 'ne', 'ng', 'rw', 'st', 'sn', 'sc', 'sl', 'so', 'za', 'ss', 'sd', 'tz', 'tg', 'tn', 'ug', 'zm', 'zw', 'us', 'gb', 'ca', 'fr', 'de', 'es', 'pt', 'it', 'au', 'in', 'br', 'jp']},'all':'index.m3u',**{x:'categories/'+x+'.m3u' for x in ['animation', 'auto', 'business', 'classic', 'comedy', 'cooking', 'culture', 'documentary', 'education', 'entertainment', 'family', 'general', 'interactive', 'kids', 'legislative', 'lifestyle', 'movies', 'music', 'news', 'outdoor', 'public', 'relax', 'religious', 'science', 'series', 'shop', 'sports', 'travel', 'weather', 'undefined']},**{x:'languages/'+x+'.m3u' for x in ['eng','fra','ara']}}
 LIMIT=12*1024*1024
 
 def stream_url(value):
