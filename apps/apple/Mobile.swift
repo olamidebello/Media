@@ -8,6 +8,7 @@ struct MediaWeb: UIViewRepresentable {
  func makeUIView(context: Context) -> WKWebView {
   let config = WKWebViewConfiguration()
   config.userContentController.add(context.coordinator, name:"mediaProvider")
+  config.userContentController.add(context.coordinator, name:"mediaExternal")
   let web = WKWebView(frame:.zero, configuration:config)
   web.navigationDelegate = context.coordinator
   web.uiDelegate = context.coordinator
@@ -17,7 +18,7 @@ struct MediaWeb: UIViewRepresentable {
  }
  func updateUIView(_ view: WKWebView, context: Context) {}
  func makeCoordinator() -> Coordinator { Coordinator() }
- static func dismantleUIView(_ view: WKWebView, coordinator: Coordinator) { view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaProvider") }
+ static func dismantleUIView(_ view: WKWebView, coordinator: Coordinator) { view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaProvider"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaExternal") }
  class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
   weak var web: WKWebView?
   func show(_ url: URL) {
@@ -28,7 +29,8 @@ struct MediaWeb: UIViewRepresentable {
   }
   func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
    guard message.frameInfo.isMainFrame, message.frameInfo.securityOrigin.host == "media.africandroid.world", let value = message.body as? String, let url = URL(string:value) else { return }
-   show(url)
+   if message.name == "mediaExternal" { if url.scheme == "https" { UIApplication.shared.open(url) } }
+   else { show(url) }
   }
   func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy)->Void) {
    guard let url = action.request.url else { decisionHandler(.cancel); return }

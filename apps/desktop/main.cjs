@@ -1,5 +1,5 @@
 const {app,BrowserWindow,shell,session}=require('electron');
 const HOME='https://media.africandroid.world/';
-function external(url){try{if(new URL(url).protocol!=='https:')return;const child=new BrowserWindow({width:1300,height:900,title:'Africa Media Hub — Provider',webPreferences:{nodeIntegration:false,contextIsolation:true,sandbox:true}});child.webContents.setWindowOpenHandler(({url:next})=>{external(next);return {action:'deny'};});child.webContents.on('will-navigate',(event,next)=>{try{if(new URL(next).protocol!=='https:')event.preventDefault();}catch{event.preventDefault();}});child.loadURL(url);}catch{}}
+function external(url){try{const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password)return;shell.openExternal(u.href).catch(()=>{});}catch{}}
 app.whenReady().then(()=>{session.defaultSession.setPermissionRequestHandler((web,permission,callback)=>callback(false));const w=new BrowserWindow({width:1400,height:900,backgroundColor:'#0c1018',webPreferences:{nodeIntegration:false,contextIsolation:true,sandbox:true}});w.webContents.setWindowOpenHandler(({url})=>{external(url);return {action:'deny'};});w.webContents.on('will-navigate',(e,url)=>{try{if(new URL(url).origin!==new URL(HOME).origin){e.preventDefault();external(url);}}catch{e.preventDefault();}});w.loadURL(HOME);});
 app.on('window-all-closed',()=>app.quit());
