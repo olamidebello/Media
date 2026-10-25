@@ -57,7 +57,7 @@ def app(env, respond):
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png'}[name.split('.')[-1]])
-            headers.append(('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; media-src https: blob:; img-src 'self' https: data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"))
+            headers.append(('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; media-src https: blob:; img-src 'self' https: data:; connect-src 'self' https://nominatim.openstreetmap.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"))
         else:
             with db() as c:
                 cookie = SimpleCookie(); cookie.load(env.get('HTTP_COOKIE',''))
@@ -138,6 +138,12 @@ def app(env, respond):
                     from iptv import refresh as refresh_channels
                     result=refresh_channels(c,str(body.get('source','all')))
                     audit(c,user,'playlist refresh '+result['source']+' added '+str(result['added']))
+                elif path=='/api/location/countries':
+                    from location_channels import COUNTRIES
+                    result=COUNTRIES
+                elif path=='/api/location/channels':
+                    from location_channels import country_channels
+                    result=country_channels(q.get('country',[''])[0])
                 elif path=='/api/guide': result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
                 elif path=='/api/studio' and method=='GET':
                     need(); result=rows(c,'SELECT * FROM videos WHERE owner_id=? ORDER BY created DESC',(user,))
