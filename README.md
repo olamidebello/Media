@@ -128,3 +128,7 @@ The administrator IPTV selector includes All channels and all 30 requested categ
 ## Location dashboard
 
 Local Channels offers opt-in browser geolocation and manual country selection. Reverse lookup sends rounded coordinates to OpenStreetMap Nominatim only after the user clicks Find my location and grants browser permission. Only a country code persists in browser local storage; Clear location removes it. The server accepts an allowlisted country code and fetches its IPTV-org directory with a one-hour in-memory cache. No coordinates are sent to or stored by this application server. Country listings support search, pagination and live playback; this is discovery, not geographic entitlement enforcement or a playback guarantee. HTTPS is required for browser location permission. Provider outages and denial fall back to manual country selection.
+
+## Additional uploaded channels
+
+Imported the supplied `All_Working_Channels.m3u`: one entry, MBC+ Drama, added to the bundled Working Channels playlist. The source file is retained in `data/All_Working_Channels.m3u`. The merged playlist now contains 107 entries; this addition has not been independently playback-tested. Deployment automatically imports the expanded bundled list with URL deduplication.
