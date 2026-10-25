@@ -83,6 +83,19 @@
       ansible.builtin.debug:
         msg: '{{ media_working_import.stdout }}'
       when: media_refresh_channels | bool
+    - name: Import user supplied HTTPS channels for administrator review
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, uploaded]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_uploaded_import
+      changed_when: media_uploaded_import.rc == 0 and (media_uploaded_import.stdout | from_json).added | int > 0
+    - name: Report uploaded channel review queue
+      ansible.builtin.debug:
+        msg: '{{ media_uploaded_import.stdout }} — new uploaded entries are disabled until reviewed and enabled in Admin.'
+      when: media_refresh_channels | bool
     - name: Install service
       ansible.builtin.copy:
         dest: /etc/systemd/system/africa-media.service

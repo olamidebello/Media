@@ -1,0 +1,66 @@
+{
+  "checked_at": "2026-10-25T15:27:57.989691+00:00",
+  "scope": "HTTPS manifest sample only; no playback or rights verification",
+  "results": [
+    {
+      "name": "ESPN*",
+      "url": "https://80.80.160.168/live/6/live.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "ESPN (SD)",
+      "url": "https://espn.tmedia.me/cache/espn1_540.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "HTTPError"
+    },
+    {
+      "name": "ESPN (HD)",
+      "url": "https://espn.clinicalkey.icu/cache/espn1.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "ESPN 2 (SD)",
+      "url": "https://espn.tmedia.me/cache/espn2_540.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "HTTPError"
+    },
+    {
+      "name": "ESPN 2 (HD)",
+      "url": "https://espn.clinicalkey.icu/cache/espn2.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "ESPN News",
+      "url": "https://espn.clinicalkey.icu/cache/espnews.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "ESPNU",
+      "url": "https://espn.clinicalkey.icu/cache/espnu.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "SuperSoccer TV (Opt-1)",
+      "url": "https://210.210.155.35/session/386ba54a-48ed-11e9-b58e-9b4ca4d348fc/uq2663/h/h20/index.m3u8?fluxustv.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "SuperSoccer TV (Opt-2)",
+      "url": "https://210.210.155.35/session/6761fe90-7bf1-11e8-a850-b82a72d63267/uq2663/h/h20/index1.m3u8",
+      "manifest": false,
+      "error": "URLError"
+    },
+    {
+      "name": "ESPN Radio 107.9",
+      "url": "https://espnsslarugby-i.akamaihd.net/hls/live/225068/rugbytest/64/64.m3u8",
+      "manifest": false,
+      "error": "HTTPError"
+    }
+  ]
+}
