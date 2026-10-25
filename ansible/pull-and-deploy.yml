@@ -96,6 +96,32 @@
       ansible.builtin.debug:
         msg: '{{ media_uploaded_import.stdout }} — new uploaded entries are disabled until reviewed and enabled in Admin.'
       when: media_refresh_channels | bool
+    - name: Import supplied Samsung TV Plus channels before stream verification
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, samsung]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_samsung_import
+      changed_when: media_samsung_import.rc == 0 and (media_samsung_import.stdout | from_json).added | int > 0
+    - name: Report Samsung TV Plus import
+      ansible.builtin.debug:
+        msg: '{{ media_samsung_import.stdout }}'
+      when: media_refresh_channels | bool
+    - name: Import supplied Roku channels before stream verification
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, roku]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_roku_import
+      changed_when: media_roku_import.rc == 0 and (media_roku_import.stdout | from_json).added | int > 0
+    - name: Report Roku channel import
+      ansible.builtin.debug:
+        msg: '{{ media_roku_import.stdout }}'
+      when: media_refresh_channels | bool
     - name: Verify enabled streams and clean unavailable channels
       become_user: africa-media
       ansible.builtin.command:

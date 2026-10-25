@@ -1,0 +1,129 @@
+#EXTM3U url-tvg="https://github.com/matthuisman/i.mjh.nz/raw/master/SamsungTVPlus/all.xml.gz"
+#EXTINF:-1 channel-id="GB800002OP-gb" tvg-id="GB800002OP" tvg-chno="4245" tvg-name="&TV" group-title="United Kingdom",&TV
+https://jmp2.uk/stvp-GB800002OP
+#EXTINF:-1 channel-id="GB2600017PX-gb" tvg-id="GB2600017PX" tvg-chno="4852" tvg-name="100% Christmas - Rakuten TV" group-title="United Kingdom",100% Christmas - Rakuten TV
+https://jmp2.uk/stvp-GB2600017PX
+#EXTINF:-1 channel-id="CABB26000082J-ca" tvg-id="CABB26000082J" tvg-chno="1600" tvg-name="21 Jump Street" group-title="Canada",21 Jump Street
+https://jmp2.uk/stvp-CABB26000082J
+#EXTINF:-1 channel-id="USBB320000397-us" tvg-id="USBB320000397" tvg-chno="1600" tvg-name="21 Jump Street" group-title="United States",21 Jump Street
+https://jmp2.uk/stvp-USBB320000397
+#EXTINF:-1 channel-id="US4000064JE-us" tvg-id="US4000064JE" tvg-chno="3952" tvg-name="40 y 20" group-title="United States",40 y 20
+https://jmp2.uk/stvp-US4000064JE
+#EXTINF:-1 channel-id="CA3900025I5-ca" tvg-id="CA3900025I5" tvg-chno="1842" tvg-name="48 Hours" group-title="Canada",48 Hours
+https://jmp2.uk/stvp-CA3900025I5
+#EXTINF:-1 channel-id="US1000005GY-us" tvg-id="US1000005GY" tvg-chno="1842" tvg-name="48 Hours" group-title="United States",48 Hours
+https://jmp2.uk/stvp-US1000005GY
+#EXTINF:-1 channel-id="USBD70000412-us" tvg-id="USBD70000412" tvg-chno="2954" tvg-name="4UV" group-title="United States",4UV
+https://jmp2.uk/stvp-USBD70000412
+#EXTINF:-1 channel-id="GBAK3504500A-gb" tvg-id="GBAK3504500A" tvg-chno="4310" tvg-name="5 Cops" group-title="United Kingdom",5 Cops
+https://jmp2.uk/stvp-GBAK3504500A
+#EXTINF:-1 channel-id="GBAK3504501A-gb" tvg-id="GBAK3504501A" tvg-chno="4342" tvg-name="5 Exploring Britain" group-title="United Kingdom",5 Exploring Britain
+https://jmp2.uk/stvp-GBAK3504501A
+#EXTINF:-1 channel-id="US150000550-us" tvg-id="US150000550" tvg-chno="1561" tvg-name="50 Cent Action" group-title="United States",50 Cent Action
+https://jmp2.uk/stvp-US150000550
+#EXTINF:-1 channel-id="USBD42000073E-us" tvg-id="USBD42000073E" tvg-chno="1831" tvg-name="60 Days In by A&E" group-title="United States",60 Days In by A&E
+https://jmp2.uk/stvp-USBD42000073E
+#EXTINF:-1 channel-id="GB1000002RV-gb" tvg-id="GB1000002RV" tvg-chno="4314" tvg-name="60 Days in Jail" group-title="United Kingdom",60 Days in Jail
+https://jmp2.uk/stvp-GB1000002RV
+#EXTINF:-1 channel-id="GB1800002FA-gb" tvg-id="GB1800002FA" tvg-chno="4158" tvg-name="8 Out Of 10 Cats" group-title="United Kingdom",8 Out Of 10 Cats
+https://jmp2.uk/stvp-GB1800002FA
+#EXTINF:-1 channel-id="GB60000381-gb" tvg-id="GB60000381" tvg-chno="4089" tvg-name="A New Life In The Sun" group-title="United Kingdom",A New Life In The Sun
+https://jmp2.uk/stvp-GB60000381
+#EXTINF:-1 channel-id="US1900023QQ-us" tvg-id="US1900023QQ" tvg-chno="1830" tvg-name="A&E Alaska State Troopers" group-title="United States",A&E Alaska State Troopers
+https://jmp2.uk/stvp-US1900023QQ
+#EXTINF:-1 channel-id="US900059YT-us" tvg-id="US900059YT" tvg-chno="1847" tvg-name="A&E Live PD: Greatest Shifts" group-title="United States",A&E Live PD: Greatest Shifts
+https://jmp2.uk/stvp-US900059YT
+#EXTINF:-1 channel-id="US4800001W5-us" tvg-id="US4800001W5" tvg-chno="1844" tvg-name="ABC 20/20" group-title="United States",ABC 20/20
+https://jmp2.uk/stvp-US4800001W5
+#EXTINF:-1 channel-id="USBC39000171G-us" tvg-id="USBC39000171G" tvg-chno="1112" tvg-name="ABC News Live" group-title="United States",ABC News Live
+https://jmp2.uk/stvp-USBC39000171G
+#EXTINF:-1 channel-id="USBD25000161U-us" tvg-id="USBD25000161U" tvg-chno="2396" tvg-name="ACC Digital Network" group-title="United States",ACC Digital Network
+https://jmp2.uk/stvp-USBD25000161U
+#EXTINF:-1 channel-id="US4100028ZF-us" tvg-id="US4100028ZF" tvg-chno="2652" tvg-name="According to Jim" group-title="United States",According to Jim
+https://jmp2.uk/stvp-US4100028ZF
+#EXTINF:-1 channel-id="US50000551O-us" tvg-id="US50000551O" tvg-chno="1133" tvg-name="AccuWeather NOW" group-title="United States",AccuWeather NOW
+https://jmp2.uk/stvp-US50000551O
+#EXTINF:-1 channel-id="US35000201T-us" tvg-id="US35000201T" tvg-chno="1818" tvg-name="Acorn TV Mysteries" group-title="United States",Acorn TV Mysteries
+https://jmp2.uk/stvp-US35000201T
+#EXTINF:-1 channel-id="GB2600015OS-gb" tvg-id="GB2600015OS" tvg-chno="4996" tvg-name="Action Movies - Rakuten TV" group-title="United Kingdom",Action Movies - Rakuten TV
+https://jmp2.uk/stvp-GB2600015OS
+#EXTINF:-1 channel-id="GBBC900015D3-gb" tvg-id="GBBC900015D3" tvg-chno="4488" tvg-name="Adventure Earth" group-title="United Kingdom",Adventure Earth
+https://jmp2.uk/stvp-GBBC900015D3
+#EXTINF:-1 channel-id="CA4100007AK-ca" tvg-id="CA4100007AK" tvg-chno="2621" tvg-name="AFV with Alfonso Ribeiro" group-title="Canada",AFV with Alfonso Ribeiro
+https://jmp2.uk/stvp-CA4100007AK
+#EXTINF:-1 channel-id="US4100038R9-us" tvg-id="US4100038R9" tvg-chno="1000" tvg-name="AFV with Alfonso Ribeiro" group-title="United States",AFV with Alfonso Ribeiro
+https://jmp2.uk/stvp-US4100038R9
+#EXTINF:-1 channel-id="GB2300005ML-gb" tvg-id="GB2300005ML" tvg-chno="4564" tvg-name="Al Jazeera" group-title="United Kingdom",Al Jazeera
+https://jmp2.uk/stvp-GB2300005ML
+#EXTINF:-1 channel-id="US1800014CG-us" tvg-id="US1800014CG" tvg-chno="3025" tvg-name="Alfred Hitchcock Presents" group-title="United States",Alfred Hitchcock Presents
+https://jmp2.uk/stvp-US1800014CG
+#EXTINF:-1 channel-id="USBC100000630-us" tvg-id="USBC100000630" tvg-chno="3050" tvg-name="Alien Nation by DUST" group-title="United States",Alien Nation by DUST
+https://jmp2.uk/stvp-USBC100000630
+#EXTINF:-1 channel-id="USBB2300001QP-us" tvg-id="USBB2300001QP" tvg-chno="1505" tvg-name="ALL ACTION" group-title="United States",ALL ACTION
+https://jmp2.uk/stvp-USBB2300001QP
+#EXTINF:-1 channel-id="USBD3300019OU-us" tvg-id="USBD3300019OU" tvg-chno="3698" tvg-name="All Babies Channel" group-title="United States",All Babies Channel
+https://jmp2.uk/stvp-USBD3300019OU
+#EXTINF:-1 channel-id="USBD12000061R-us" tvg-id="USBD12000061R" tvg-chno="1945" tvg-name="All Reality We TV" group-title="United States",All Reality We TV
+https://jmp2.uk/stvp-USBD12000061R
+#EXTINF:-1 channel-id="USBD1200005XR-us" tvg-id="USBD1200005XR" tvg-chno="1946" tvg-name="All Weddings We TV" group-title="United States",All Weddings We TV
+https://jmp2.uk/stvp-USBD1200005XR
+#EXTINF:-1 channel-id="USBB4400016F9-us" tvg-id="USBB4400016F9" tvg-chno="1904" tvg-name="All-Out Reality" group-title="United States",All-Out Reality
+https://jmp2.uk/stvp-USBB4400016F9
+#EXTINF:-1 channel-id="USBD300022FH-us" tvg-id="USBD300022FH" tvg-chno="1545" tvg-name="ALLBLK Gems" group-title="United States",ALLBLK Gems
+https://jmp2.uk/stvp-USBD300022FH
+#EXTINF:-1 channel-id="USBD27000156I-us" tvg-id="USBD27000156I" tvg-chno="2749" tvg-name="Alone By History" group-title="United States",Alone By History
+https://jmp2.uk/stvp-USBD27000156I
+#EXTINF:-1 channel-id="CABA3700001DB-ca" tvg-id="CABA3700001DB" tvg-chno="2684" tvg-name="Always Funny Videos" group-title="Canada",Always Funny Videos
+https://jmp2.uk/stvp-CABA3700001DB
+#EXTINF:-1 channel-id="USBA1600001XM-us" tvg-id="USBA1600001XM" tvg-chno="2684" tvg-name="Always Funny Videos" group-title="United States",Always Funny Videos
+https://jmp2.uk/stvp-USBA1600001XM
+#EXTINF:-1 channel-id="US4900004KP-us" tvg-id="US4900004KP" tvg-chno="2155" tvg-name="Amazon Live" group-title="United States",Amazon Live
+https://jmp2.uk/stvp-US4900004KP
+#EXTINF:-1 channel-id="GB29000089Y-gb" tvg-id="GB29000089Y" tvg-chno="4073" tvg-name="AMC Cupid" group-title="United Kingdom",AMC Cupid
+https://jmp2.uk/stvp-GB29000089Y
+#EXTINF:-1 channel-id="USBD7000017L-us" tvg-id="USBD7000017L" tvg-chno="3809" tvg-name="AMC en Español" group-title="United States",AMC en Español
+https://jmp2.uk/stvp-USBD7000017L
+#EXTINF:-1 channel-id="GB2900009S9-gb" tvg-id="GB2900009S9" tvg-chno="4072" tvg-name="AMC Reality" group-title="United Kingdom",AMC Reality
+https://jmp2.uk/stvp-GB2900009S9
+#EXTINF:-1 channel-id="GBBC2300002GG-gb" tvg-id="GBBC2300002GG" tvg-chno="4064" tvg-name="America's Got Talent" group-title="United Kingdom",America's Got Talent
+https://jmp2.uk/stvp-GBBC2300002GG
+#EXTINF:-1 channel-id="US3500006VF-us" tvg-id="US3500006VF" tvg-chno="2727" tvg-name="America's Got Talent" group-title="United States",America's Got Talent
+https://jmp2.uk/stvp-US3500006VF
+#EXTINF:-1 channel-id="USBA3800002KI-us" tvg-id="USBA3800002KI" tvg-chno="2110" tvg-name="America's Test Kitchen" group-title="United States",America's Test Kitchen
+https://jmp2.uk/stvp-USBA3800002KI
+#EXTINF:-1 channel-id="USBD42000250Q-us" tvg-id="USBD42000250Q" tvg-chno="1848" tvg-name="American Crimes" group-title="United States",American Crimes
+https://jmp2.uk/stvp-USBD42000250Q
+#EXTINF:-1 channel-id="GBBC2300001X5-gb" tvg-id="GBBC2300001X5" tvg-chno="4065" tvg-name="American Idol" group-title="United Kingdom",American Idol
+https://jmp2.uk/stvp-GBBC2300001X5
+#EXTINF:-1 channel-id="US19000017A-us" tvg-id="US19000017A" tvg-chno="2718" tvg-name="American Ninja Warrior" group-title="United States",American Ninja Warrior
+https://jmp2.uk/stvp-US19000017A
+#EXTINF:-1 channel-id="CA1400014EH-ca" tvg-id="CA1400014EH" tvg-chno="1904" tvg-name="American Pickers" group-title="Canada",American Pickers
+https://jmp2.uk/stvp-CA1400014EH
+#EXTINF:-1 channel-id="USBD3500041ZF-us" tvg-id="USBD3500041ZF" tvg-chno="2729" tvg-name="American Pickers by History" group-title="United States",American Pickers by History
+https://jmp2.uk/stvp-USBD3500041ZF
+#EXTINF:-1 channel-id="CA41000088Y-ca" tvg-id="CA41000088Y" tvg-chno="2683" tvg-name="America’s Funniest Home Videos" group-title="Canada",America’s Funniest Home Videos
+https://jmp2.uk/stvp-CA41000088Y
+#EXTINF:-1 channel-id="US4100039PO-us" tvg-id="US4100039PO" tvg-chno="2683" tvg-name="America’s Funniest Home Videos" group-title="United States",America’s Funniest Home Videos
+https://jmp2.uk/stvp-US4100039PO
+#EXTINF:-1 channel-id="US3300010F5-us" tvg-id="US3300010F5" tvg-chno="3065" tvg-name="Ancient Aliens" group-title="United States",Ancient Aliens
+https://jmp2.uk/stvp-US3300010F5
+#EXTINF:-1 channel-id="US2200004HD-us" tvg-id="US2200004HD" tvg-chno="3925" tvg-name="Angelique" group-title="United States",Angelique
+https://jmp2.uk/stvp-US2200004HD
+#EXTINF:-1 channel-id="US1900015FR-us" tvg-id="US1900015FR" tvg-chno="2649" tvg-name="Anger Management" group-title="United States",Anger Management
+https://jmp2.uk/stvp-US1900015FR
+#EXTINF:-1 channel-id="CA400003FQ-ca" tvg-id="CA400003FQ" tvg-chno="2605" tvg-name="Animation+" group-title="Canada",Animation+
+https://jmp2.uk/stvp-CA400003FQ
+#EXTINF:-1 channel-id="US400002PS-us" tvg-id="US400002PS" tvg-chno="2605" tvg-name="Animation+" group-title="United States",Animation+
+https://jmp2.uk/stvp-US400002PS
+#EXTINF:-1 channel-id="USAJ3504502A-us" tvg-id="USAJ3504502A" tvg-chno="3205" tvg-name="Anime All day" group-title="United States",Anime All day
+https://jmp2.uk/stvp-USAJ3504502A
+#EXTINF:-1 channel-id="US15000032I-us" tvg-id="US15000032I" tvg-chno="3209" tvg-name="ANIME x HIDIVE" group-title="United States",ANIME x HIDIVE
+https://jmp2.uk/stvp-US15000032I
+#EXTINF:-1 channel-id="GB3000387J-gb" tvg-id="GB3000387J" tvg-chno="4088" tvg-name="Antiques Road Trip" group-title="United Kingdom",Antiques Road Trip
+https://jmp2.uk/stvp-GB3000387J
+#EXTINF:-1 channel-id="CABD1200005AV-ca" tvg-id="CABD1200005AV" tvg-chno="2044" tvg-name="Antiques Roadshow" group-title="Canada",Antiques Roadshow
+https://jmp2.uk/stvp-CABD1200005AV
+#EXTINF:-1 channel-id="USBC600018CF-us" tvg-id="USBC600018CF" tvg-chno="2044" tvg-name="Antiques Roadshow UK" group-title="United States",Antiques Roadshow UK
+https://jmp2.uk/stvp-USBC600018CF
+#EXTINF:-1 channel-id="CABC5200009HX-ca" tvg-id="CABC5200009HX" tvg-chno="2037" tvg-name="Architectural Digest" group-title="Canada",Architectural Digest
+https://jmp2.uk/stvp-CABC5200009HX
