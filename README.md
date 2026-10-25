@@ -183,7 +183,7 @@ Admin now includes media creation/editing, audience and visibility controls, M3U
 
 ## Supplied Al Jazeera feeds
 
-All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The HTTPS importer skips the seven HTTP alternatives, which are not upgraded or proxied automatically. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
+All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The HTTP alternatives are upgraded to HTTPS during import; their upstream servers must support HTTPS. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
 
 
 ### HTTP media links
@@ -195,3 +195,8 @@ ports, paths and signed query strings are preserved. Private/local addresses and
 embedded credentials remain rejected. This is a URL upgrade, not a relay:
 the upstream must serve valid HTTPS, including HTTPS HLS segments and keys.
 HTTP-only origins require a separately configured HTTPS media relay.
+
+### HTTP link compatibility
+HTTP media and provider links entered in this platform are upgraded to HTTPS before saving, playlist import, playback, or opening the in-app provider viewer. Existing HTTP channel and video records are upgraded during database initialization on deployment. Paths and query strings are retained; explicit HTTP port 80 becomes the HTTPS default, while custom ports are retained. Import deduplication uses the upgraded URL.
+
+This is URL normalization, not a media proxy or TLS service for remote servers. Sources must support HTTPS with a valid certificate on the resulting URL and port. There is no downgrade to HTTP if an upstream does not support HTTPS. Third-party embedded pages, redirects, and HLS segment URLs remain under the source provider’s control.

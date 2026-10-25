@@ -42,12 +42,13 @@ class PlatformTests(unittest.TestCase):
     def test_admin_publish_and_live_schedule(self):
         p=self.register()
         with app.db() as c:c.execute("UPDATE users SET role='admin'")
-        self.assertEqual(self.req('/api/admin',{'action':'channel','name':'News','url':'http://public.example'})[0],200)
-        self.assertEqual(self.req('/api/admin',{'action':'channel','name':'News','url':'https://example.com/live.m3u8'})[0],200)
-        cid=self.req('/api/guide')[1]['channels'][0]['id']
+        self.assertEqual(self.req('/api/admin',{'action':'channel','name':'News','url':'file:///unsafe'})[0],400)
+        self.assertEqual(self.req('/api/admin',{'action':'channel','name':'News','url':'http://example.com:80/live.m3u8'})[0],200)
+        channel=self.req('/api/guide')[1]['channels'][0]
+        self.assertEqual(channel['url'],'https://example.com/live.m3u8')
+        cid=channel['id']
         self.assertEqual(self.req('/api/admin',{'action':'program','channel_id':cid,'title':'News hour','start':2000000000,'end':2000003600})[0],200)
         self.assertEqual(self.req('/api/record',{'profile_id':p,'program_id':1})[0],400)
 
 app.init()
 if __name__=='__main__':unittest.main()
-

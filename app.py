@@ -38,6 +38,13 @@ def init():
         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
+        # Upgrade existing platform media records on deployment without fetching sources.
+        from iptv import normalize_media_url
+        for table in ('videos', 'channels'):
+            for record in c.execute('SELECT id,url FROM ' + table + " WHERE lower(url) LIKE 'http:%'").fetchall():
+                try: upgraded = normalize_media_url(record['url'])
+                except ValueError: continue
+                c.execute('UPDATE ' + table + ' SET url=? WHERE id=?', (upgraded, record['id']))
 
 def password(p, salt=None):
     salt = salt or secrets.token_hex(16)
@@ -288,5 +295,4 @@ if __name__=='__main__':
         from iptv import refresh as refresh_channels
         with db() as c: print(json.dumps(refresh_channels(c,args.source)))
     elif args.command=='serve': make_server('127.0.0.1',int(os.environ.get('PORT','18840')),app).serve_forever()
-
 

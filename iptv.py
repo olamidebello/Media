@@ -10,17 +10,8 @@ LIMIT=12*1024*1024
 
 def normalize_media_url(value):
     """Accept HTTP input and store HTTPS, preserving path and signed query."""
-    value=value.strip()
-    if any(ord(ch)<32 or ord(ch)==127 for ch in value):
-        raise ValueError('Invalid media URL')
-    p=urlparse(value)
-    if p.scheme not in ('http','https') or not p.hostname or p.username or p.password:
-        raise ValueError('Use a public HTTP or HTTPS media URL')
-    port=p.port
-    if p.scheme=='http':
-        host='['+p.hostname+']' if ':' in p.hostname else p.hostname
-        netloc=host if port in (None,80) else host+':'+str(port)
-        value=p._replace(scheme='https',netloc=netloc).geturl()
+    from media_urls import https_url
+    value=https_url(value)
     if not stream_url(value):
         raise ValueError('Use a public HTTP or HTTPS media URL')
     return value
