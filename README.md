@@ -183,20 +183,29 @@ Admin now includes media creation/editing, audience and visibility controls, M3U
 
 ## Supplied Al Jazeera feeds
 
-All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The HTTP alternatives are upgraded to HTTPS during import; their upstream servers must support HTTPS. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
+All ten supplied feed URLs are retained in `data/Al_Jazeera_Sources.m3u`; the three HTTPS feeds (English, Arabic and Balkans) are also added to the automatic bundled import. Admin can choose ALJAZEERA in the IPTV source selector. The importer preserves HTTP sources for signed-in playback through the platform relay. These are supplied sources, not a claim that every endpoint is live, authorized for redistribution or browser-compatible. Availability and network checks must be verified at use time.
 
 
-### HTTP media links
+### HTTP sources inside the HTTPS platform
 
-Manual channel creation, creator submissions, and M3U imports accept public HTTP
-and HTTPS URLs. HTTP URLs are internally normalized to HTTPS before storage and
-duplicate detection. Explicit port 80 becomes the default HTTPS port; other
-ports, paths and signed query strings are preserved. Private/local addresses and
-embedded credentials remain rejected. This is a URL upgrade, not a relay:
-the upstream must serve valid HTTPS, including HTTPS HLS segments and keys.
-HTTP-only origins require a separately configured HTTPS media relay.
+HTTP and HTTPS origins are preserved during import; changing a source's scheme
+without verifying its TLS support can break it. Signed-in viewers receive
+same-origin playback URLs for live channels and HTTP video sources. The relay
+fetches HTTP upstream internally while the browser/app uses the platform's HTTPS
+connection. HLS variant, audio, subtitle, segment and key URI references are
+rewritten to user-bound signed resource URLs. Host the site with TLS enabled.
 
-### HTTP link compatibility
-HTTP media and provider links entered in this platform are upgraded to HTTPS before saving, playlist import, playback, or opening the in-app provider viewer. Existing HTTP channel and video records are upgraded during database initialization on deployment. Paths and query strings are retained; explicit HTTP port 80 becomes the HTTPS default, while custom ports are retained. Import deduplication uses the upgraded URL.
+Relay links expire after 12 hours and require an active platform session. Each
+request rechecks channel visibility and feature controls. URLs cannot be supplied
+freely to the relay: they must come from approved channel/video records or the
+configured country directory, or from their signed playlists. Redirect targets
+are revalidated, DNS answers must all be public, and connections pin the validated
+address while retaining TLS certificate verification. No permissive CORS is added.
 
-This is URL normalization, not a media proxy or TLS service for remote servers. Sources must support HTTPS with a valid certificate on the resulting URL and port. There is no downgrade to HTTP if an upstream does not support HTTPS. Third-party embedded pages, redirects, and HLS segment URLs remain under the source provider’s control.
+The relay buffers up to 32 MiB per response and limits open-ended byte ranges to
+8 MiB when the origin supports ranges. Large HTTP files on origins without range
+support, HLS variable substitution, DRM licensing, and unsupported browser codecs
+may require a dedicated media gateway. Native HLS browser support is still
+required. Existing URLs changed by earlier versions cannot be reliably restored;
+refresh the relevant source to import its original URLs. This change does not
+make unavailable or region-restricted streams accessible.
