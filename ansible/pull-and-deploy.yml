@@ -3,8 +3,8 @@
   hosts: all
   become: true
   vars:
-    media_domain: media.olamidepanel.com
-    media_port: 18840
+    media_domain: media.africandroid.world
+    media_port: 18841
     media_root: /opt/africa-media
     media_ref: main
     media_tls: false
@@ -103,6 +103,11 @@
           }
       # Preserve Certbot-managed HTTPS configuration on subsequent pulls.
       when: not (media_tls | bool) or not (media_certificate.stat.exists | default(false))
+    - name: Update upstream in existing HTTPS site
+      ansible.builtin.replace:
+        path: /etc/nginx/sites-available/africa-media.conf
+        regexp: 'proxy_pass http://127\.0\.0\.1:[0-9]+;'
+        replace: 'proxy_pass http://127.0.0.1:{{ media_port }};'
     - name: Configure authentication rate limit
       ansible.builtin.copy:
         dest: /etc/nginx/conf.d/africa-media-rate.conf
@@ -136,7 +141,7 @@
       register: health
       retries: 10
       delay: 2
-      until: health.status == 200
+      until: health.status == 200 and health.json.service | default('') == 'Africa Media Hub'
     - name: Show administrator setup command
       ansible.builtin.debug:
         msg: 'Run: sudo -u africa-media env MEDIA_DB=/var/lib/africa-media/media.db python3 {{ media_root }}/app.py admin --email YOUR_EMAIL'
@@ -146,3 +151,4 @@
         name: africa-media
         daemon_reload: true
         state: restarted
+
