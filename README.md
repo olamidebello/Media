@@ -78,3 +78,18 @@ Artwork was edited using the built-in imagegen tool with this prompt: “Change 
 ### Deployment helper
 
 After cloning, run `sudo bash scripts/deploy-olamidepanel.sh media.olamidepanel.com YOUR_EMAIL`. This invokes the same Ansible playbook with HTTPS enabled. DNS must point to the Olamidepanel server first.
+
+## IPTV channel refresh
+
+Admin → **IPTV playlists** → select **ALL**, **SPORTS**, a category or a language → **Refresh channels**. Includes the supplied IPTV-org index, twelve category playlists and English/French/Arabic playlists. Live TV includes channel search, category selection, refresh and paged display.
+
+Deployment now attempts a directory refresh with `media_playlist_source=all`. Failure to download a playlist is reported and does not remove existing channels or stop application deployment. Set `-e media_refresh_channels=false` to skip or `-e media_playlist_source=sports` to import only sports. Imports include public HTTPS stream URLs; HTTP-only, private literal addresses and unsupported protocols are skipped. Duplicate stream URLs and disabled-channel preferences are preserved. Stream playback is not validated by a directory refresh; browser format support, availability, geographical restrictions and distribution rights still apply.
+
+Refresh on the server independently:
+
+```bash
+sudo -u africa-media env MEDIA_DB=/var/lib/africa-media/media.db \
+ python3 /opt/africa-media/app.py refresh-channels --source all
+```
+
+The directory importer does not supply EPG schedules, DVR capture, subscriptions or rebroadcast rights.

@@ -128,6 +128,16 @@ def app(env, respond):
                     search=q.get('q',[''])[0]
                     if search: sql+=' AND (title LIKE ? OR category LIKE ?)'; args += ['%'+search+'%']*2
                     result=rows(c,sql+' ORDER BY created DESC',args)
+                elif path=='/api/admin/iptv' and method=='GET':
+                    admin()
+                    from iptv import SOURCES, BASE
+                    last=c.execute("SELECT value FROM settings WHERE key='iptv_last_refresh'").fetchone()
+                    result={'sources':[{'key':k,'url':BASE+v} for k,v in SOURCES.items()], 'last':json.loads(last[0]) if last else None}
+                elif path=='/api/admin/iptv' and method=='POST':
+                    admin()
+                    from iptv import refresh as refresh_channels
+                    result=refresh_channels(c,str(body.get('source','all')))
+                    audit(c,user,'playlist refresh '+result['source']+' added '+str(result['added']))
                 elif path=='/api/guide': result={'channels':rows(c,'SELECT * FROM channels WHERE enabled=1'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
                 elif path=='/api/studio' and method=='GET':
                     need(); result=rows(c,'SELECT * FROM videos WHERE owner_id=? ORDER BY created DESC',(user,))
@@ -210,7 +220,7 @@ def app(env, respond):
 
 if __name__=='__main__':
     import argparse, getpass
-    parser=argparse.ArgumentParser(); parser.add_argument('command',choices=['serve','init','admin'],nargs='?',default='serve'); parser.add_argument('--email'); args=parser.parse_args(); init()
+    parser=argparse.ArgumentParser(); parser.add_argument('command',choices=['serve','init','admin','refresh-channels'],nargs='?',default='serve'); parser.add_argument('--email'); parser.add_argument('--source',default='all'); args=parser.parse_args(); init()
     if args.command=='admin':
         if not args.email: parser.error('--email required')
         pw=getpass.getpass('Administrator password (12+ characters): ')
@@ -220,5 +230,8 @@ if __name__=='__main__':
             uid=c.execute('SELECT id FROM users WHERE email=?',(args.email.lower(),)).fetchone()[0]
             if not c.execute('SELECT id FROM profiles WHERE user_id=?',(uid,)).fetchone(): c.execute('INSERT INTO profiles(user_id,name) VALUES(?,?)',(uid,'Administrator'))
         print('Administrator configured')
+    elif args.command=='refresh-channels':
+        from iptv import refresh as refresh_channels
+        with db() as c: print(json.dumps(refresh_channels(c,args.source)))
     elif args.command=='serve': make_server('127.0.0.1',int(os.environ.get('PORT','18840')),app).serve_forever()
 

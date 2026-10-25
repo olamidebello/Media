@@ -9,6 +9,8 @@
     media_ref: main
     media_tls: false
     media_email: ''
+    media_refresh_channels: true
+    media_playlist_source: all
   tasks:
     - name: Validate deployment inputs
       ansible.builtin.assert:
@@ -54,6 +56,20 @@
       environment:
         MEDIA_DB: /var/lib/africa-media/media.db
       changed_when: false
+    - name: Refresh IPTV directory without interrupting application deployment
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, '{{ media_playlist_source }}']
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_import
+      failed_when: false
+      changed_when: media_import.rc == 0
+    - name: Report playlist refresh outcome
+      ansible.builtin.debug:
+        msg: '{{ media_import.stdout | default(media_import.stderr, true) }}'
+      when: media_refresh_channels | bool
     - name: Install service
       ansible.builtin.copy:
         dest: /etc/systemd/system/africa-media.service
