@@ -40,6 +40,8 @@ def init():
         ''')
         import people, commerce
         people.init(c); commerce.init(c)
+        import support
+        support.init(c)
         # Upgrade existing platform media records on deployment without fetching sources.
         from iptv import normalize_media_url
         for table in ('videos', 'channels'):
@@ -83,7 +85,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -123,7 +125,21 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/admin/people':
+                if path=='/api/support/guide':
+                    from support import GUIDE
+                    result={'topics':GUIDE,'ai_available':bool(os.environ.get('OPENAI_API_KEY'))}
+                elif path in ('/api/support/tickets','/api/admin/support'):
+                    need()
+                    staff=path=='/api/admin/support'
+                    if staff: admin()
+                    from support import tickets
+                    result=tickets(c,user,staff,method,body,audit)
+                elif path=='/api/support/ai':
+                    need()
+                    if method!='POST':raise ValueError('POST required')
+                    from support import ask
+                    result=ask(c,user,body)
+                elif path=='/api/admin/people':
                     admin()
                     from people import manage
                     result=manage(c,user,method,body,audit)
