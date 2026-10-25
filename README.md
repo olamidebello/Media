@@ -162,3 +162,9 @@ See `apps/README.md` for Android (including TV/Fire), desktop, Apple and vendor 
 The existing `ansible/update-and-deploy.yml` deploys web changes. Add `-e media_package_dir=/absolute/server/path/to/packages` to publish completed recognized build files from the target server. `/api/downloads` lists only nonempty deployed packages; `/install` shows available downloads and labels development/unsigned outputs. Package compatibility and signatures must be reviewed before distribution.
 
 Arise News, Superbook and PBS KIDS official viewing links are displayed on Home and Live TV. They open provider pages, not direct video streams.
+
+## Expanded family directory
+
+Home and Live TV now include Arise News, Superbook, PBS KIDS, Yippee Kids, Pure Flix and the family-channel destinations shown in the supplied FaithChannel screenshots. Kids & Family navigation offers search and category filtering. Kids profiles omit news and general-family services from this directory. Provider destinations open externally; no subscription or media redistribution integration is claimed. Moore the Merrier links to the source article because its direct destination was not independently resolved.
+
+Sources: https://www.yippee.tv/ ; https://www.pureflix.com/ ; https://www.faithchannel.com/blogs/best-christian-kid-youtubers .
