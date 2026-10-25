@@ -245,3 +245,6 @@ To run just cleanup after deploying current code:
 sudo -u africa-media /usr/bin/python3 /opt/africa-media/tools/prune_channels.py --database /var/lib/africa-media/media.db --apply
 ```
 Without `--apply`, the tool only reports checks. Local testing on October 25, 2026 could not verify the 117 bundled candidates because outbound DNS resolution failed; none of those source entries were deleted based on that environment-wide failure. Run checks from the streaming server for an applicable network result.
+
+### Clickable dashboards
+Home includes shortcuts to viewing, sports, saved content, marketplace, history and settings. Media cards are native buttons whose entire surface opens playback. Administrators see dashboard shortcuts for accounts, creation, groups, content, channels, schedules, reports, products, payment gateways, orders, feature switches, legal inbox and audit. Account/content/channel statistic buttons open the corresponding management controls. Shortcuts expand enclosing sections, scroll to the target and move keyboard focus to its controls; normal buttons work with keyboard and TV-remote OK selection. Shortcuts navigate only; they do not perform destructive actions or bypass backend administrator checks.
