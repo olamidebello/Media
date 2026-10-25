@@ -154,3 +154,11 @@ YouTube Live navigation contains a searchable starting directory of ten broadcas
 ## Device detection and installation
 
 The header links to `/install`, which detects mobile, tablet, desktop and common TV user agents, offers manual correction and displays device-specific browser installation instructions. A manifest, 192/512px icons and service worker provide an installable web-app foundation with a static offline notice; video and account responses are not cached. Installation prompts depend on HTTPS, browser support and engagement rules. iOS uses manual Safari Add to Home Screen; native Android/iOS/Tizen/webOS/Fire TV/desktop packages and casting are not yet built or published. Device detection is heuristic. This release does not claim native apps for every device.
+
+## Native app builds and package deployment
+
+See `apps/README.md` for Android (including TV/Fire), desktop, Apple and vendor TV source projects. The Build device apps workflow builds Android development APK and unsigned desktop packages, and compiles Apple simulator targets. Vendor SDKs, signing, notarization and store distribution remain external requirements. No successful native package build has been verified yet.
+
+The existing `ansible/update-and-deploy.yml` deploys web changes. Add `-e media_package_dir=/absolute/server/path/to/packages` to publish completed recognized build files from the target server. `/api/downloads` lists only nonempty deployed packages; `/install` shows available downloads and labels development/unsigned outputs. Package compatibility and signatures must be reviewed before distribution.
+
+Arise News, Superbook and PBS KIDS official viewing links are displayed on Home and Live TV. They open provider pages, not direct video streams.

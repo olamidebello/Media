@@ -52,7 +52,24 @@ def app(env, respond):
     status = '200 OK'; headers = [('Content-Type','application/json; charset=utf-8'),('X-Content-Type-Options','nosniff'),('Referrer-Policy','same-origin'),('Cache-Control','no-store')]
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
+        if path.startswith('/downloads/'):
+            from device_packages import ROOT as PACKAGE_ROOT, PACKAGES
+            key=path.rsplit('/',1)[-1]
+            if key not in PACKAGES: raise LookupError('Package unavailable')
+            filename,label,mime=PACKAGES[key]; package=PACKAGE_ROOT/filename
+            if not package.is_file() or package.stat().st_size==0: raise LookupError('Package unavailable')
+            headers[0]=('Content-Type',mime)
+            headers.append(('Content-Disposition','attachment; filename="'+filename+'"'))
+            respond(status,headers)
+            def chunks():
+                with package.open('rb') as f:
+                    while True:
+                        chunk=f.read(65536)
+                        if not chunk: break
+                        yield chunk
+            return chunks()
         if not path.startswith('/api/'):
+
             name = {'/':'index.html','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/smart-tv.js':'smart-tv.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
@@ -92,7 +109,10 @@ def app(env, respond):
                     if not v or (v['visibility']!='public' and v['owner_id']!=user and (not sess or sess['role']!='admin')): raise LookupError('Video unavailable')
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
-                if path == '/api/health': result = {'ok': True,'service':'Africa Media Hub'}
+                if path == '/api/downloads':
+                    from device_packages import available
+                    result=available()
+                elif path == '/api/health': result = {'ok': True,'service':'Africa Media Hub'}
                 elif path in ('/api/register','/api/login') and method=='POST':
                     email = str(body.get('email','')).strip().lower(); pw = str(body.get('password',''))
                     if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email) or len(pw)<12: raise ValueError('Valid email and a password of at least 12 characters required')

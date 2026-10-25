@@ -1,0 +1,24 @@
+name: AfricaMediaHub
+options:
+  bundleIdPrefix: com.africamedia
+targets:
+  AfricaMediaHub:
+    type: application
+    platform: iOS
+    deploymentTarget: '16.0'
+    sources: [Mobile.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.africamedia.hub.ios
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        TARGETED_DEVICE_FAMILY: '1,2'
+  AfricaMediaTV:
+    type: application
+    platform: tvOS
+    deploymentTarget: '16.0'
+    sources: [TV.swift]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.africamedia.hub.tv
+        GENERATE_INFOPLIST_FILE: YES

@@ -56,3 +56,7 @@
     media_tls: true
     media_refresh_channels: true
     media_playlist_source: all
+
+- name: Publish approved native app outputs when supplied
+  ansible.builtin.import_playbook: deploy-device-apps.yml
+  when: media_package_dir | default('') | length > 0

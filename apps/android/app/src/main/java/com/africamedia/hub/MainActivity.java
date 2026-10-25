@@ -1,0 +1,14 @@
+package com.africamedia.hub;
+import android.app.*;import android.os.*;import android.webkit.*;import android.content.*;import android.content.res.Configuration;import android.net.Uri;import android.view.*;import android.widget.*;
+public class MainActivity extends Activity {
+ WebView web; FrameLayout root; View full; WebChromeClient.CustomViewCallback callback;
+ boolean trusted(Uri u){return "https".equals(u.getScheme())&&"media.africandroid.world".equals(u.getHost());}
+ @Override public void onCreate(Bundle b){super.onCreate(b);root=new FrameLayout(this);web=new WebView(this);root.addView(web);setContentView(root);
+ web.getSettings().setJavaScriptEnabled(true);web.getSettings().setDomStorageEnabled(true);web.getSettings().setAllowFileAccess(false);web.getSettings().setAllowContentAccess(false);web.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);web.getSettings().setMediaPlaybackRequiresUserGesture(true);
+ if((getResources().getConfiguration().uiMode&Configuration.UI_MODE_TYPE_MASK)==Configuration.UI_MODE_TYPE_TELEVISION)web.getSettings().setUserAgentString(web.getSettings().getUserAgentString()+" Android TV AfricaMediaHub");
+ web.setWebViewClient(new WebViewClient(){@Override public boolean shouldOverrideUrlLoading(WebView v,WebResourceRequest req){if(!req.isForMainFrame())return false;Uri u=req.getUrl();if(trusted(u))return false;if("https".equals(u.getScheme()))try{startActivity(new Intent(Intent.ACTION_VIEW,u));}catch(ActivityNotFoundException e){Toast.makeText(MainActivity.this,"No external browser installed",Toast.LENGTH_LONG).show();}return true;}});
+ web.setWebChromeClient(new WebChromeClient(){@Override public void onShowCustomView(View v,CustomViewCallback cb){if(full!=null){cb.onCustomViewHidden();return;}full=v;callback=cb;web.setVisibility(View.GONE);root.addView(v);}@Override public void onHideCustomView(){if(full!=null){root.removeView(full);full=null;web.setVisibility(View.VISIBLE);callback.onCustomViewHidden();}}});
+ web.loadUrl("https://media.africandroid.world/");}
+ @Override public void onBackPressed(){if(full!=null){root.removeView(full);full=null;web.setVisibility(View.VISIBLE);callback.onCustomViewHidden();}else if(web.canGoBack())web.goBack();else super.onBackPressed();}
+ @Override protected void onDestroy(){web.destroy();super.onDestroy();}
+}
