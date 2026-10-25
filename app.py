@@ -42,6 +42,8 @@ def init():
         people.init(c); commerce.init(c)
         import support
         support.init(c)
+        import activity
+        activity.init(c)
         # Upgrade existing platform media records on deployment without fetching sources.
         from iptv import normalize_media_url
         for table in ('videos', 'channels'):
@@ -73,6 +75,14 @@ def app(env, respond):
             if key not in PACKAGES: raise LookupError('Package unavailable')
             filename,label,mime=PACKAGES[key]; package=PACKAGE_ROOT/filename
             if not package.is_file() or package.stat().st_size==0: raise LookupError('Package unavailable')
+            from activity import record
+            download_user=None
+            with db() as c:
+                download_cookie=SimpleCookie();download_cookie.load(env.get('HTTP_COOKIE',''))
+                download_token=download_cookie['media_session'].value if 'media_session' in download_cookie else ''
+                download_session=c.execute('SELECT s.user_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',(hashlib.sha256(download_token.encode()).hexdigest(),int(time.time()))).fetchone()
+                if download_session:download_user=download_session['user_id']
+                record(c,download_user,'download','started',filename)
             headers[0]=('Content-Type',mime)
             headers.append(('Content-Disposition','attachment; filename="'+filename+'"'))
             respond(status,headers)
@@ -82,10 +92,11 @@ def app(env, respond):
                         chunk=f.read(65536)
                         if not chunk: break
                         yield chunk
+                with db() as c:record(c,download_user,'download','served',filename)
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -125,7 +136,19 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/support/guide':
+                if path=='/api/admin/activity':
+                    admin()
+                    from activity import manage
+                    result=manage(c,user,method,body,q,audit)
+                elif path=='/api/activity':
+                    need()
+                    if method!='POST':raise ValueError('POST required')
+                    page=str(body.get('page',''))
+                    if page not in ('Home','Kids & Family','Local Channels','TV','Movies','Live TV','Sports','Shorts','Podcasts','My Stuff','Marketplace','History','Creator Studio','Settings','Help'):raise ValueError('Invalid page')
+                    from activity import record
+                    if c.execute("SELECT count(*) FROM activity WHERE user_id=? AND kind='navigation' AND created>?",(user,int(time.time())-60)).fetchone()[0]<30:record(c,user,'navigation','page_view',page)
+                    result={'ok':True}
+                elif path=='/api/support/guide':
                     from support import GUIDE
                     result={'topics':GUIDE,'ai_available':bool(os.environ.get('OPENAI_API_KEY'))}
                 elif path in ('/api/support/tickets','/api/admin/support'):
@@ -233,6 +256,9 @@ def app(env, respond):
                     if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
                     from location_channels import country_channels
                     result=country_channels(q.get('country',[''])[0])
+                    if user:
+                        from activity import record
+                        record(c,user,'location','selected_country',q.get('country',[''])[0][:2].upper())
                 elif path=='/api/guide':
                     if not enabled(c,'live_tv'): raise PermissionError('Live TV disabled by administrator')
                     result={'channels':rows(c,'SELECT *,id AS number FROM channels WHERE enabled=1 ORDER BY id'),'programs':rows(c,'SELECT * FROM programs WHERE end>? ORDER BY start',(int(time.time())-86400,))}
@@ -309,6 +335,9 @@ def app(env, respond):
                     else: raise ValueError('Unknown admin action')
                     audit(c,user,action); result={'ok':True}
                 else: raise LookupError('Not found')
+                if user and method=='POST' and path not in ('/api/activity','/api/admin/activity'):
+                    from activity import record
+                    record(c,user,'user','request_completed',path)
                 data=json.dumps(result).encode()
     except PermissionError as e: status='403 Forbidden'; data=json.dumps({'error':str(e)}).encode()
     except LookupError as e: status='404 Not Found'; data=json.dumps({'error':str(e)}).encode()

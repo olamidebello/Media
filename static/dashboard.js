@@ -10,7 +10,7 @@ function openDashboardTarget(selector){
  document.addEventListener('click',event=>{const button=event.target.closest('[data-dashboard-target]');if(button){event.preventDefault();openDashboardTarget(button.dataset.dashboardTarget);}});
  const beforeAdmin=adminView;
  adminView=async function(){await beforeAdmin();const area=document.createElement('section');area.className='dashboard-overview';area.setAttribute('aria-label','Administration dashboard');
- const destinations=[['Users','#people-list'],['Create user','#people-create'],['Groups','.people-group'],['Content','#admin-content'],['Channels','#console-channel-filter'],['Schedules','#program'],['Reports','#admin-reports'],['Marketplace','.market-product'],['Payment gateways','.market-gateway'],['Orders','#admin-orders'],['Feature switches','#console-features'],['Legal inbox','#admin-legal'],['Audit log','#admin-audit']];
+ const destinations=[['Activity & downloads','#admin-activity'],['Support inbox','#admin-support'],['Users','#people-list'],['Create user','#people-create'],['Groups','.people-group'],['Content','#admin-content'],['Channels','#console-channel-filter'],['Schedules','#program'],['Reports','#admin-reports'],['Marketplace','.market-product'],['Payment gateways','.market-gateway'],['Orders','#admin-orders'],['Feature switches','#console-features'],['Legal inbox','#admin-legal'],['Audit log','#admin-audit']];
  area.innerHTML='<h1>Administration dashboard</h1><p>Select a card to open its management controls.</p><div class="grid dashboard-links">'+destinations.map(([label,selector])=>'<button class="stat" data-dashboard-target="'+selector+'">'+esc(label)+' →</button>').join('')+'</div>';document.querySelector('#view').prepend(area);
  };
  const beforeHome=tvHome;
