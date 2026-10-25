@@ -172,3 +172,7 @@ Sources: https://www.yippee.tv/ ; https://www.pureflix.com/ ; https://www.faithc
 ## In-app provider viewing
 
 External HTTPS links are intercepted into a GUI viewing panel. YouTube watch URLs with a video ID use the supported embed form; channel pages may refuse frames. The panel is sandboxed and provides Back navigation. Android uses an isolated ProviderActivity without the main app bridge; iOS uses an in-app SFSafariViewController; desktop uses a sandboxed child app window. These providers can still reject WebViews, third-party cookies, DRM playback or embedding. No provider restrictions are bypassed, and universal in-app playback is not claimed. Apple TV remains a direct-stream guide and has no general browser view. Updated native behavior requires rebuilding and reinstalling its package.
+
+## Policies and legal contact
+
+Terms, Privacy and Copyright pages are at `/legal/terms`, `/legal/privacy` and `/legal/copyright`. Version 2026-10-25 applies to new registration acknowledgements recorded server-side. Existing accounts are not retroactively recorded as accepting. `/legal/contact` accepts privacy/copyright/terms enquiries with references; Admin shows the inbox. It does not send email notifications. The existing Ansible deployment initializes the new tables and deploys the pages. The operator’s legal identity, monitored business contact, applicable jurisdiction and any designated DMCA-agent registration must be finalized by the operator before public launch; none are fabricated or claimed as completed here.

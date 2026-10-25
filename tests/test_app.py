@@ -17,7 +17,7 @@ class PlatformTests(unittest.TestCase):
             if k=='Set-Cookie': self.cookie=v.split(';')[0]
         return int(status[0].split()[0]),json.loads(out)
     def register(self,email='viewer@example.com'):
-        self.assertEqual(self.req('/api/register',{'email':email,'password':'strong-password-123'})[0],200)
+        self.assertEqual(self.req('/api/register',{'email':email,'password':'strong-password-123','policy_version':'2026-10-25','adult_account':True})[0],200)
         _,m=self.req('/api/me'); self.csrf=m['csrf']; return m['profiles'][0]['id']
     def test_auth_csrf_and_admin_authorization(self):
         p=self.register(); self.assertEqual(self.req('/api/admin')[0],403)

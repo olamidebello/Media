@@ -19,6 +19,8 @@ def init():
     Path(DB).parent.mkdir(parents=True, exist_ok=True)
     with db() as c:
         c.executescript('''
+        CREATE TABLE IF NOT EXISTS legal_requests(id INTEGER PRIMARY KEY,reference TEXT,email TEXT,topic TEXT,message TEXT,created INTEGER);
+        CREATE TABLE IF NOT EXISTS policy_acceptances(user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,version TEXT,created INTEGER);
         CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY,email TEXT UNIQUE NOT NULL,password TEXT NOT NULL,role TEXT DEFAULT 'viewer',active INTEGER DEFAULT 1);
         CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,csrf TEXT,expires INTEGER);
         CREATE TABLE IF NOT EXISTS profiles(id INTEGER PRIMARY KEY,user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,name TEXT,kids INTEGER DEFAULT 0);
@@ -70,7 +72,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -89,7 +91,7 @@ def app(env, respond):
                     origin = env.get('HTTP_ORIGIN')
                     if origin and urlparse(origin).netloc != env.get('HTTP_HOST'): raise PermissionError('Cross-origin request rejected')
                     body = json.loads(env['wsgi.input'].read(length) or '{}')
-                    if path not in ('/api/register','/api/login'):
+                    if path not in ('/api/register','/api/login','/api/legal/request'):
                         if not sess: raise PermissionError('Sign in required')
                         if not hmac.compare_digest(env.get('HTTP_X_CSRF_TOKEN',''),sess['csrf']): raise PermissionError('Refresh and try again')
                 def need():
@@ -109,19 +111,30 @@ def app(env, respond):
                     if not v or (v['visibility']!='public' and v['owner_id']!=user and (not sess or sess['role']!='admin')): raise LookupError('Video unavailable')
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
-                if path == '/api/downloads':
+                if path == '/api/legal/request' and method=='POST':
+                    email=str(body.get('email','')).strip().lower();topic=str(body.get('topic',''));message=str(body.get('message','')).strip()
+                    if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email) or len(email)>254 or topic not in ('Privacy','Copyright','Terms','Operator details') or not 20<=len(message)<=5000: raise ValueError('Valid email, topic and a message of 20–5000 characters required')
+                    if c.execute('SELECT count(*) FROM legal_requests WHERE email=? AND created>?',(email,int(time.time())-3600)).fetchone()[0]>=5:raise ValueError('Request limit reached. Try again later.')
+                    reference=secrets.token_hex(8)
+                    c.execute('INSERT INTO legal_requests(reference,email,topic,message,created) VALUES(?,?,?,?,?)',(reference,email,topic,message,int(time.time())))
+                    result={'ok':True,'reference':reference}
+                elif path == '/api/admin/legal-requests':
+                    admin();result=rows(c,'SELECT * FROM legal_requests ORDER BY id DESC LIMIT 200')
+                elif path == '/api/downloads':
                     from device_packages import available
                     result=available()
                 elif path == '/api/health': result = {'ok': True,'service':'Africa Media Hub'}
-                elif path in ('/api/register','/api/login') and method=='POST':
+                elif path in ('/api/register','/api/login','/api/legal/request') and method=='POST':
                     email = str(body.get('email','')).strip().lower(); pw = str(body.get('password',''))
                     if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email) or len(pw)<12: raise ValueError('Valid email and a password of at least 12 characters required')
                     if path.endswith('register'):
+                        if body.get('policy_version')!='2026-10-25' or body.get('adult_account') not in (True,'yes'): raise ValueError('Accept the current Terms and acknowledge Privacy; adult account holder required')
                         if any(r[0]=='off' for r in c.execute("SELECT value FROM settings WHERE key='registration'")): raise PermissionError('Registration disabled')
                         try:
                             cur=c.execute('INSERT INTO users(email,password) VALUES(?,?)',(email,password(pw)))
                         except sqlite3.IntegrityError: raise ValueError('Account cannot be created with this email')
                         uid=cur.lastrowid
+                        c.execute('INSERT INTO policy_acceptances VALUES(?,?,?)',(uid,'2026-10-25',int(time.time())))
                         c.execute('INSERT INTO profiles(user_id,name) VALUES(?,?)',(uid,'My profile'))
                     else:
                         u=c.execute('SELECT * FROM users WHERE email=? AND active=1',(email,)).fetchone()
