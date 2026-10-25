@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://media.africandroid.world" version="1.0.0" viewmodes="maximized">
+ <tizen:application id="AMediaHub1.MediaHub" package="AMediaHub1" required_version="5.0"/>
+ <content src="index.html"/><name>Africa Media Hub</name><icon src="icon.png"/>
+ <access origin="https://media.africandroid.world" subdomains="true"/>
+ <tizen:profile name="tv-samsung"/><tizen:privilege name="http://tizen.org/privilege/internet"/>
+</widget>

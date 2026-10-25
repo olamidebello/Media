@@ -1,0 +1,62 @@
+---
+- name: Back up Africa Media Hub before updating
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure Python is installed
+      ansible.builtin.apt:
+        name: python3
+        state: present
+        update_cache: true
+    - name: Check persistent database
+      ansible.builtin.stat:
+        path: /var/lib/africa-media/media.db
+      register: media_existing_database
+    - name: Create protected backup directory
+      ansible.builtin.file:
+        path: /var/backups/africa-media
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+      when: media_existing_database.stat.exists
+    - name: Create consistent SQLite backup and verify integrity
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/python3
+          - -c
+          - |
+            import datetime, os, pathlib, sqlite3, uuid
+            folder = pathlib.Path('/var/backups/africa-media')
+            stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+            target = folder / ('media-' + stamp + '-' + uuid.uuid4().hex[:8] + '.db')
+            os.umask(0o077)
+            source = sqlite3.connect('file:/var/lib/africa-media/media.db?mode=ro', uri=True)
+            destination = sqlite3.connect(str(target))
+            source.backup(destination)
+            check = destination.execute('PRAGMA integrity_check').fetchone()[0]
+            destination.close()
+            source.close()
+            if check != 'ok':
+                raise SystemExit('Backup integrity check failed: ' + check)
+            print('Database backup: ' + str(target))
+      when: media_existing_database.stat.exists
+      register: media_backup
+      changed_when: true
+    - name: Report backup location
+      ansible.builtin.debug:
+        msg: '{{ media_backup.stdout }}'
+      when: media_existing_database.stat.exists
+
+- name: Pull latest code and deploy Africa Media Hub
+  ansible.builtin.import_playbook: pull-and-deploy.yml
+  vars:
+    media_domain: media.africandroid.world
+    media_port: 18841
+    media_tls: true
+    media_refresh_channels: true
+    media_playlist_source: all
+
+- name: Publish approved native app outputs when supplied
+  ansible.builtin.import_playbook: deploy-device-apps.yml
+  when: media_package_dir | default('') | length > 0

@@ -1,0 +1,809 @@
+{
+  "original_entries": 17,
+  "tested": 180,
+  "added": 89,
+  "validation": "HTTP-level HLS manifest and one media segment; decoding and continuous playback not tested",
+  "channels": [
+    {
+      "name": "ACNN (480p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_014/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:53:55Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "1KZN TV (576p)",
+      "category": "Africa",
+      "url": "https://cdn.freevisiontv.co.za/sttv/smil:1kzn.stream.smil/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:53:56Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Akili Kids!",
+      "category": "Africa",
+      "url": "https://m6.livecdn.io/akilikids.co.ke/akilikids.smil/playlist.m3u8",
+      "source": "countries/ke.m3u",
+      "checked_at": "2026-10-25T10:53:57Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "30A Golf Kingdom (720p)",
+      "category": "Sports",
+      "url": "https://30a-tv.com/feeds/vidaa/golf.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:53:56Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "3ABN Kids",
+      "category": "Kids",
+      "url": "https://3abn.bozztv.com/3abn2/Kids_live/smil:Kids_live.smil/playlist.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:53:54Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Approval TV (720p)",
+      "category": "Africa",
+      "url": "https://live.approvaltv.com/approvaltv/index.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:01Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "BOKTV (720p) [Not 24/7]",
+      "category": "Africa",
+      "url": "https://livestream2.bokradio.co.za/hls/Bok5c.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:00Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Great Commission TV",
+      "category": "Africa",
+      "url": "https://stream-server9-jupiter.muxlive.com/hls/gctvghana/index.m3u8",
+      "source": "countries/ke.m3u",
+      "checked_at": "2026-10-25T10:53:52Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "3ABN Praise Him Music Network",
+      "category": "Music",
+      "url": "https://3abn.bozztv.com/3abn1/PraiseHim/smil:PraiseHim.smil/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:53:57Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "BCS StarCross TV (576p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_001/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:00Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Cape Town TV (576p)",
+      "category": "Africa",
+      "url": "https://cdn.freevisiontv.co.za/sttv/smil:ctv.stream.smil/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:00Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Inooro TV",
+      "category": "Africa",
+      "url": "https://live-onesignal.royalmedia.co.ke/live/T-MxRsFebq6zx7k2QFMbLw.m3u8",
+      "source": "countries/ke.m3u",
+      "checked_at": "2026-10-25T10:54:00Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "ACC Digital Network (1080p)",
+      "category": "Sports",
+      "url": "https://raycom-accdn-firetv.amagi.tv/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:04Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "4Kurd",
+      "category": "Music",
+      "url": "https://4kuhls.persiana.live/hls/stream.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:02Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Bride TV (576p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_013/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:04Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "ACI Sport TV SD (1080p)",
+      "category": "Sports",
+      "url": "https://webstream.multistream.it/memfs/e2cb3629-c1a2-495b-b43a-9eb386f04ed8.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:13Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "4 Music",
+      "category": "Music",
+      "url": "https://musichls.persiana.live/hls/stream.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:07Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Homebase TV (480p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_022/Stream/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:25Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "OTV (Ghana) (720p)",
+      "category": "Africa",
+      "url": "https://5dcabf026b188.streamlock.net/OceansTV/livestream/playlist.m3u8",
+      "source": "countries/gh.m3u",
+      "checked_at": "2026-10-25T10:54:36Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Africa 24 Sport (1080p)",
+      "category": "Sports",
+      "url": "https://africa24.vedge.infomaniak.com/livecast/ik:africa24sport/manifest.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:39Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "7X Music (360p)",
+      "category": "Music",
+      "url": "https://cdn2.in/7xPunjabihls/live.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:34Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Chosen TV English (360p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_024/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:35Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LN24SA (1080p)",
+      "category": "Africa",
+      "url": "https://cdnstack.internetmultimediaonline.org/ln24/ln24.stream/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:36Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Pent TV",
+      "category": "Africa",
+      "url": "https://playlist.dacast.com/live/a72117af-d78e-7ffe-7c12-1af6cd4a8483-live-42172a86-494b-a866-498f-dbaff4b5e3c0/master.m3u8",
+      "source": "countries/gh.m3u",
+      "checked_at": "2026-10-25T10:54:36Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "4 SiDES TV (1080p)",
+      "category": "News",
+      "url": "https://stream.ottlive.co.in/4sidestv/index.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:54:37Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Al Iraqia Sport (720p)",
+      "category": "Sports",
+      "url": "https://imn-live.esite-lab.com/hls/iraqia-sports-1.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:34Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "9X Jalwa (1080p)",
+      "category": "Music",
+      "url": "https://wiselp.wiseplayout.com/9X_Jalwa/master.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:34Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LoveworldSAT (1080p)",
+      "category": "Africa",
+      "url": "https://cdnstack.internetmultimediaonline.org/lwsat/lwsat.stream/index.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:41Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "4TV News (576p)",
+      "category": "News",
+      "url": "https://cdn.pishow.tv/ott/live/1007/master.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:54:44Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "9X Jhakaas (1080p)",
+      "category": "Music",
+      "url": "https://amg01281-9xmediapvtltd-9xjhakaas-samsungin-ci2cs.amagi.tv/playlist/amg01281-9xmediapvtltd-9xjhakaas-samsungin/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:48Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Afarin Baxcha (1080p)",
+      "category": "Kids",
+      "url": "https://5dcabf026b188.streamlock.net/afarinTV/livestream/playlist.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:54:44Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Coza TV (576p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_019/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:44Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "NuView TV (360p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_002/Stream/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:44Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "American Ninja Warrior (1080p)",
+      "category": "Sports",
+      "url": "https://d4whmvwm0rdvi.cloudfront.net/10007/99951318/hls/master.m3u8?ads.xumo_channelId=99951318&ads.asnw=169843&ads.afid=405342864&ads.sfid=19647852&ads.csid=xumo_web_NBCUAmericanNinjaWarrior_ssai_cro&ads._fw_is_lat=0&ads._fw_us_privacy=&ads._fw_coppa=0&ads._fw_did=a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads._fw_vcid2=512116:a5090924-15b1-4b7f-b6cd-2f06e2ba51e1&ads._fw_app_bundle=web.xumo.com&ads._fw_app_store_url=&ads._fw_content_category=&ads._fw_content_genre=&ads._fw_content_language=en&ads._fw_content_rating=&ads._fw_deviceMake=GitHubAction&ads._fw_device_model=PythonScript&ads._fw_deviceType=3-Connected_TV&ads.appVersion=1.0.0&ads.appName=XumoPlay&ads.xumo_contentId=4063&ads.xumo_contentName=NBCUAmericanNinjaWarrior&ads.xumo_providerId=4063&ads.xumo_providerName=NBCUAmericanNinjaWarrior&ads.channelId=99951318",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:47Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "9X Tashan (1080p)",
+      "category": "Music",
+      "url": "https://amg01281-9xmediapvtltd-9xtashan-samsungin-xz1sd.amagi.tv/playlist/amg01281-9xmediapvtltd-9xtashan-samsungin/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:50Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Afarin TV (720p) [Not 24/7]",
+      "category": "Kids",
+      "url": "https://65f16f0fdfc51.streamlock.net/afarinTV/livestream/playlist.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:54:47Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "6 TV Telugu (576p)",
+      "category": "News",
+      "url": "https://yuppparoriglin.akamaized.net/181224/smil:6tv.smil/playlist.m3u8?hdnts=st=1735898689~exp=1835898688~acl=*~hmac=f5fe24724fe05481e3841f9eb5ab8efdee0a3dd83645ae9dcf45703f525bab7b",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:54:51Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Astrahan.Ru Sport (720p)",
+      "category": "Sports",
+      "url": "https://streaming.astrakhan.ru/astrakhanrusporthd/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:50Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Flame TV (576p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_010/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:54Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "ROV TV (576p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_012/Stream/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:54:54Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "ATG Live (720p)",
+      "category": "Sports",
+      "url": "https://kanal75xto-llhls.akamaized.net/live/Data/atg-kanal-15-02a-rr/HLS-Legacy-HL/atg-kanal-15-02a-rr.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:54:53Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "13 Festival (1080p)",
+      "category": "Music",
+      "url": "https://origin.dpsgo.com/ssai/event/Nftd0fM2SXasfDlRphvUsg/master.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:54:58Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Aqlvoy",
+      "category": "Kids",
+      "url": "https://stream8.cinerama.uz/1205/tracks-v1a1/mono.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:54:56Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Fortis TV",
+      "category": "Africa",
+      "url": "https://stream.fortistv.com/hls/fortis-news/index.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:54:53Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "9 Plus News (1080p)",
+      "category": "News",
+      "url": "https://stream.ottlive.co.in/9plusnews/index.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:54:58Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Atfal & Mawaheb TV (1080p)",
+      "category": "Kids",
+      "url": "https://5aafcc5de91f1.streamlock.net/atfal1.com/atfal2/playlist.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:55:01Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "10 TV (720p)",
+      "category": "News",
+      "url": "https://mumbai-edge.smartplaytv.in/10TV/index.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:01Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Bahrain Sports 1 (720p) [Not 24/7]",
+      "category": "Sports",
+      "url": "https://5c7b683162943.streamlock.net/live/ngrp:sportsone_all/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:55:02Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "30A Music (720p)",
+      "category": "Music",
+      "url": "https://30a-tv.com/music.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:02Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "HMTV (Nigeria) (720p)",
+      "category": "Africa",
+      "url": "https://customer-yzxu6n447dx2x45h.cloudflarestream.com/f255a1e5ef17a8277e15e5f409951e98/manifest/video.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:02Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "SABC Lehae [Geo-blocked]",
+      "category": "Africa",
+      "url": "https://sabctretalh.cdn.mangomolo.com/lehae/smil:lehae.stream.smil/master.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:55:07Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "13 Siam Thai (1080p)",
+      "category": "News",
+      "url": "https://live.x2.co.th/live/13livetv-th.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:04Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Bahrain Sports 2 (720p) [Not 24/7]",
+      "category": "Sports",
+      "url": "https://5c7b683162943.streamlock.net/live/ngrp:bahrainsportstwo_all/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:55:02Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "70-80 TV",
+      "category": "Music",
+      "url": "https://585b674743bbb.streamlock.net/9050/9050/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:05Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Itage TV (480p)",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_011/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:15Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "SABC News (720p) [Geo-blocked]",
+      "category": "Africa",
+      "url": "https://sabconetanw.cdn.mangomolo.com/news/smil:news.stream.smil/master.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:55:10Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "22Scope News (1080p)",
+      "category": "News",
+      "url": "https://thelegitpro.in/HDlive/22scope/index.fmp4.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:13Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "98.1 Pearl FM (720p)",
+      "category": "Music",
+      "url": "https://live2.tensila.com/pearl-v-1.pearlfm/hls/live/mystream.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:08Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "24 Horas (720p)",
+      "category": "News",
+      "url": "https://ztnr.rtve.es/ztnr/1694255.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:16Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "360TuneBox (1080p)",
+      "category": "Music",
+      "url": "https://dash3.antik.sk/live/test_360_tunebox_medium_atk/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:15Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Soweto TV (576p)",
+      "category": "Africa",
+      "url": "https://cdn.freevisiontv.co.za/sttv/smil:soweto.stream.smil/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:55:16Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "24 Horas Catalunya (720p)",
+      "category": "News",
+      "url": "https://ztnr.rtve.es/ztnr/4952053.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:20Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "A2i Music (720p) [Not 24/7]",
+      "category": "Music",
+      "url": "https://stream.sen-gt.com/A2iMusic/myStream/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:19Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Baby Shark TV (1080p)",
+      "category": "Kids",
+      "url": "https://newidco-babysharktv-1-us.roku.wurl.tv/playlist.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:55:20Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LoveWorld Arabic (360p)",
+      "category": "Africa",
+      "url": "https://go5lm6a6dawb-hls-live.5centscdn.com/lwarabic/53132d996b4263ec0d7b602292c46eaf.sdp/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:22Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "24 Kanal (720p)",
+      "category": "News",
+      "url": "https://cdn15.live-tv.cloud/ua_infinitas_tv/news24-abr/playlist.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:23Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Aaryaa TV (1080p)",
+      "category": "Music",
+      "url": "https://stream.ottlive.co.in/aryatvtamil/index.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:27Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "BabyFirst (720p)",
+      "category": "Kids",
+      "url": "https://cdn.fast.jwp.services/v1/channel/1_jB6940Ei_TvhvIHDL/manifest.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:55:24Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LoveWorld Persia (720p)",
+      "category": "Africa",
+      "url": "https://cdn3.wowza.com/5/aVJETlF0UFdmYTFu/LWPP/ngrp:persia.stream_all/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:24Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Tshwane TV (576p)",
+      "category": "Africa",
+      "url": "https://cdn.freevisiontv.co.za/sttv/smil:tshwane.stream.smil/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:55:26Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LoveWorld UK (1080p) [Not 24/7]",
+      "category": "Africa",
+      "url": "https://cdn3.wowza.com/5/L1Uzd2FrbVlLRG1W/live/smil:lwukweb.smil/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:28Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "TV BRICS English (1080p)",
+      "category": "Africa",
+      "url": "https://engbrics.mediacdn.ru/cdn/brics/english/playlist.m3u8",
+      "source": "countries/za.m3u",
+      "checked_at": "2026-10-25T10:55:33Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "24 News (576p)",
+      "category": "News",
+      "url": "https://mumt07.tangotv.in/zHjX9OFlTWENTYFOURNEWS/index.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:32Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "ACE Country Radio KPVM-LD",
+      "category": "Music",
+      "url": "https://2-fss-1.streamhoster.com/pl_122/206858-4412960-1/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:31Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "LoveWorld USA (720p)",
+      "category": "Africa",
+      "url": "https://cdn3.wowza.com/5/RGtVZkFxL3FOQkxX/LWU/ngrp:lwu.stream_all/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:31Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "24 TV (720p)",
+      "category": "News",
+      "url": "https://turkmedya-live.ercdn.net/tv24/tv24.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:35Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Activa TV (720p)",
+      "category": "Music",
+      "url": "https://streamtv.mediasector.es/hls/activatv/index.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:37Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "beIN SPORTS XTRA (1080p)",
+      "category": "Sports",
+      "url": "https://bein-xtra-bein.amagi.tv/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:55:38Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "BEK Sports West (720p)",
+      "category": "Sports",
+      "url": "https://cdn3.wowza.com/5/ZWQ1K2NYTmpFbGsr/BEK-WOWZA-1/smil:BEKPRIMEW.smil/playlist.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:55:41Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "AE Radio TV (720p) [Not 24/7]",
+      "category": "Music",
+      "url": "https://tls-cl.cdnz.cl/aeradio/live/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:41Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "99TV (720p)",
+      "category": "News",
+      "url": "https://cdn.pishow.tv/ott/live/1211/master.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:41Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "AFN TV",
+      "category": "Music",
+      "url": "https://bozztv.com/1gbw5/tintv2/tintv2/playlist.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:45Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "BeJoy.kids (1080p)",
+      "category": "Kids",
+      "url": "https://stream.paroledivita.org/bejoy.m3u8",
+      "source": "categories/kids.m3u",
+      "checked_at": "2026-10-25T10:55:44Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Nigbati (720p) [Not 24/7]",
+      "category": "Africa",
+      "url": "https://viewmedia7219.bozztv.com/wmedia/viewmedia100/web_023/Stream/playlist.m3u8",
+      "source": "countries/ng.m3u",
+      "checked_at": "2026-10-25T10:55:43Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Afrobeat TV Entertainment (1080p)",
+      "category": "Music",
+      "url": "https://stream.ecable.tv/afrobeats/index.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:48Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "360 (720p) [Not 24/7]",
+      "category": "News",
+      "url": "https://turkmedya-live.ercdn.net/tv360/tv360.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:50Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Aghani Aghani TV (1080p)",
+      "category": "Music",
+      "url": "https://cdn.streamlane.tv/hls/aghanitv/index.m3u8",
+      "source": "categories/music.m3u",
+      "checked_at": "2026-10-25T10:55:50Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "360\u00b0 News (1080p)",
+      "category": "News",
+      "url": "https://live-vgtrksmotrim.cdnvideo.ru/vgtrksmotrim/smotrim-live-03-srt.smil/playlist.m3u8",
+      "source": "categories/news.m3u",
+      "checked_at": "2026-10-25T10:55:53Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    },
+    {
+      "name": "Billiard TV (1080p) [Geo-blocked]",
+      "category": "Sports",
+      "url": "https://pb-wm04vonaerv0k.akamaized.net/billi.m3u8",
+      "source": "categories/sports.m3u",
+      "checked_at": "2026-10-25T10:55:53Z",
+      "check": "HLS manifest and media segment accessible",
+      "segment_bytes": 8192
+    }
+  ]
+}

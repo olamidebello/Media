@@ -1,0 +1,183 @@
+---
+- name: Deploy Africa Media Hub on Olamidepanel
+  hosts: all
+  become: true
+  vars:
+    media_domain: media.africandroid.world
+    media_port: 18841
+    media_root: /opt/africa-media
+    media_ref: main
+    media_tls: false
+    media_email: ''
+    media_refresh_channels: true
+    media_playlist_source: all
+  tasks:
+    - name: Validate deployment inputs
+      ansible.builtin.assert:
+        that:
+          - media_domain is match('^[a-z0-9][a-z0-9.-]+[a-z0-9]$')
+          - media_port | int > 1024
+          - media_port | int < 65536
+          - not media_tls | bool or media_email | length > 3
+    - name: Install dependencies
+      ansible.builtin.apt:
+        name: [git, acl, python3, python3-venv, nginx, certbot, python3-certbot-nginx]
+        update_cache: true
+    - name: Create service account
+      ansible.builtin.user:
+        name: africa-media
+        system: true
+        home: /var/lib/africa-media
+        create_home: true
+        shell: /usr/sbin/nologin
+    - name: Pull repository
+      ansible.builtin.git:
+        repo: https://github.com/olamidebello/Media.git
+        dest: '{{ media_root }}'
+        version: '{{ media_ref }}'
+        force: false
+      notify: Restart media
+    - name: Install application runtime
+      ansible.builtin.pip:
+        requirements: '{{ media_root }}/requirements.txt'
+        virtualenv: '{{ media_root }}/.venv'
+        virtualenv_command: python3 -m venv
+      notify: Restart media
+    - name: Create persistent storage
+      ansible.builtin.file:
+        path: /var/lib/africa-media
+        state: directory
+        owner: africa-media
+        group: africa-media
+        mode: '0700'
+    - name: Initialize database as service user
+      become_user: africa-media
+      ansible.builtin.command: /usr/bin/python3 {{ media_root }}/app.py init
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      changed_when: false
+    - name: Refresh IPTV directory without interrupting application deployment
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, '{{ media_playlist_source }}']
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_import
+      failed_when: false
+      changed_when: media_import.rc == 0
+    - name: Report playlist refresh outcome
+      ansible.builtin.debug:
+        msg: '{{ media_import.stdout | default(media_import.stderr, true) }}'
+      when: media_refresh_channels | bool
+    - name: Import expanded Working Channels playlist
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/app.py', refresh-channels, --source, working]
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      when: media_refresh_channels | bool
+      register: media_working_import
+      changed_when: media_working_import.rc == 0 and (media_working_import.stdout | from_json).added | int > 0
+    - name: Report Working Channels import
+      ansible.builtin.debug:
+        msg: '{{ media_working_import.stdout }}'
+      when: media_refresh_channels | bool
+    - name: Install service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/africa-media.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Africa Media Hub
+          After=network.target
+          [Service]
+          User=africa-media
+          Group=africa-media
+          WorkingDirectory={{ media_root }}
+          Environment=MEDIA_DB=/var/lib/africa-media/media.db
+          Environment=MEDIA_SECURE_COOKIE={{ '1' if media_tls | bool else '0' }}
+          ExecStart={{ media_root }}/.venv/bin/gunicorn --workers 2 --threads 4 --bind 127.0.0.1:{{ media_port }} app:app
+          Restart=on-failure
+          NoNewPrivileges=true
+          ProtectSystem=strict
+          ProtectHome=true
+          PrivateTmp=true
+          ReadWritePaths=/var/lib/africa-media
+          [Install]
+          WantedBy=multi-user.target
+      notify: Restart media
+    - name: Enable application
+      ansible.builtin.systemd:
+        name: africa-media
+        daemon_reload: true
+        enabled: true
+        state: started
+    - name: Check existing certificate
+      ansible.builtin.stat:
+        path: /etc/letsencrypt/live/{{ media_domain }}/fullchain.pem
+      register: media_certificate
+    - name: Configure dedicated Nginx site
+      ansible.builtin.copy:
+        dest: /etc/nginx/sites-available/africa-media.conf
+        mode: '0644'
+        content: |
+          server {
+            listen 80;
+            server_name {{ media_domain }};
+            client_max_body_size 100k;
+            location /api/login { limit_req zone=media_auth burst=5 nodelay; proxy_pass http://127.0.0.1:{{ media_port }}; proxy_set_header Host $host; }
+            location /api/register { limit_req zone=media_auth burst=5 nodelay; proxy_pass http://127.0.0.1:{{ media_port }}; proxy_set_header Host $host; }
+            location / { proxy_pass http://127.0.0.1:{{ media_port }}; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }
+          }
+      # Preserve Certbot-managed HTTPS configuration on subsequent pulls.
+      when: not (media_tls | bool) or not (media_certificate.stat.exists | default(false))
+    - name: Update upstream in existing HTTPS site
+      ansible.builtin.replace:
+        path: /etc/nginx/sites-available/africa-media.conf
+        regexp: 'proxy_pass http://127\.0\.0\.1:[0-9]+;'
+        replace: 'proxy_pass http://127.0.0.1:{{ media_port }};'
+    - name: Configure authentication rate limit
+      ansible.builtin.copy:
+        dest: /etc/nginx/conf.d/africa-media-rate.conf
+        mode: '0644'
+        content: 'limit_req_zone $binary_remote_addr zone=media_auth:10m rate=5r/m;'
+    - name: Enable dedicated site
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/africa-media.conf
+        dest: /etc/nginx/sites-enabled/africa-media.conf
+        state: link
+    - name: Validate Nginx
+      ansible.builtin.command: nginx -t
+      changed_when: false
+    - name: Reload Nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
+        enabled: true
+    - name: Issue HTTPS certificate when requested and DNS is ready
+      ansible.builtin.command:
+        argv: [certbot, --nginx, --non-interactive, --agree-tos, --redirect, -m, '{{ media_email }}', -d, '{{ media_domain }}']
+      when: media_tls | bool
+      register: media_certbot
+      changed_when: "'Congratulations' in media_certbot.stdout"
+    - name: Flush application restart
+      ansible.builtin.meta: flush_handlers
+    - name: Verify application readiness
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/api/health'
+        return_content: true
+      register: health
+      retries: 10
+      delay: 2
+      until: health.status == 200 and health.json.service | default('') == 'Africa Media Hub'
+    - name: Show administrator setup command
+      ansible.builtin.debug:
+        msg: 'Run: sudo -u africa-media env MEDIA_DB=/var/lib/africa-media/media.db python3 {{ media_root }}/app.py admin --email YOUR_EMAIL'
+  handlers:
+    - name: Restart media
+      ansible.builtin.systemd:
+        name: africa-media
+        daemon_reload: true
+        state: restarted
+
