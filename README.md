@@ -146,3 +146,7 @@ Home and Movies include official external links to Tubi, Pluto TV and Plex. Thes
 Toggle TV mode in the header for larger targets and directional spatial focus. Arrow keys navigate, Enter activates, Escape/Back returns, Page Up/Down changes live channels, media keys control playback and numeric keys select live channel position. Player buttons offer play/pause, mute, full screen, guide and channel changes or VOD seeking. Stream buffering and errors have on-screen messages. TV mode persists on the device. Existing native video volume/caption controls remain available.
 
 This is browser-level remote support, not an exact Samsung/LG/Android TV operating-system replica. Dedicated remote buttons may require native apps or vendor APIs; fullscreen, codecs, autoplay, power, input, system volume, casting and app installation depend on the device. Remote behavior and playback require validation on physical TVs.
+
+## Al Jazeera and YouTube Live
+
+YouTube Live navigation contains a searchable starting directory of ten broadcaster channel live destinations, the YouTube Live discovery page and Al Jazeera’s official live website. These are external destinations, not direct media streams or a complete inventory of YouTube broadcasts. Current live status and all channel destination redirects are not verified. Existing Ansible update-and-deploy installs these changes without additional credentials.
