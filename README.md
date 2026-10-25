@@ -93,3 +93,22 @@ sudo -u africa-media env MEDIA_DB=/var/lib/africa-media/media.db \
 ```
 
 The directory importer does not supply EPG schedules, DVR capture, subscriptions or rebroadcast rights.
+
+## Pull, back up and deploy an update
+
+Use `ansible/update-and-deploy.yml` for a first install or an update. It creates a consistent SQLite backup under `/var/backups/africa-media/` when a database already exists, verifies backup integrity, then runs the deployment playbook. It defaults to `media.africandroid.world`, loopback port `18841`, HTTPS and the complete channel directory. Backups contain account data, have private permissions and are retained until an administrator removes them. Backup failure stops the update. Database restore is manual; no automatic rollback is claimed.
+
+Run on the Olamidepanel Debian server after the domain DNS points to it:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y git ansible python3
+sudo ansible-pull \
+  -U https://github.com/olamidebello/Media.git \
+  -C main -d /opt/africa-media-bootstrap \
+  -i localhost, -c local \
+  ansible/update-and-deploy.yml \
+  -e media_email=YOUR_EMAIL
+```
+
+Replace `YOUR_EMAIL` with your certificate contact email. The deployment pulls into `/opt/africa-media`, restarts `africa-media.service` when code changes, validates Nginx, obtains HTTPS, imports channels and verifies application identity at `/api/health`. Channel download failures are reported without stopping the web service deployment.
