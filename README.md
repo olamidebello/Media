@@ -234,3 +234,14 @@ Stripe Checkout and Paystack hosted checkout are implemented using fixed HTTPS p
 After deploying the latest code, provision `MEDIA_STRIPE_SECRET_KEY` and/or `MEDIA_PAYSTACK_SECRET_KEY` in root-only `/etc/africa-media/payments.env`, then restart `africa-media`. Alternatively use `ansible/configure-payments.yml` with an Ansible Vault variables file containing `media_stripe_secret_key` and/or `media_paystack_secret_key`; tasks suppress secret output and preserve unspecified keys. Do not commit credentials or put live keys in command arguments. The service loads this optional file through systemd. Admin shows configured/missing status and enabled switches; enabling alone does not supply credentials or create a merchant account. `MEDIA_PUBLIC_URL` defaults to `https://media.africandroid.world` for payment return URLs. Only supported two-decimal currencies are exposed; availability still depends on the merchant account and provider.
 
 Provider references: https://docs.stripe.com/api/checkout/sessions/create , https://docs.stripe.com/api/checkout/sessions/retrieve , https://paystack.com/docs/api/transaction/ .
+
+## Remove non-working channels
+Deployment now runs `tools/prune_channels.py --apply` after imports against the persistent server database. It checks **enabled** stream URLs, traverses HLS playlists and looks for recognizable media bytes. A verified result is a point-in-time transport check, not full decoding or continuous-playback assurance. HTTP 404/410, invalid playlists, invalid media and unsafe addresses are checked twice before deletion. Timeout, DNS, TLS, access-denied, encrypted or other inconclusive results are disabled rather than permanently deleted. Existing disabled review entries are not scanned or enabled. Channel changes made by an administrator during the scan are preserved.
+
+Before modifying channels the tool creates an integrity-checked SQLite backup and private JSON report under `/var/lib/africa-media/channel-backups/`. A scan with no verified channel stops without changing the database, to avoid a network-wide outage purge. Deleting channels also removes their associated schedules through existing database relations. `media_prune_channels=false` skips cleanup when troubleshooting deployment. All imported sources are checked again on subsequent deployments, so previously deleted links may be re-imported and then rechecked.
+
+To run just cleanup after deploying current code:
+```bash
+sudo -u africa-media /usr/bin/python3 /opt/africa-media/tools/prune_channels.py --database /var/lib/africa-media/media.db --apply
+```
+Without `--apply`, the tool only reports checks. Local testing on October 25, 2026 could not verify the 117 bundled candidates because outbound DNS resolution failed; none of those source entries were deleted based on that environment-wide failure. Run checks from the streaming server for an applicable network result.

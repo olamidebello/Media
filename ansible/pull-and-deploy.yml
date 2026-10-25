@@ -96,6 +96,17 @@
       ansible.builtin.debug:
         msg: '{{ media_uploaded_import.stdout }} — new uploaded entries are disabled until reviewed and enabled in Admin.'
       when: media_refresh_channels | bool
+    - name: Verify enabled streams and clean unavailable channels
+      become_user: africa-media
+      ansible.builtin.command:
+        argv: [/usr/bin/python3, '{{ media_root }}/tools/prune_channels.py', --database, /var/lib/africa-media/media.db, --apply]
+      when: media_prune_channels | default(true) | bool
+      register: media_prune
+      changed_when: media_prune.rc == 0 and ((media_prune.stdout | from_json).removed | int > 0 or (media_prune.stdout | from_json).disabled | int > 0)
+    - name: Report channel cleanup and backup paths
+      ansible.builtin.debug:
+        msg: '{{ media_prune.stdout }}'
+      when: media_prune_channels | default(true) | bool
     - name: Install service
       ansible.builtin.copy:
         dest: /etc/systemd/system/africa-media.service
