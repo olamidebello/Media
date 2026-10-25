@@ -52,10 +52,10 @@ def app(env, respond):
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
         if not path.startswith('/api/'):
-            name = {'/':'index.html','/app.js':'app.js','/style.css':'style.css'}.get(path)
+            name = {'/':'index.html','/app.js':'app.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
-            headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css'}[name.split('.')[-1]])
+            headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png'}[name.split('.')[-1]])
             headers.append(('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; media-src https: blob:; img-src 'self' https: data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"))
         else:
             with db() as c:

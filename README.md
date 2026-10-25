@@ -66,3 +66,15 @@ This first release does **not** provide feature parity with Hulu, YouTube TV or 
 | Apps | Native Android/iOS/TV clients and app-store builds |
 
 Channel distribution, recording and territorial availability must be configured according to the rights of the supplied media. Adding a URL does not grant distribution rights. Do not enter private provider credentials into public stream URLs.
+
+## Brand identity
+
+**Africa Creates. The World Connects.**
+
+The generated transparent logo is in `static/assets/africa-media-logo.png`. The cinematic artwork with the approved slogan is in `static/assets/africa-media-hero.png`. They are used in navigation, the Home hero and account dialogs. Responsive rendering preserves the full banner instead of cropping its text.
+
+Artwork was edited using the built-in imagegen tool with this prompt: “Change only the two-line tagline to Africa Creates. / The World Connects.; preserve the brand heading, composition, people, Africa emblem and colors.”
+
+### Deployment helper
+
+After cloning, run `sudo bash scripts/deploy-olamidepanel.sh media.olamidepanel.com YOUR_EMAIL`. This invokes the same Ansible playbook with HTTPS enabled. DNS must point to the Olamidepanel server first.
