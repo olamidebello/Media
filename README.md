@@ -140,3 +140,9 @@ Home now presents a cinematic brand hero, real imported channel cards, horizonta
 ## Free streaming discovery
 
 Home and Movies include official external links to Tubi, Pluto TV and Plex. These are outbound provider links, not embedded streams, account integrations or a redistribution arrangement. Movies also displays imported channels categorized Movies and offers administrators a one-click Movies playlist refresh. The configured source is https://iptv-org.github.io/iptv/categories/movies.m3u. Provider login, availability and playback remain on their websites.
+
+## Smart TV mode
+
+Toggle TV mode in the header for larger targets and directional spatial focus. Arrow keys navigate, Enter activates, Escape/Back returns, Page Up/Down changes live channels, media keys control playback and numeric keys select live channel position. Player buttons offer play/pause, mute, full screen, guide and channel changes or VOD seeking. Stream buffering and errors have on-screen messages. TV mode persists on the device. Existing native video volume/caption controls remain available.
+
+This is browser-level remote support, not an exact Samsung/LG/Android TV operating-system replica. Dedicated remote buttons may require native apps or vendor APIs; fullscreen, codecs, autoplay, power, input, system volume, casting and app installation depend on the device. Remote behavior and playback require validation on physical TVs.
