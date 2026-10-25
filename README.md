@@ -168,3 +168,7 @@ Arise News, Superbook and PBS KIDS official viewing links are displayed on Home 
 Home and Live TV now include Arise News, Superbook, PBS KIDS, Yippee Kids, Pure Flix and the family-channel destinations shown in the supplied FaithChannel screenshots. Kids & Family navigation offers search and category filtering. Kids profiles omit news and general-family services from this directory. Provider destinations open externally; no subscription or media redistribution integration is claimed. Moore the Merrier links to the source article because its direct destination was not independently resolved.
 
 Sources: https://www.yippee.tv/ ; https://www.pureflix.com/ ; https://www.faithchannel.com/blogs/best-christian-kid-youtubers .
+
+## In-app provider viewing
+
+External HTTPS links are intercepted into a GUI viewing panel. YouTube watch URLs with a video ID use the supported embed form; channel pages may refuse frames. The panel is sandboxed and provides Back navigation. Android uses an isolated ProviderActivity without the main app bridge; iOS uses an in-app SFSafariViewController; desktop uses a sandboxed child app window. These providers can still reject WebViews, third-party cookies, DRM playback or embedding. No provider restrictions are bypassed, and universal in-app playback is not claimed. Apple TV remains a direct-stream guide and has no general browser view. Updated native behavior requires rebuilding and reinstalling its package.
