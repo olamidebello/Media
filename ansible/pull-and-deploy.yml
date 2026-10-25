@@ -109,6 +109,7 @@
           Group=africa-media
           WorkingDirectory={{ media_root }}
           Environment=MEDIA_DB=/var/lib/africa-media/media.db
+          EnvironmentFile=-/etc/africa-media/payments.env
           Environment=MEDIA_SECURE_COOKIE={{ '1' if media_tls | bool else '0' }}
           ExecStart={{ media_root }}/.venv/bin/gunicorn --workers 2 --threads 4 --bind 127.0.0.1:{{ media_port }} app:app
           Restart=on-failure

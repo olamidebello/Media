@@ -38,6 +38,8 @@ def init():
         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
+        import people, commerce
+        people.init(c); commerce.init(c)
         # Upgrade existing platform media records on deployment without fetching sources.
         from iptv import normalize_media_url
         for table in ('videos', 'channels'):
@@ -81,7 +83,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/device-install.js':'device-install.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -121,7 +123,27 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/config':
+                if path=='/api/admin/people':
+                    admin()
+                    from people import manage
+                    result=manage(c,user,method,body,audit)
+                elif path=='/api/admin/market':
+                    admin()
+                    from commerce import admin as market_admin
+                    result=market_admin(c,user,method,body,audit)
+                elif path=='/api/market':
+                    from commerce import products,gateways
+                    result={'products':products(c),'gateways':[g for g in gateways(c) if g['enabled'] and g['configured']]}
+                elif path=='/api/market/orders':
+                    need()
+                    from commerce import orders
+                    result=orders(c,user)
+                elif path in ('/api/market/checkout','/api/market/verify') and method=='POST':
+                    need()
+                    if owned_profile()['kids']:raise PermissionError('Purchases require a standard adult-managed profile')
+                    from commerce import checkout,verify
+                    result=checkout(c,user,sess['email'],body) if path.endswith('checkout') else verify(c,user,str(body.get('id','')),audit)
+                elif path=='/api/config':
                     result={key:enabled(c,key) for key in FEATURES}
                 elif path=='/api/admin/console' and method=='POST':
                     admin()

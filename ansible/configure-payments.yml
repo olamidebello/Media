@@ -1,0 +1,47 @@
+---
+- name: Configure server-side payment secrets for Africa Media Hub
+  hosts: all
+  become: true
+  tasks:
+    - name: Validate supplied keys
+      ansible.builtin.assert:
+        that:
+          - media_stripe_secret_key is not defined or media_stripe_secret_key is match('^[A-Za-z0-9_]+$')
+          - media_paystack_secret_key is not defined or media_paystack_secret_key is match('^[A-Za-z0-9_]+$')
+      no_log: true
+    - name: Create protected configuration directory
+      ansible.builtin.file:
+        path: /etc/africa-media
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+    - name: Install supplied Stripe key without changing other keys
+      ansible.builtin.lineinfile:
+        path: /etc/africa-media/payments.env
+        regexp: '^MEDIA_STRIPE_SECRET_KEY='
+        line: 'MEDIA_STRIPE_SECRET_KEY={{ media_stripe_secret_key }}'
+        create: true
+        owner: root
+        group: root
+        mode: '0600'
+      when: media_stripe_secret_key is defined
+      no_log: true
+      notify: Restart media
+    - name: Install supplied Paystack key without changing other keys
+      ansible.builtin.lineinfile:
+        path: /etc/africa-media/payments.env
+        regexp: '^MEDIA_PAYSTACK_SECRET_KEY='
+        line: 'MEDIA_PAYSTACK_SECRET_KEY={{ media_paystack_secret_key }}'
+        create: true
+        owner: root
+        group: root
+        mode: '0600'
+      when: media_paystack_secret_key is defined
+      no_log: true
+      notify: Restart media
+  handlers:
+    - name: Restart media
+      ansible.builtin.systemd:
+        name: africa-media
+        state: restarted
