@@ -51,3 +51,18 @@ Phone-to-TV APK installation is not implemented: paired ADB installation current
 The Build device apps workflow builds Android/Fire, desktop, Roku ZIP and LG webOS IPK, and compiles Apple simulator apps. LG uses the official `@webos-tools/cli`. Samsung package creation remains dependent on a configured Samsung SDK/certificate profile; no unsigned ZIP is advertised as an installable WGT. For Samsung, run the SDK commands listed in the table above on your configured signing workstation. Store approval and device tests are separate from packaging.
 
 Publish `africa-media-roku.zip` alongside the existing package filenames using `ansible/deploy-device-apps.yml`. Workflow artifacts are not automatically copied to the live server.
+
+## Deploy the TV and mobile installation update
+
+On the server already hosting Media, run as root:
+
+```bash
+apt-get update && apt-get install -y ansible git
+ansible-pull -U https://github.com/olamidebello/Media.git -C main \
+  -d /opt/africa-media-tv-bootstrap -i localhost, -c local \
+  ansible/deploy-tv-install.yml
+```
+
+This backs up SQLite, pulls main into `/opt/africa-media`, installs requirements, checks Python syntax, restarts `africa-media`, and verifies local health, installation assets and public HTTPS. Existing Nginx, TLS, credentials and channel settings are preserved. Local source edits cause the pull to fail rather than being overwritten. Failures are reported; no automatic database rollback is attempted. Override `media_root`, `media_port` or `media_domain` with `-e` for a customized installation. Use `-e media_verify_https=false` only when intentionally skipping the public check.
+
+To also publish completed native packages downloaded from GitHub Actions and extracted on the server, append `-e media_package_dir=/absolute/path/to/packages`. Use the exact filenames listed above; this does not build packages or configure store signing. The new mobile/desktop clients must be installed for native discovery. `scripts/deploy-tv-install.sh` wraps the same command and accepts the optional package directory as its first argument.

@@ -1,0 +1,123 @@
+---
+- name: Update Media TV and mobile installation features on an existing server
+  hosts: all
+  become: true
+  vars:
+    media_root: /opt/africa-media
+    media_ref: main
+    media_port: 18841
+    media_domain: media.africandroid.world
+    media_package_dir: ''
+    media_verify_https: true
+  pre_tasks:
+    - name: Validate deployment settings
+      ansible.builtin.assert:
+        that:
+          - media_root is match('^/opt/[A-Za-z0-9_/-]+$')
+          - media_port | int > 1024
+          - media_port | int < 65536
+          - media_domain is match('^[a-z0-9][a-z0-9.-]+[a-z0-9]$')
+    - name: Read installed service information
+      ansible.builtin.service_facts:
+    - name: Require an existing Media installation
+      ansible.builtin.assert:
+        that:
+          - "'africa-media.service' in ansible_facts.services"
+        fail_msg: Install Media first with ansible/pull-and-deploy.yml. This updater preserves existing Nginx, TLS and service configuration.
+    - name: Install deployment dependencies
+      ansible.builtin.apt:
+        name: [git, python3, python3-venv]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+    - name: Create protected backup folder
+      ansible.builtin.file:
+        path: /var/backups/africa-media
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+    - name: Back up the persistent database consistently
+      ansible.builtin.command:
+        argv:
+          - /usr/bin/python3
+          - -c
+          - |
+            import datetime, os, pathlib, sqlite3, uuid
+            source_path = pathlib.Path('/var/lib/africa-media/media.db')
+            if not source_path.is_file():
+                raise SystemExit('Existing Media database is missing; refusing update')
+            os.umask(0o077)
+            stamp = datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+            target = pathlib.Path('/var/backups/africa-media') / ('tv-install-' + stamp + '-' + uuid.uuid4().hex[:8] + '.db')
+            source = sqlite3.connect('file:' + str(source_path) + '?mode=ro', uri=True)
+            destination = sqlite3.connect(target)
+            source.backup(destination)
+            result = destination.execute('PRAGMA integrity_check').fetchone()[0]
+            destination.close()
+            source.close()
+            if result != 'ok':
+                raise SystemExit('Backup integrity check failed: ' + result)
+            print(target)
+      register: media_tv_backup
+      changed_when: true
+  tasks:
+    - name: Pull requested repository revision without overwriting local edits
+      ansible.builtin.git:
+        repo: https://github.com/olamidebello/Media.git
+        dest: '{{ media_root }}'
+        version: '{{ media_ref }}'
+        update: true
+        force: false
+      register: media_tv_source
+    - name: Install application requirements in existing virtual environment
+      ansible.builtin.pip:
+        requirements: '{{ media_root }}/requirements.txt'
+        virtualenv: '{{ media_root }}/.venv'
+        virtualenv_command: python3 -m venv
+    - name: Verify Python application syntax before restarting
+      ansible.builtin.command:
+        argv: ['{{ media_root }}/.venv/bin/python', -m, py_compile, '{{ media_root }}/app.py', '{{ media_root }}/device_packages.py']
+      changed_when: false
+    - name: Restart Media with its existing configuration
+      ansible.builtin.systemd:
+        name: africa-media
+        state: restarted
+        enabled: true
+    - name: Verify local application identity and health
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/api/health'
+        return_content: true
+      register: media_tv_health
+      retries: 15
+      delay: 2
+      until: media_tv_health.status | default(0) == 200 and media_tv_health.json.service | default('') == 'Africa Media Hub'
+    - name: Verify installation page and platform detection assets
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}{{ item.path }}'
+        return_content: true
+      loop:
+        - {path: /install, marker: 'tv-platform.js'}
+        - {path: /tv-platform.js, marker: 'MediaTVPlatforms'}
+        - {path: /device-install.js, marker: 'discover-tvs'}
+      register: media_tv_asset
+      failed_when: media_tv_asset.status != 200 or item.marker not in media_tv_asset.content
+    - name: Verify public HTTPS installation page
+      ansible.builtin.uri:
+        url: 'https://{{ media_domain }}/install'
+        return_content: true
+        validate_certs: true
+      register: media_tv_public
+      failed_when: media_tv_public.status != 200 or 'tv-platform.js' not in media_tv_public.content
+      when: media_verify_https | bool
+    - name: Report deployment and backup
+      ansible.builtin.debug:
+        msg:
+          - 'Updated revision: {{ media_tv_source.after }}'
+          - 'Install page: https://{{ media_domain }}/install'
+          - 'Database backup: {{ media_tv_backup.stdout }}'
+          - 'Mobile and desktop clients must be updated to the new builds. This play deploys server code; it does not sign or build native apps.'
+
+- name: Publish approved native packages already placed on the server
+  ansible.builtin.import_playbook: deploy-device-apps.yml
+  when: media_package_dir | default('') | length > 0
