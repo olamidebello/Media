@@ -14,7 +14,7 @@ These projects are build sources. A committed project is not evidence of a succe
 | LG webOS | tv-web | `ares-package apps/tv-web`; vendor SDK/Developer Mode required |
 | Samsung Tizen | tv-web | `tizen build-web -- apps/tv-web` then `tizen package -t wgt -s YOUR_PROFILE -- apps/tv-web/.buildResult`; vendor SDK and signing profile required |
 | Chromebook/other browser devices | installed PWA | Use /install |
-| Roku | Not implemented | Requires a separate SceneGraph client; browser/PWA cannot be assumed |
+| Roku | roku | SceneGraph live channel guide and HTTPS HLS/MP4 playback; development sideload ZIP, physical testing required |
 
 GitHub Actions `Build device apps` runs for app source pushes and manual dispatch. Android/desktop jobs upload workflow artifacts. Apple jobs compile simulator targets and do not produce distributable IPA files. Workflow success must be checked; no package has been verified at source creation time.
 
@@ -30,3 +30,24 @@ To publish approved outputs to the server, put them in `/var/lib/africa-media/do
 - africa-media-lg.ipk
 
 Run `ansible/deploy-device-apps.yml` with `-e media_package_dir=/absolute/server/path/to/approved/packages` after the web deployment. The directory is on the target server. Only nonempty recognized files are copied. The install page fetches availability from the server, so no missing package is advertised. Existing deployed packages are not automatically deleted.
+
+
+## TV detection and installation
+
+`/install` selects the package by operating system, never by brand alone. Users can override the estimate. Android, Fire TV, Samsung Tizen, LG webOS, Roku, Apple TV, VIDAA and Titan OS have separate instructions. A package link is shown only if its download is published. No native VIDAA/Titan client or public store listing is configured.
+
+The desktop app discovers ADB and SSDP services on private IPv4 LAN addresses. SSDP results choose platform guidance; they do not imply install permission. Direct Android/Fire installation requires Platform Tools and TV pairing/approval. Cast and AirPlay are not app installers. Samsung uses the existing Tizen project and requires Samsung SDK and signing certificates; Apple CI only compiles simulator apps and cannot produce a distributable tvOS build without provisioning.
+
+### Mobile Wi-Fi discovery
+
+The Android app's Install on device button opens a native discovery screen after confirmation. It searches advertised Cast, Android TV, ADB, AirPlay, webOS and Roku services for 12 seconds. Private IPv4 addresses remain on the phone. Selecting a result opens `/install?tvPlatform=...` with the recommended platform selected and a manual override. Cast/AirPlay service discovery is an estimate, not proof of a TV OS. Samsung/Fire/other TVs without these services may not appear.
+
+Phone-to-TV APK installation is not implemented: paired ADB installation currently requires the desktop app. Samsung/LG/Roku use their developer installation processes; Apple requires signed distribution. iPhone and ordinary mobile browsers provide manual platform selection and instructions, not native local discovery. Guest Wi-Fi isolation, permissions and TV standby can prevent discovery. The Android app must be rebuilt for this capability.
+
+### Build outputs
+
+`python3 scripts/package-roku.py` produces `packages/africa-media-roku.zip`; upload this file through the TV's Roku Development Application Installer after enabling Developer Mode. The current sideloaded channel is replaced. The Roku app plays compatible HTTPS HLS/MP4 channels from the live guide; browser-provider pages and DRM sources are excluded.
+
+The Build device apps workflow builds Android/Fire, desktop, Roku ZIP and LG webOS IPK, and compiles Apple simulator apps. LG uses the official `@webos-tools/cli`. Samsung package creation remains dependent on a configured Samsung SDK/certificate profile; no unsigned ZIP is advertised as an installable WGT. For Samsung, run the SDK commands listed in the table above on your configured signing workstation. Store approval and device tests are separate from packaging.
+
+Publish `africa-media-roku.zip` alongside the existing package filenames using `ansible/deploy-device-apps.yml`. Workflow artifacts are not automatically copied to the live server.

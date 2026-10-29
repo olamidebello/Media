@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MainScene" extends="Scene">
+ <script type="text/brightscript" uri="MainScene.brs"/>
+ <children>
+  <Label text="Africa Media Hub" translation="[70,40]" width="1100" height="60"/>
+  <Label id="status" text="Loading channels…" translation="[70,110]" width="1100" height="60"/>
+  <LabelList id="channels" translation="[70,180]" itemSize="[1100,50]" numRows="9"/>
+  <Video id="player" width="1280" height="720" visible="false"/>
+ </children>
+</component>

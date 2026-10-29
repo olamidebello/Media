@@ -19,7 +19,8 @@
       "main.cjs",
       "package.json",
       "preload.cjs",
-      "tv-install.cjs"
+      "tv-install.cjs",
+      "tv-discovery.cjs"
     ],
     "win": {
       "target": "nsis"

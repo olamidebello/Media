@@ -11,6 +11,7 @@
       - africa-media-linux.AppImage
       - africa-media-samsung.wgt
       - africa-media-lg.ipk
+      - africa-media-roku.zip
   tasks:
     - name: Require a target-server directory containing approved build outputs
       ansible.builtin.assert:

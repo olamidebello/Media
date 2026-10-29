@@ -1,7 +1,7 @@
 name: Build device apps
 on:
   push:
-    paths: ['apps/**', '.github/workflows/build-device-apps.yml']
+    paths: ['apps/**', 'scripts/package-roku.py', '.github/workflows/build-device-apps.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -63,3 +63,30 @@ jobs:
         working-directory: apps/apple
       - run: xcodebuild -project AfricaMediaHub.xcodeproj -scheme AfricaMediaTV -sdk appletvsimulator -configuration Debug -derivedDataPath build-tv CODE_SIGNING_ALLOWED=NO build
         working-directory: apps/apple
+
+  roku:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/package-roku.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: roku-development-channel
+          path: packages/africa-media-roku.zip
+  lg-webos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install -g @webos-tools/cli
+      - run: |
+          mkdir -p packages webos-stage
+          cp apps/tv-web/index.html apps/tv-web/launch.js apps/tv-web/icon.png apps/tv-web/appinfo.json webos-stage/
+          ares-package webos-stage --outdir packages --no-minify
+          mv packages/com.africamedia.hub_*.ipk packages/africa-media-lg.ipk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lg-webos-development
+          path: packages/africa-media-lg.ipk

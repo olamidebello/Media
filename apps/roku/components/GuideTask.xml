@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="GuideTask" extends="Task">
+ <interface><field id="items" type="array"/><field id="error" type="string"/></interface>
+ <script type="text/brightscript" uri="GuideTask.brs"/>
+</component>
