@@ -72,3 +72,16 @@ To also publish completed native packages downloaded from GitHub Actions and ext
 The desktop Scan LAN / Wi-Fi devices action combines TV service discovery with the operating system's IPv4 neighbor table (`ip neigh` on Linux, `arp -a` fallback on Windows/macOS). It shows cached private-network device addresses and MAC addresses where available, plus manufacturer/model metadata advertised by TVs. No public MAC lookup service is contacted. Neighbor tables are partial, may contain stale entries, and cannot enumerate every connected client. Locally administered/random MAC addresses cannot reliably identify a manufacturer. A MAC-only entry remains unclassified and opens the platform selector; no APK is selected solely from a MAC prefix. Android/iOS discovery remains service based because mobile systems restrict access to other devices' MAC addresses.
 
 Automatic app selection uses platform evidence from TV services. Direct ADB installation additionally checks that the paired device reports Android TV/Leanback features, and requires confirmation. Other TV platforms retain their supported installation instructions and signing requirements. This works for devices on Ethernet and Wi-Fi when they share a reachable local network; VLAN/guest isolation may prevent discovery. Update the desktop app after deploying server changes.
+
+### Deploy the LAN/MAC discovery update
+
+Run on the existing Media server as root:
+
+```bash
+apt-get update && apt-get install -y ansible git
+ansible-pull -U https://github.com/olamidebello/Media.git -C main \
+  -d /opt/africa-media-tv-bootstrap -i localhost, -c local \
+  ansible/deploy-lan-discovery.yml
+```
+
+This reuses the database backup, repository pull, dependency installation, restart and health/HTTPS checks, then checks the LAN/MAC interface and desktop discovery source. It preserves the existing server configuration. To publish native app files already downloaded from GitHub Actions and extracted on this server, append `-e media_package_dir=/absolute/server/package/directory`. Follow the exact filenames above; Windows/macOS/Linux build artifacts may need renaming before publishing. Install the new desktop app on the user's LAN computer afterward. This play does not run user-network discovery from the public hosting server, build/sign native apps, or install software on TVs without pairing/approval.

@@ -1,0 +1,38 @@
+---
+- name: Deploy current Media server and My Streaming features
+  ansible.builtin.import_playbook: deploy-my-streaming.yml
+
+- name: Verify LAN device identification update
+  hosts: all
+  become: true
+  vars:
+    media_root: /opt/africa-media
+    media_port: 18841
+  tasks:
+    - name: Verify installation interface includes LAN and MAC controls
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/device-install.js'
+        return_content: true
+      register: media_lan_interface
+      failed_when: >-
+        media_lan_interface.status != 200 or
+        'Scan LAN / Wi-Fi devices' not in media_lan_interface.content or
+        'device.mac' not in media_lan_interface.content
+    - name: Check desktop discovery source is deployed
+      ansible.builtin.stat:
+        path: '{{ media_root }}/apps/desktop/lan-devices.cjs'
+      register: media_lan_source
+    - name: Require LAN discovery source
+      ansible.builtin.assert:
+        that:
+          - media_lan_source.stat.exists
+          - media_lan_source.stat.isreg | default(false)
+          - media_lan_source.stat.size | default(0) > 0
+        fail_msg: LAN discovery source is missing. Check media_ref and repository deployment.
+    - name: Report deployment and native client requirement
+      ansible.builtin.debug:
+        msg:
+          - 'Server update verified. Open /install for LAN / Wi-Fi device scanning.'
+          - 'Install the rebuilt desktop app on the computer connected to the TV network. Server code deployment alone cannot update installed clients or inspect a user LAN.'
+          - 'To publish downloaded and extracted native builds, supply -e media_package_dir=/absolute/server/package/directory using the documented artifact filenames.'
+          - 'MAC addresses appear when the desktop operating system neighbor table supplies them. TV platform selection uses advertised services; MAC-only devices remain unclassified.'
