@@ -5,6 +5,7 @@ const {ipcMain,dialog,net}=require('electron');
 const HOME='https://media.africandroid.world/';
 function external(url){try{const u=new URL(url);if(u.protocol!=='https:'||u.username||u.password)return;shell.openExternal(u.href).catch(()=>{});}catch{}}
 app.whenReady().then(()=>{
+require('./camera-discovery.cjs').register(ipcMain,dialog);
 const apkPath=path.join(app.getPath('temp'),'africa-media-tv.apk');
 require('./tv-install.cjs').register({ipcMain,dialog,apkPath,download:async()=>{
  const response=await net.fetch(HOME+'downloads/android',{redirect:'error'});

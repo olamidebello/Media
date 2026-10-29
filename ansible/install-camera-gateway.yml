@@ -1,0 +1,86 @@
+---
+- name: Install an outbound camera gateway on a Debian computer on the camera LAN
+  hosts: all
+  become: true
+  vars:
+    camera_instance: entrance
+  tasks:
+    - name: Validate instance name
+      ansible.builtin.assert:
+        that:
+          - camera_instance is match('^[a-z0-9_-]{1,40}$')
+    - name: Install gateway runtime
+      ansible.builtin.apt:
+        name: [python3, ffmpeg]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+    - name: Create gateway service account
+      ansible.builtin.user:
+        name: africa-media-camera
+        system: true
+        create_home: false
+        shell: /usr/sbin/nologin
+    - name: Create gateway program directory
+      ansible.builtin.file:
+        path: /opt/africa-media-camera
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+    - name: Install gateway program
+      ansible.builtin.copy:
+        src: '{{ playbook_dir }}/../scripts/camera-gateway.py'
+        dest: /opt/africa-media-camera/camera-gateway.py
+        owner: root
+        group: root
+        mode: '0755'
+    - name: Create private gateway configuration directory
+      ansible.builtin.file:
+        path: /etc/africa-media-camera
+        state: directory
+        owner: africa-media-camera
+        group: africa-media-camera
+        mode: '0700'
+    - name: Install gateway service template
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/africa-media-camera@.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Africa Media camera gateway %i
+          After=network-online.target
+          Wants=network-online.target
+          [Service]
+          User=africa-media-camera
+          Group=africa-media-camera
+          ExecStart=/usr/bin/python3 /opt/africa-media-camera/camera-gateway.py --config /etc/africa-media-camera/%i.json
+          Restart=on-failure
+          RestartSec=10
+          NoNewPrivileges=true
+          ProtectSystem=strict
+          ProtectHome=true
+          PrivateTmp=true
+          UMask=0077
+          [Install]
+          WantedBy=multi-user.target
+    - name: Check whether this gateway is paired
+      ansible.builtin.stat:
+        path: '/etc/africa-media-camera/{{ camera_instance }}.json'
+      register: camera_config
+    - name: Reload gateway units
+      ansible.builtin.systemd:
+        daemon_reload: true
+    - name: Restart a configured gateway instance
+      ansible.builtin.systemd:
+        name: 'africa-media-camera@{{ camera_instance }}'
+        enabled: true
+        state: restarted
+      when: camera_config.stat.exists
+    - name: Show local interactive setup commands
+      ansible.builtin.debug:
+        msg:
+          - 'In My Streaming, add your camera and choose Pair gateway.'
+          - 'Configure locally: sudo -u africa-media-camera python3 /opt/africa-media-camera/camera-gateway.py --config /etc/africa-media-camera/{{ camera_instance }}.json --configure'
+          - 'Then start: sudo systemctl enable --now africa-media-camera@{{ camera_instance }}'
+          - 'Enter the camera stream URL and pairing token only in the interactive configuration prompt. This computer must remain connected to the camera network.'

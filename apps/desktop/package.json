@@ -20,7 +20,8 @@
       "package.json",
       "preload.cjs",
       "tv-install.cjs",
-      "tv-discovery.cjs"
+      "tv-discovery.cjs",
+      "camera-discovery.cjs"
     ],
     "win": {
       "target": "nsis"

@@ -1,0 +1,23 @@
+---
+- name: Update the existing Media server
+  ansible.builtin.import_playbook: deploy-tv-install.yml
+
+- name: Verify My Streaming deployment
+  hosts: all
+  become: true
+  vars:
+    media_port: 18841
+  tasks:
+    - name: Verify camera interface asset
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/my-streaming.js'
+        return_content: true
+      register: media_camera_asset
+      failed_when: media_camera_asset.status != 200 or 'myStreamingView' not in media_camera_asset.content
+    - name: Verify camera access requires authentication
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/api/my-streaming'
+        status_code: 403
+    - name: Report gateway requirement
+      ansible.builtin.debug:
+        msg: 'My Streaming is deployed. Install the updated mobile/desktop client for local discovery. Run a paired gateway on an always-on device on each camera network for remote snapshots. Do not run camera discovery on this public server.'

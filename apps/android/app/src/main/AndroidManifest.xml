@@ -6,6 +6,7 @@
  <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
  <uses-feature android:name="android.software.leanback" android:required="false"/>
  <application android:label="Africa Media Hub" android:theme="@android:style/Theme.Material.NoActionBar" android:usesCleartextTraffic="false" android:banner="@drawable/tv_banner" android:icon="@drawable/app_icon">
+  <activity android:name=".CameraDevicesActivity" android:exported="false"/>
   <activity android:name=".TvDevicesActivity" android:exported="false"/>
   <activity android:name=".ProviderActivity" android:exported="false"/>
   <activity android:name=".MainActivity" android:exported="true">

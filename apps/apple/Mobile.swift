@@ -10,6 +10,8 @@ struct MediaWeb: UIViewRepresentable {
   let config = WKWebViewConfiguration()
   config.userContentController.add(context.coordinator, name:"mediaProvider")
   config.userContentController.add(context.coordinator, name:"mediaExternal")
+  config.userContentController.add(context.coordinator, name:"mediaCameraDiscovery")
+  config.userContentController.addUserScript(WKUserScript(source:"window.MediaMobileCameras={discover:function(){window.webkit.messageHandlers.mediaCameraDiscovery.postMessage('discover');}};", injectionTime:.atDocumentStart, forMainFrameOnly:true))
   config.userContentController.add(context.coordinator, name:"mediaTVDiscovery")
   config.userContentController.addUserScript(WKUserScript(source:"window.MediaMobileTV={discover:function(){window.webkit.messageHandlers.mediaTVDiscovery.postMessage('discover');}};", injectionTime:.atDocumentStart, forMainFrameOnly:true))
   let web = WKWebView(frame:.zero, configuration:config)
@@ -21,7 +23,7 @@ struct MediaWeb: UIViewRepresentable {
  }
  func updateUIView(_ view: WKWebView, context: Context) {}
  func makeCoordinator() -> Coordinator { Coordinator() }
- static func dismantleUIView(_ view: WKWebView, coordinator: Coordinator) { view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaTVDiscovery"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaProvider"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaExternal") }
+ static func dismantleUIView(_ view: WKWebView, coordinator: Coordinator) { view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaCameraDiscovery"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaTVDiscovery"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaProvider"); view.configuration.userContentController.removeScriptMessageHandler(forName:"mediaExternal") }
  class Coordinator: NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
   weak var web: WKWebView?
   func show(_ url: URL) {
@@ -31,6 +33,19 @@ struct MediaWeb: UIViewRepresentable {
    top.present(SFSafariViewController(url:url), animated:true)
   }
   func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+   if message.name == "mediaCameraDiscovery" {
+    guard message.frameInfo.isMainFrame, message.frameInfo.securityOrigin.protocol == "https", message.frameInfo.securityOrigin.host == "media.africandroid.world", let root = web?.window?.rootViewController else { return }
+    var top = root
+    while let next = top.presentedViewController { top = next }
+    let picker = TVDiscoveryController()
+    picker.cameraMode = true
+    picker.onCameraSelect = { [weak self] name in
+     guard let data = try? JSONSerialization.data(withJSONObject:["name":name,"address":"Bonjour camera"]), let json = String(data:data,encoding:.utf8) else { return }
+     self?.web?.evaluateJavaScript("window.mediaCameraDiscovered&&window.mediaCameraDiscovered("+json+")",completionHandler:nil)
+    }
+    top.present(UINavigationController(rootViewController:picker), animated:true)
+    return
+   }
    if message.name == "mediaTVDiscovery" {
     guard message.frameInfo.isMainFrame, message.frameInfo.securityOrigin.protocol == "https", message.frameInfo.securityOrigin.host == "media.africandroid.world", web?.url?.path == "/install", let root = web?.window?.rootViewController else { return }
     var top = root
@@ -58,6 +73,8 @@ struct MediaWeb: UIViewRepresentable {
 
 
 final class TVDiscoveryController: UITableViewController {
+ var cameraMode = false
+ var onCameraSelect: ((String)->Void)?
  var onSelect: ((String)->Void)?
  private var browsers: [NWBrowser] = []
  private var devices: [(name:String, platform:String)] = []
@@ -66,14 +83,16 @@ final class TVDiscoveryController: UITableViewController {
  private var timeout: DispatchWorkItem?
  override func viewDidLoad() {
   super.viewDidLoad()
-  title = "Nearby TVs"
+  title = cameraMode ? "Nearby camera services" : "Nearby TVs"
   navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem:.done, target:self, action:#selector(done))
   let label = UILabel()
   label.numberOfLines = 0
   label.text = "Connect to the same Wi-Fi as your TV and allow Local Network access. Searching for 12 seconds. Select a device for installation options. Cast/AirPlay receivers may not identify the TV OS; confirm it on the next page. TV approval is required."
   label.frame = CGRect(x:16,y:0,width:320,height:170)
+  if cameraMode { label.text = "Connect to camera Wi-Fi and allow Local Network access. Searching advertised RTSP/ONVIF Bonjour services. This cannot discover all cameras. Select a service, confirm its name, and pair a local gateway for remote snapshots." }
   tableView.tableHeaderView = label
-  let types = [("_googlecast._tcp","android"),("_androidtvremote2._tcp","android"),("_adb-tls-connect._tcp","android"),("_airplay._tcp","apple"),("_webostv._tcp","lg"),("_roku-ecp._tcp","roku")]
+  let tvTypes = [("_googlecast._tcp","android"),("_androidtvremote2._tcp","android"),("_adb-tls-connect._tcp","android"),("_airplay._tcp","apple"),("_webostv._tcp","lg"),("_roku-ecp._tcp","roku")]
+  let types = cameraMode ? [("_rtsp._tcp","camera"),("_onvif._tcp","camera")] : tvTypes
   for (type, platform) in types {
    let params = NWParameters.tcp
    params.requiredInterfaceType = .wifi
@@ -116,7 +135,8 @@ final class TVDiscoveryController: UITableViewController {
  }
  override func tableView(_ tableView:UITableView,didSelectRowAt indexPath:IndexPath) {
   let platform = devices[indexPath.row].platform
+  let name = devices[indexPath.row].name
   stop()
-  dismiss(animated:true) { self.onSelect?(platform) }
+  dismiss(animated:true) { if self.cameraMode { self.onCameraSelect?(name) } else { self.onSelect?(platform) } }
  }
 }

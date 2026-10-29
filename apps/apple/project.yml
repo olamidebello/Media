@@ -18,6 +18,8 @@ targets:
           - _airplay._tcp
           - _webostv._tcp
           - _roku-ecp._tcp
+          - _rtsp._tcp
+          - _onvif._tcp
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.africamedia.hub.ios

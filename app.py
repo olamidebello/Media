@@ -38,6 +38,8 @@ def init():
         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
+        import my_streaming
+        my_streaming.init(c)
         import people, commerce
         people.init(c); commerce.init(c)
         import support
@@ -68,7 +70,19 @@ def app(env, respond):
     status = '200 OK'; headers = [('Content-Type','application/json; charset=utf-8'),('X-Content-Type-Options','nosniff'),('Referrer-Policy','same-origin'),('Cache-Control','no-store')]
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
-        if path.startswith('/downloads/'):
+        if path == '/api/my-streaming/ingest':
+            if method != 'POST': raise ValueError('POST required')
+            length = int(env.get('CONTENT_LENGTH') or 0)
+            if length <= 0 or length > 100000: raise ValueError('Invalid gateway request size')
+            token = env.get('HTTP_AUTHORIZATION','')
+            if not token.startswith('Bearer '): raise PermissionError('Gateway authentication required')
+            from my_streaming import ingest
+            with db() as c:
+                result = ingest(c,token[7:],json.loads(env['wsgi.input'].read(length)))
+            data = json.dumps(result).encode()
+            respond(status,headers)
+            return [data]
+        elif path.startswith('/downloads/'):
             from admin_console import enabled
             with db() as c:
                 if not enabled(c,'downloads'): raise PermissionError('Downloads disabled by administrator')
@@ -98,7 +112,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/install':'index.html','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -138,7 +152,12 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/admin/advertising':
+                if path.startswith('/api/my-streaming'):
+                    selected = owned_profile()
+                    if selected['kids']: raise PermissionError('Cameras are unavailable in Kids profiles')
+                    from my_streaming import handle
+                    result = handle(c,profile,path,method,body,q)
+                elif path=='/api/admin/advertising':
                     admin()
                     from advertising import admin as ad_admin
                     result=ad_admin(c,user,method,body,audit)
