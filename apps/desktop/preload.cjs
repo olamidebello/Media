@@ -1,0 +1,3 @@
+'use strict';
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('MediaTVInstaller',Object.freeze({discover:()=>ipcRenderer.invoke('tv:discover'),install:id=>ipcRenderer.invoke('tv:install',id)}));

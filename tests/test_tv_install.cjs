@@ -1,0 +1,4 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const {localEndpoint,parseDiscovery}=require('../apps/desktop/tv-install.cjs');
+test('only valid private LAN endpoints can be selected',()=>{for(const id of ['127.0.0.1:5555','8.8.8.8:5555','192.168.1.999:5555','10.1.1.1:0','10.1.1.1:65536','10.1.1.1:5555;whoami'])assert.equal(localEndpoint(id),false);assert.equal(localEndpoint('192.168.1.20:5555'),true);});
+test('discovery deduplicates and excludes USB, public and pairing-only services',()=>{const result=parseDiscovery('192.168.1.20:5555 device model:Living_Room\nUSB123 device model:Phone','tv _adb._tcp. 192.168.1.20:5555\nnewtv _adb-tls-connect._tcp. 10.0.0.3:34567\npair _adb-tls-pairing._tcp. 10.0.0.3:34568\nremote _adb._tcp. 8.8.8.8:5555');assert.equal(result.length,2);assert.equal(result[0].state,'device');assert.equal(result[1].state,'pairing-required');});

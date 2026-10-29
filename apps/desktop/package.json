@@ -17,7 +17,9 @@
     "productName": "Africa Media Hub",
     "files": [
       "main.cjs",
-      "package.json"
+      "package.json",
+      "preload.cjs",
+      "tv-install.cjs"
     ],
     "win": {
       "target": "nsis"
