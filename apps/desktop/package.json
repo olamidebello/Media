@@ -21,7 +21,8 @@
       "preload.cjs",
       "tv-install.cjs",
       "tv-discovery.cjs",
-      "camera-discovery.cjs"
+      "camera-discovery.cjs",
+      "lan-devices.cjs"
     ],
     "win": {
       "target": "nsis"

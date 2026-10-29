@@ -1,0 +1,9 @@
+'use strict';
+const {execFile}=require('node:child_process');
+const {localEndpoint}=require('./tv-install.cjs');
+function normalizeMac(value){const mac=String(value||'').replace(/-/g,':').toUpperCase();if(!/^(?:[0-9A-F]{2}:){5}[0-9A-F]{2}$/.test(mac)||['00:00:00:00:00:00','FF:FF:FF:FF:FF:FF'].includes(mac)||parseInt(mac.slice(0,2),16)&1)return null;return mac;}
+function parseNeighbors(text){const found=new Map();for(const line of String(text).split('\n')){if(/FAILED|INCOMPLETE|PERMANENT/i.test(line))continue;const address=line.match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/)?.[0];const raw=line.match(/\b(?:[a-f0-9]{2}[:-]){5}[a-f0-9]{2}\b/i)?.[0];const mac=normalizeMac(raw);if(address&&mac&&localEndpoint(address+':80'))found.set(address,{address,mac,locallyAdministered:!!(parseInt(mac.slice(0,2),16)&2)});}return [...found.values()];}
+function command(program,args){return new Promise(resolve=>execFile(program,args,{timeout:5000,maxBuffer:1024*1024,windowsHide:true},(error,stdout)=>resolve(error?'':stdout)));}
+async function neighbors(){let text='';if(process.platform==='linux')text=await command('ip',['-4','neigh','show']);if(!text)text=await command('arp',['-a']);return parseNeighbors(text);}
+function mergeDevices(devices,entries){const byAddress=new Map(entries.map(e=>[e.address,e]));const used=new Set();const result=devices.map(device=>{const address=device.address||(device.id.startsWith('ssdp:')?device.id.slice(5):device.id.split(':')[0]);used.add(address);return {...device,...(byAddress.get(address)||{}),address};});for(const entry of entries){if(used.has(entry.address))continue;result.push({...entry,id:'lan:'+entry.address,name:'Unidentified LAN device',platform:'browser',transport:'lan',state:'TV type unconfirmed'});}return result;}
+module.exports={normalizeMac,parseNeighbors,neighbors,mergeDevices};
