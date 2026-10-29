@@ -22,7 +22,8 @@
       "tv-install.cjs",
       "tv-discovery.cjs",
       "camera-discovery.cjs",
-      "lan-devices.cjs"
+      "lan-devices.cjs",
+      "network-scanner.cjs"
     ],
     "win": {
       "target": "nsis"

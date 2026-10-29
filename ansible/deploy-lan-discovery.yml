@@ -20,15 +20,19 @@
         'device.mac' not in media_lan_interface.content
     - name: Check desktop discovery source is deployed
       ansible.builtin.stat:
-        path: '{{ media_root }}/apps/desktop/lan-devices.cjs'
+        path: '{{ media_root }}/apps/desktop/{{ item }}'
+      loop:
+        - lan-devices.cjs
+        - network-scanner.cjs
       register: media_lan_source
     - name: Require LAN discovery source
       ansible.builtin.assert:
         that:
-          - media_lan_source.stat.exists
-          - media_lan_source.stat.isreg | default(false)
-          - media_lan_source.stat.size | default(0) > 0
+          - item.stat.exists
+          - item.stat.isreg | default(false)
+          - item.stat.size | default(0) > 0
         fail_msg: LAN discovery source is missing. Check media_ref and repository deployment.
+      loop: '{{ media_lan_source.results }}'
     - name: Report deployment and native client requirement
       ansible.builtin.debug:
         msg:
