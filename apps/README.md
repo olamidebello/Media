@@ -40,9 +40,9 @@ The desktop app discovers ADB and SSDP services on private IPv4 LAN addresses. S
 
 ### Mobile Wi-Fi discovery
 
-The Android app's Install on device button opens a native discovery screen after confirmation. It searches advertised Cast, Android TV, ADB, AirPlay, webOS and Roku services for 12 seconds. Private IPv4 addresses remain on the phone. Selecting a result opens `/install?tvPlatform=...` with the recommended platform selected and a manual override. Cast/AirPlay service discovery is an estimate, not proof of a TV OS. Samsung/Fire/other TVs without these services may not appear.
+The Android app's Install on device button opens a native discovery screen after confirmation. It searches advertised Cast, Android TV, ADB, AirPlay, webOS and Roku services for 12 seconds, with additional SSDP discovery on Android. Private IPv4 addresses remain on the phone. Selecting a result opens `/install?tvPlatform=...` with the recommended platform selected and a manual override. Cast/AirPlay service discovery is an estimate, not proof of a TV OS. Samsung/Fire/other TVs without these services may not appear.
 
-Phone-to-TV APK installation is not implemented: paired ADB installation currently requires the desktop app. Samsung/LG/Roku use their developer installation processes; Apple requires signed distribution. iPhone and ordinary mobile browsers provide manual platform selection and instructions, not native local discovery. Guest Wi-Fi isolation, permissions and TV standby can prevent discovery. The Android app must be rebuilt for this capability.
+Phone-to-TV APK installation is not implemented: paired ADB installation currently requires the desktop app. Samsung/LG/Roku use their developer installation processes; Apple requires signed distribution. The iOS native app also provides Bonjour discovery over Wi-Fi after Local Network permission, with platform selection and installation guidance. Ordinary mobile browsers provide manual platform selection only. iOS distribution still requires Apple signing/TestFlight or the App Store. Guest Wi-Fi isolation, permissions and TV standby can prevent discovery. The Android app must be rebuilt for this capability.
 
 ### Build outputs
 

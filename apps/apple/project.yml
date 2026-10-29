@@ -7,10 +7,21 @@ targets:
     platform: iOS
     deploymentTarget: '16.0'
     sources: [Mobile.swift]
+    info:
+      path: Info-iOS.plist
+      properties:
+        NSLocalNetworkUsageDescription: Find TVs on your Wi-Fi to show matching installation options. Device names stay on your phone.
+        NSBonjourServices:
+          - _googlecast._tcp
+          - _androidtvremote2._tcp
+          - _adb-tls-connect._tcp
+          - _airplay._tcp
+          - _webostv._tcp
+          - _roku-ecp._tcp
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.africamedia.hub.ios
-        GENERATE_INFOPLIST_FILE: YES
+        GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: '1,2'
   AfricaMediaTV:
