@@ -104,3 +104,18 @@ For Android/Google TVs with Wireless debugging: enable it in Developer options, 
 The phone copies its own universal Africa Media Hub APK directly to the TV over ADB. No desktop or public-server LAN access is required. It checks Android TV/Leanback features before transferring, requires explicit installation confirmation, and reports success only after the TV package installer returns Success. Pairing identity is stored in the phone's private no-backup directory. Pairing codes are cleared after submission. Clear app data to remove the phone's pairing identity; revoke trusted debugging devices in TV settings as needed. Disable TV debugging when no longer required.
 
 Limits: Android phone only; iPhone and normal browsers do not provide this installer. Samsung Tizen, LG webOS, Roku and Apple TV cannot receive Android APKs. Split APK transfer is not supported; use the universal APK built by this repository. Signature/version conflicts or TV restrictions can reject an update; the app never uninstalls the existing TV app automatically. Installation has not been tested on physical TVs. Dependency: LibADB Android 3.1.1 (Apache-2.0 option), Conscrypt and Bouncy Castle, resolved during Android builds. Vendor code and dependency licenses remain applicable.
+
+### Deploy the phone-to-TV installer update
+
+Run on the existing Media server as root:
+
+```bash
+apt-get update && apt-get install -y ansible git
+ansible-pull -U https://github.com/olamidebello/Media.git -C main \
+  -d /opt/africa-media-tv-bootstrap -i localhost, -c local \
+  ansible/deploy-phone-tv-install.yml
+```
+
+This includes the existing database backup, repository pull, dependency installation, service restart, health/HTTPS, My Streaming and LAN checks, then verifies the phone pairing button, bridge integration and native installer source files. It preserves existing server configuration.
+
+To publish the rebuilt universal APK already downloaded from GitHub Actions and extracted on this server, name it `africa-media-android-debug.apk` in an absolute directory and append `-e media_package_dir=/absolute/server/package/directory` to the command. The package directory must be on the target server. Existing packages are not rebuilt by this play. Install the updated APK on the phone afterward; opening the website in a browser does not enable native pairing. TV pairing/approval and physical-device validation remain required.

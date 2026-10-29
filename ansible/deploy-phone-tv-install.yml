@@ -1,0 +1,42 @@
+---
+- name: Deploy the latest Media server and LAN discovery features
+  ansible.builtin.import_playbook: deploy-lan-discovery.yml
+
+- name: Verify phone-to-TV installer update
+  hosts: all
+  become: true
+  vars:
+    media_root: /opt/africa-media
+    media_port: 18841
+  tasks:
+    - name: Verify phone pairing button and native bridge integration
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}/device-install.js'
+        return_content: true
+      register: media_phone_install_ui
+      failed_when: >-
+        media_phone_install_ui.status != 200 or
+        'Pair phone and install on TV' not in media_phone_install_ui.content or
+        'pairAndInstallTV' not in media_phone_install_ui.content
+    - name: Check native phone installer sources
+      ansible.builtin.stat:
+        path: '{{ media_root }}/apps/android/app/src/main/java/com/africamedia/hub/{{ item }}'
+      loop:
+        - PhoneTvConnection.java
+        - PhoneTvInstallActivity.java
+      register: media_phone_sources
+    - name: Require native installer source files
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.isreg | default(false)
+          - item.stat.size | default(0) > 0
+        fail_msg: Phone-to-TV installer source is missing. Verify the repository revision.
+      loop: '{{ media_phone_sources.results }}'
+    - name: Report installation requirements
+      ansible.builtin.debug:
+        msg:
+          - 'Phone installer server interface verified. Open /install in the updated Android app.'
+          - 'Publish the rebuilt universal Android APK by supplying -e media_package_dir=/absolute/server/package/directory. Name it africa-media-android-debug.apk.'
+          - 'Install that new APK on the phone. Server deployment does not update installed phone apps.'
+          - 'Enable TV debugging, pair or approve the phone, then choose Connect, verify TV and install. The phone transfers its own APK directly to a compatible Android/Fire TV.'
