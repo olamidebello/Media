@@ -14,3 +14,9 @@ def init(c):
         columns={row[1] for row in c.execute('PRAGMA table_info('+table+')')}
         if columns and 'thumbnail' not in columns:
             c.execute('ALTER TABLE '+table+" ADD COLUMN thumbnail TEXT NOT NULL DEFAULT ''")
+
+    columns={row[1] for row in c.execute('PRAGMA table_info(channels)')}
+    if columns:
+        for name in ('thumbnail_source','thumbnail_credit','thumbnail_license'):
+            if name not in columns:c.execute('ALTER TABLE channels ADD COLUMN '+name+" TEXT NOT NULL DEFAULT ''")
+        if 'artwork_checked' not in columns:c.execute('ALTER TABLE channels ADD COLUMN artwork_checked INTEGER NOT NULL DEFAULT 0')

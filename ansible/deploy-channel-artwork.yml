@@ -1,0 +1,36 @@
+---
+- name: Deploy unique channel covers and current browsing repairs
+  ansible.builtin.import_playbook: deploy-browse-repair.yml
+
+- name: Search online before using generated missing-channel covers
+  hosts: all
+  become: true
+  vars:
+    media_root: /opt/africa-media
+    media_artwork_lookup_limit: 200
+    media_artwork_lookup_seconds: 300
+  tasks:
+    - name: Search missing artwork and preserve source and license metadata
+      become_user: africa-media
+      ansible.builtin.command:
+        argv:
+          - python3
+          - '{{ media_root }}/tools/find_channel_artwork.py'
+          - --limit
+          - '{{ media_artwork_lookup_limit | string }}'
+          - --max-seconds
+          - '{{ media_artwork_lookup_seconds | string }}'
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      async: 3700
+      poll: 15
+      register: media_online_artwork
+      changed_when: (media_online_artwork.stdout | from_json).matched | int > 0
+      failed_when: >-
+        media_online_artwork.rc != 0 or
+        ((media_online_artwork.stdout | from_json).processed | int > 0 and
+        (media_online_artwork.stdout | from_json).search_errors | int ==
+        (media_online_artwork.stdout | from_json).processed | int)
+    - name: Report matches, generated fallbacks and remaining lookup work
+      ansible.builtin.debug:
+        msg: '{{ media_online_artwork.stdout | from_json }}'
