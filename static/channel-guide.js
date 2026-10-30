@@ -1,6 +1,6 @@
 'use strict';
 liveGuide=async function(){
- const guide=await api('guide');let limit=100,category='';
+ const guide=await api('guide');window.mediaGuideArtwork=new Map(guide.channels.map(c=>[String(c.id),c]));let limit=100,category='';
  $('#view').innerHTML='<section class="channel-guide"><div class="guide-screen"><span class="guide-live">LIVE TV</span><h1>Your channels. One place.</h1><p>Select a channel below to start watching.</p></div><div class="guide-categories" role="group" aria-label="Channel categories"></div><div class="actions"><input id="channel-search" aria-label="Find a channel" placeholder="Search channels or enter a number"><button id="reload-guide">Refresh</button></div><p id="channel-count" class="muted"></p><div id="guide-rows"></div><button id="more-channels" hidden>Show more channels</button></section>';
  const cats=['All',...new Set(guide.channels.map(c=>c.category))];
  function draw(){const now=Date.now()/1000,term=$('#channel-search').value.toLowerCase();const list=guide.channels.filter(c=>(!category||c.category===category)&&(c.name.toLowerCase().includes(term)||String(c.number||c.id)===term));

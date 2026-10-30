@@ -119,3 +119,19 @@ ansible-pull -U https://github.com/olamidebello/Media.git -C main \
 This includes the existing database backup, repository pull, dependency installation, service restart, health/HTTPS, My Streaming and LAN checks, then verifies the phone pairing button, bridge integration and native installer source files. It preserves existing server configuration.
 
 To publish the rebuilt universal APK already downloaded from GitHub Actions and extracted on this server, name it `africa-media-android-debug.apk` in an absolute directory and append `-e media_package_dir=/absolute/server/package/directory` to the command. The package directory must be on the target server. Existing packages are not rebuilt by this play. Install the updated APK on the phone afterward; opening the website in a browser does not enable native pairing. TV pairing/approval and physical-device validation remain required.
+
+### Browsing and thumbnail repair
+
+Main navigation exposes Live TV, Movies, Sports, News, Music, Kids & Family and Local Channels directly. News/Music now open independent searchable category grids instead of targeting a removed Live TV dropdown. Category pages have refresh, search, pagination and clear empty/error states. Late navigation responses do not replace the selected tab. Sections without published on-demand videos explain their empty state.
+
+Channel imports preserve HTTPS `tvg-logo` artwork, including for existing channels, without re-enabling disabled entries. Video submissions accept an optional HTTPS thumbnail URL. Cards and guide rows display available artwork and use a clearly labeled branded fallback when an image is missing or broken; fallback graphics are not video screenshots. Existing videos need publisher-supplied poster URLs for actual thumbnail images.
+
+Deploy on the existing Media server:
+
+```bash
+ansible-pull -U https://github.com/olamidebello/Media.git -C main \
+  -d /opt/africa-media-tv-bootstrap -i localhost, -c local \
+  ansible/deploy-browse-repair.yml
+```
+
+The updater backs up the database and deploys server changes, then adds artwork columns and backfills logos from bundled playlists. It does not fetch new playlists, change channel visibility or guarantee source playback. Refresh other playlists through Admin to bring in their logos. Reload the browser/app after deployment. Physical device and live UI verification remain pending.

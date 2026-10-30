@@ -38,6 +38,8 @@ def init():
         CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit(id INTEGER PRIMARY KEY,user_id INTEGER,action TEXT,created INTEGER);
         ''')
+        import artwork
+        artwork.init(c)
         import my_streaming
         my_streaming.init(c)
         import people, commerce
@@ -112,7 +114,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/browse.js':'browse.js','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -124,6 +126,8 @@ def app(env, respond):
                 sess = c.execute('SELECT s.*,u.email,u.role,u.active FROM sessions s JOIN users u ON u.id=s.user_id WHERE token=? AND expires>?',(hashlib.sha256(token.encode()).hexdigest(),int(time.time()))).fetchone()
                 if sess and not sess['active']: sess = None
                 user = sess['user_id'] if sess else None
+                import artwork
+                artwork.init(c)
                 body = {}
                 if method in ('POST','PUT','DELETE'):
                     length = int(env.get('CONTENT_LENGTH') or 0)
@@ -267,7 +271,7 @@ def app(env, respond):
                     c.execute('INSERT INTO profiles(user_id,name,kids) VALUES(?,?,?)',(user,name,int(bool(body.get('kids'))))); result={'ok':True}
                 elif path=='/api/catalog':
                     if not enabled(c,'catalog'): raise PermissionError('Catalog disabled by administrator')
-                    args=[]; sql="SELECT id,title,description,kind,category,url,kids FROM videos WHERE visibility='public'"
+                    args=[]; sql="SELECT id,title,description,kind,category,url,kids,thumbnail FROM videos WHERE visibility='public'"
                     if profile and owned_profile()['kids']: sql+=' AND kids=1'
                     search=q.get('q',[''])[0]
                     if search: sql+=' AND (title LIKE ? OR category LIKE ?)'; args += ['%'+search+'%']*2
@@ -304,6 +308,7 @@ def app(env, respond):
                     kind=body.get('kind','video')
                     if kind not in ('video','movie','tv','short','podcast','live'): raise ValueError('Invalid content type')
                     c.execute('INSERT INTO videos(owner_id,title,description,kind,category,url,kids,created) VALUES(?,?,?,?,?,?,?,?)',(user,title,str(body.get('description',''))[:5000],kind,str(body.get('category','Entertainment'))[:80],valid_url(str(body.get('url',''))),int(bool(body.get('kids'))),int(time.time())))
+                    c.execute('UPDATE videos SET thumbnail=? WHERE id=last_insert_rowid()',(artwork.safe_url(body.get('thumbnail')),))
                     audit(c,user,'submitted content for moderation'); result={'ok':True,'status':'draft'}
                 elif path=='/api/library':
                     owned_profile(); result={'saved':rows(c,'SELECT v.* FROM saved s JOIN videos v ON v.id=s.video_id WHERE s.profile_id=? AND v.visibility="public"'+(' AND v.kids=1' if owned_profile()['kids'] else ''),(profile,)), 'history':rows(c,'SELECT v.*,h.position FROM history h JOIN videos v ON v.id=h.video_id WHERE h.profile_id=? AND v.visibility="public"'+(' AND v.kids=1' if owned_profile()['kids'] else '')+' ORDER BY h.updated DESC',(profile,)), 'recordings':rows(c,'SELECT r.*,p.title FROM recording_requests r JOIN programs p ON p.id=r.program_id WHERE r.profile_id=?',(profile,)), 'playlists':rows(c,'SELECT * FROM playlists WHERE profile_id=?',(profile,))}

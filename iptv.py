@@ -63,7 +63,7 @@ def parse(text):
         if line.startswith('#EXTINF:'):
             match=re.search(r',([^\r\n]*)$',line)
             attrs=dict(re.findall(r'([\w-]+)="([^"]*)"',line))
-            metadata={'name':(match.group(1) if match else attrs.get('tvg-id','Channel'))[:200],'category':attrs.get('group-title','General')[:100] or 'General'}
+            metadata={'thumbnail':__import__('artwork').safe_url(attrs.get('tvg-logo','')),'name':(match.group(1) if match else attrs.get('tvg-id','Channel'))[:200],'category':attrs.get('group-title','General')[:100] or 'General'}
         elif line and not line.startswith('#') and metadata:
             try:
                 if urlparse(line).hostname in ('youtube.com','www.youtube.com','youtu.be','twitch.tv','www.twitch.tv'):raise ValueError('External platform pages are not streams')
@@ -74,6 +74,8 @@ def parse(text):
 
 def refresh(c,key='all',text=None):
     if key not in SOURCES:raise ValueError('Unknown playlist source')
+    from artwork import init as init_artwork
+    init_artwork(c)
     items,skipped=parse(download(key) if text is None else text)
     if not items:raise ValueError('Playlist contained no usable HTTPS channels; existing channels were preserved')
     added=existing=0
@@ -83,9 +85,10 @@ def refresh(c,key='all',text=None):
             # Refine only the old generic US group; retain administrator categories and status.
             if key=='pluto' and old[1]=='United States' and item['category']!='United States':
                 c.execute('UPDATE channels SET category=? WHERE id=?',(item['category'],old[0]))
+            if item.get('thumbnail'):c.execute('UPDATE channels SET thumbnail=? WHERE id=? AND thumbnail=?',(item['thumbnail'],old[0],''))
             existing+=1;continue
         category=item['category'] if key in ('all','index-country','index-category','index-language','free-tv','eng','fra','ara','working','aljazeera','uploaded','samsung','roku','international','pluto') else key.title()
-        c.execute('INSERT INTO channels(name,url,category,enabled) VALUES(?,?,?,?)',(item['name'],item['url'],category,0 if key=='uploaded' else 1));added+=1
+        c.execute('INSERT INTO channels(name,url,category,enabled) VALUES(?,?,?,?)',(item['name'],item['url'],category,0 if key=='uploaded' else 1));c.execute('UPDATE channels SET thumbnail=? WHERE id=last_insert_rowid()',(item.get('thumbnail',''),));added+=1
     result={'source':key,'added':added,'existing':existing,'skipped':skipped,'updated':int(time.time())}
     c.execute('INSERT OR REPLACE INTO settings(key,value) VALUES(?,?)',('iptv_last_refresh',json.dumps(result)))
     return result
