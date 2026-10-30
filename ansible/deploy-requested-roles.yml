@@ -1,0 +1,38 @@
+---
+- name: Deploy browsing repairs and role support
+  ansible.builtin.import_playbook: deploy-browse-repair.yml
+
+- name: Assign the requested existing Media account roles
+  hosts: all
+  become: true
+  tasks:
+    - name: Promote both existing accounts in one transaction without changing passwords
+      become_user: africa-media
+      ansible.builtin.command:
+        argv:
+          - python3
+          - -c
+          - |
+            import sqlite3,time,json
+            requested=[('dg857641@gmail.com','admin'),('dobcalldemo@gmail.com','superadmin')]
+            c=sqlite3.connect('file:/var/lib/africa-media/media.db?mode=rw',uri=True)
+            results=[]
+            with c:
+                selected=[]
+                for email,role in requested:
+                    rows=c.execute('SELECT id,role,active FROM users WHERE lower(email)=?',(email,)).fetchall()
+                    if len(rows)!=1:raise SystemExit('Expected one existing account for '+email+'; no accounts or passwords were created')
+                    selected.append((email,role,rows[0]))
+                for email,role,(uid,old,active) in selected:
+                    changed=old!=role
+                    if changed:
+                        c.execute('UPDATE users SET role=? WHERE id=?',(role,uid))
+                        c.execute('DELETE FROM sessions WHERE user_id=?',(uid,))
+                        c.execute('INSERT INTO audit(user_id,action,created) VALUES(?,?,?)',(uid,'Server-authorized role assignment: '+role,int(time.time())))
+                    results.append({'email':email,'role':role,'active':bool(active),'changed':changed})
+            c.close();print(json.dumps(results))
+      register: media_requested_roles
+      changed_when: (media_requested_roles.stdout | from_json | selectattr('changed') | list | length) > 0
+    - name: Report assigned roles
+      ansible.builtin.debug:
+        msg: '{{ media_requested_roles.stdout | from_json }}'

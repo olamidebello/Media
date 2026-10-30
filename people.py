@@ -21,6 +21,8 @@ def manage(c,actor,method,b,audit):
   if not isinstance(ids,list) or not 1<=len(ids)<=500:raise ValueError('Select 1 to 500 accounts')
   ids=sorted({int(x) for x in ids});marks=','.join('?' for _ in ids)
   if c.execute('SELECT count(*) FROM users WHERE id IN ('+marks+')',ids).fetchone()[0]!=len(ids):raise LookupError('Account not found')
+  from roles import protect
+  protect(c,actor,ids)
   if action.startswith('group_'):
    if not c.execute('SELECT 1 FROM user_groups WHERE id=?',(target,)).fetchone():raise LookupError('Group not found')
    for uid in ids:
@@ -29,8 +31,9 @@ def manage(c,actor,method,b,audit):
   else:
    if action=='bulk_role':
     role=b.get('role')
-    if role not in ('viewer','creator','admin'):raise ValueError('Invalid role')
-    if actor in ids and role!='admin':raise ValueError('Cannot remove your own administrator role')
+    from roles import validate_role
+    validate_role(c,actor,role)
+    if actor in ids and role not in ('admin','superadmin'):raise ValueError('Cannot remove your own administrator role')
     c.execute('UPDATE users SET role=? WHERE id IN ('+marks+')',[role]+ids)
    elif action=='bulk_active':
     active=b.get('active')
@@ -40,6 +43,9 @@ def manage(c,actor,method,b,audit):
    c.execute('DELETE FROM sessions WHERE user_id IN ('+marks+')',ids)
   audit(c,actor,'people '+action+' ids='+','.join(map(str,ids))+' group='+str(target));return {'ok':True}
  elif action=='edit_profile':
+  from roles import protect
+  owner=c.execute('SELECT user_id FROM profiles WHERE id=?',(target,)).fetchone()
+  if owner:protect(c,actor,[owner[0]])
   name=str(b.get('name','')).strip()[:50]
   if not name:raise ValueError('Profile name required')
   if not c.execute('UPDATE profiles SET name=?,kids=? WHERE id=?',(name,int(bool(b.get('kids'))),target)).rowcount:raise LookupError('Profile not found')

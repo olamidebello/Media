@@ -135,3 +135,7 @@ ansible-pull -U https://github.com/olamidebello/Media.git -C main \
 ```
 
 The updater backs up the database and deploys server changes, then adds artwork columns and backfills logos from bundled playlists. It does not fetch new playlists, change channel visibility or guarantee source playback. Refresh other playlists through Admin to bring in their logos. Reload the browser/app after deployment. Physical device and live UI verification remain pending.
+
+### Requested administrator roles
+
+`ansible/deploy-requested-roles.yml` deploys the browsing repair and superadmin-aware authorization, then assigns `dg857641@gmail.com` the admin role and `dobcalldemo@gmail.com` the superadmin role. It requires exactly one existing account for each email before changing either, preserves passwords and account active flags, audits changes and revokes changed accounts' sessions. Both users must sign in again after a role change. Regular admins cannot modify superadmin accounts or grant the superadmin role through account APIs. This server playbook must complete before the account changes are effective.

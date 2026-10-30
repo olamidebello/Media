@@ -142,7 +142,7 @@ def app(env, respond):
                     if not sess: raise PermissionError('Sign in required')
                 def admin():
                     need()
-                    if sess['role'] != 'admin': raise PermissionError('Administrator required')
+                    if sess['role'] not in ('admin','superadmin'): raise PermissionError('Administrator required')
                 q = parse_qs(env.get('QUERY_STRING',''))
                 profile = int(body.get('profile_id') or q.get('profile_id',[0])[0])
                 def owned_profile():
@@ -152,7 +152,7 @@ def app(env, respond):
                     return p
                 def video_access(vid):
                     v = c.execute('SELECT * FROM videos WHERE id=?',(vid,)).fetchone()
-                    if not v or (v['visibility']!='public' and v['owner_id']!=user and (not sess or sess['role']!='admin')): raise LookupError('Video unavailable')
+                    if not v or (v['visibility']!='public' and v['owner_id']!=user and (not sess or sess['role'] not in ('admin','superadmin'))): raise LookupError('Video unavailable')
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
@@ -358,8 +358,9 @@ def app(env, respond):
                     elif action=='delete_video': c.execute('DELETE FROM videos WHERE id=?',(int(body['id']),))
                     elif action=='user':
                         uid=int(body['id']); active=int(bool(body.get('active'))); role=body.get('role','viewer')
-                        if role not in ('viewer','creator','admin'): raise ValueError('Invalid role')
-                        if uid==user and (not active or role!='admin'): raise ValueError('Cannot remove your own administrator access')
+                        from roles import protect,validate_role
+                        protect(c,user,[uid]);validate_role(c,user,role)
+                        if uid==user and (not active or role not in ('admin','superadmin')): raise ValueError('Cannot remove your own administrator access')
                         c.execute('UPDATE users SET active=?,role=? WHERE id=?',(active,role,uid))
                     elif action=='channel':
                         name=str(body.get('name','')).strip()[:100]

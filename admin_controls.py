@@ -18,12 +18,15 @@ def manage(c, actor, method, b, password, valid_url, audit):
         if action != 'create_user':
             old=c.execute('SELECT * FROM users WHERE id=?',(target,)).fetchone()
             if not old: raise LookupError('User not found')
+            from roles import protect
+            protect(c,actor,[target])
         if action in ('create_user','edit_user'):
             email=str(b.get('email','')).strip().lower()
             role=b.get('role','viewer'); active=int(bool(b.get('active',True)))
             if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+',email): raise ValueError('Valid email required')
-            if role not in ('viewer','creator','admin'): raise ValueError('Invalid role')
-            if target==actor and (not active or role!='admin'): raise ValueError('Cannot remove your own admin access')
+            from roles import validate_role
+            validate_role(c,actor,role)
+            if target==actor and (not active or role not in ('admin','superadmin')): raise ValueError('Cannot remove your own admin access')
             if action=='create_user':
                 pw=str(b.get('password',''))
                 if len(pw)<12: raise ValueError('Password must have at least 12 characters')
