@@ -65,11 +65,11 @@ def admin(c,actor,method,b,audit):
  else:raise ValueError('Unknown marketplace action')
  audit(c,actor,'market '+action);return {'ok':True}
 
-def checkout(c,uid,email,b):
+def checkout(c,uid,email,b,allow_unlisted=False,on_order_created=None):
  gateway=b.get('gateway');key=str(b.get('request_key',''))
  if not re.fullmatch(r'[a-zA-Z0-9-]{16,80}',key):raise ValueError('Checkout request key required')
  if gateway not in GATEWAYS or not any(g['id']==gateway and g['enabled'] and g['configured'] for g in gateways(c)):raise ValueError('Gateway unavailable')
- product=c.execute('SELECT * FROM market_products WHERE id=? AND active=1',(int(b.get('product_id') or 0),)).fetchone()
+ product=c.execute('SELECT * FROM market_products WHERE id=? AND (active=1 OR ?)',(int(b.get('product_id') or 0),int(allow_unlisted))).fetchone()
  if not product:raise LookupError('Product unavailable')
  if gateway=='paystack' and product['currency'] not in ('NGN','GHS','ZAR','KES','USD'):raise ValueError('Choose a different gateway for this currency')
  old=c.execute('SELECT * FROM market_orders WHERE user_id=? AND request_key=?',(uid,key)).fetchone()
@@ -78,7 +78,9 @@ def checkout(c,uid,email,b):
   return {'id':old['id'],'status':old['status'],'checkout_url':old['checkout_url']}
  if c.execute('SELECT count(*) FROM market_orders WHERE user_id=? AND created>?',(uid,int(time.time())-3600)).fetchone()[0]>=20:raise ValueError('Checkout limit reached. Review your existing orders.')
  reference='amh-'+secrets.token_hex(16);now=int(time.time())
- c.execute('INSERT INTO market_orders(id,user_id,product_id,title,amount,currency,fulfillment,gateway,status,request_key,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(reference,uid,product['id'],product['title'],product['amount'],product['currency'],product['fulfillment'],gateway,'pending',key,now));c.commit()
+ c.execute('INSERT INTO market_orders(id,user_id,product_id,title,amount,currency,fulfillment,gateway,status,request_key,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)',(reference,uid,product['id'],product['title'],product['amount'],product['currency'],product['fulfillment'],gateway,'pending',key,now))
+ if on_order_created:on_order_created(reference)
+ c.commit()
  origin=os.environ.get('MEDIA_PUBLIC_URL','https://media.africandroid.world').rstrip('/')
  parsed=urlsplit(origin)
  if parsed.scheme!='https' or not parsed.hostname or parsed.username or parsed.password:raise ValueError('Configure an HTTPS public platform URL')
@@ -100,7 +102,12 @@ def checkout(c,uid,email,b):
 def verify(c,uid,reference,audit):
  order=c.execute('SELECT * FROM market_orders WHERE id=? AND user_id=?',(reference,uid)).fetchone()
  if not order:raise LookupError('Order not found')
- if order['status']=='paid':return {'id':reference,'status':'paid'}
+ def grant_channel_benefit():
+  if c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='community_payments'").fetchone():
+   from community import apply_paid
+   apply_paid(c,reference)
+ if order['status']=='paid':
+  grant_channel_benefit();return {'id':reference,'status':'paid'}
  if order['gateway']=='stripe':
   if not order['provider_id']:raise ValueError('Checkout was not created; no payment is confirmed')
   data=request('stripe','checkout/sessions/'+quote(order['provider_id'],safe=''))
@@ -112,4 +119,5 @@ def verify(c,uid,reference,audit):
  if paid and not matches:raise ValueError('Payment details do not match this order. Contact the administrator.')
  if paid:
   c.execute("UPDATE market_orders SET status='paid',paid=? WHERE id=? AND status!='paid'",(int(time.time()),reference));audit(c,uid,'payment verified order='+reference)
+  grant_channel_benefit()
  return {'id':reference,'status':'paid' if paid else 'pending'}

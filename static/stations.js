@@ -35,7 +35,7 @@ async function stationBuilder(){
 }
 function stationPlayer(video,source,status){
  let hls;const url=new URL(source,location.origin).href;
- if(video.canPlayType('application/vnd.apple.mpegurl'))video.src=url;
+ if(!/\.m3u8(?:$|\?)/i.test(url)||video.canPlayType('application/vnd.apple.mpegurl'))video.src=url;
  else if(window.Hls?.isSupported()){hls=new Hls({enableWorker:false});hls.loadSource(url);hls.attachMedia(video);hls.on(Hls.Events.ERROR,(_,e)=>{if(e.fatal)status.textContent='Stream unavailable. Check that the encoder is sending H.264/AAC and retry playback.';});}
  else status.textContent='This browser cannot play HLS. Use a compatible browser or an HLS player.';
  const failed=()=>{status.textContent='No playable stream yet. Start the encoder, wait a few seconds, then retry.';};video.addEventListener('error',failed);

@@ -1,0 +1,45 @@
+---
+- name: Update Media application and migrate community tables
+  ansible.builtin.import_playbook: deploy-tv-install.yml
+
+- name: Verify station community features without restarting the streaming engine
+  hosts: all
+  become: true
+  vars:
+    media_port: 18841
+    media_domain: media.africandroid.world
+  tasks:
+    - name: Verify community pages and player assets
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}{{ item.path }}'
+        return_content: true
+      loop:
+        - {path: /community, marker: '/community.js'}
+        - {path: /community.js, marker: 'communityCreator'}
+        - {path: /community.css, marker: '.community-chat'}
+        - {path: /embed/station, marker: 'station-embed.js'}
+      register: community_asset
+      failed_when: community_asset.status != 200 or item.marker not in community_asset.content
+    - name: Verify public directory and protected community endpoints
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}{{ item.path }}'
+        status_code: '{{ item.status }}'
+      loop:
+        - {path: /api/community/directory, status: 200}
+        - {path: /api/community/bot, status: 403}
+        - {path: /api/admin/community, status: 403}
+        - {path: /api/community/notifications, status: 403}
+    - name: Verify public HTTPS community page
+      ansible.builtin.uri:
+        url: 'https://{{ media_domain }}/community'
+        return_content: true
+      register: community_public
+      failed_when: community_public.status != 200 or '/community.js' not in community_public.content
+    - name: Report community deployment and payment availability
+      ansible.builtin.debug:
+        msg:
+          - 'Community directory: https://{{ media_domain }}/community'
+          - 'Creators: Build a Station → Community dashboard. Moderators: open the channel → Creator & moderation tools.'
+          - 'Chat updates every 3 seconds. Notifications are in-app. Point predictions use free non-cash points.'
+          - 'Channel payments require super-admin eligibility and an enabled live Stripe or Paystack gateway. Passes last 30 days, do not renew, and require verified payment. Creator payouts are operator-managed.'
+          - 'Cloud recording, automatic media playout, recurring billing, paid Bits balances, push notifications and outbound webhooks are not enabled.'

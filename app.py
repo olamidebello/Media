@@ -46,6 +46,8 @@ def init():
         my_streaming.init(c)
         import people, commerce
         people.init(c); commerce.init(c)
+        import community
+        community.init(c)
         import support
         support.init(c)
         import activity
@@ -74,6 +76,16 @@ def app(env, respond):
     status = '200 OK'; headers = [('Content-Type','application/json; charset=utf-8'),('X-Content-Type-Options','nosniff'),('Referrer-Policy','same-origin'),('Cache-Control','no-store')]
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
+        if path=='/api/community/bot':
+            if method not in ('GET','POST'): raise ValueError('Unsupported bot method')
+            auth=env.get('HTTP_AUTHORIZATION','')
+            if not auth.startswith('Bearer '): raise PermissionError('Bot authentication required')
+            length=int(env.get('CONTENT_LENGTH') or 0)
+            if not 0<=length<=16000: raise ValueError('Invalid bot request size')
+            payload=json.loads(env['wsgi.input'].read(length) or '{}') if method=='POST' else {}
+            from community import bot
+            with db() as c: result=bot(c,auth[7:],method,payload,parse_qs(env.get('QUERY_STRING','')))
+            respond(status,headers); return [json.dumps(result).encode()]
         if path.startswith('/station-hls/'):
             if method not in ('GET','HEAD'): raise ValueError('GET required')
             from stations import access, HLS
@@ -147,11 +159,13 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/build-a-station':'index.html','/station':'index.html','/station-overlay':'station-overlay.html','/station-overlay.js':'station-overlay.js','/stations.js':'stations.js','/stations.css':'stations.css','/vendor/hls.light.min.js':'vendor/hls.light.min.js','/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/channel-cover.js':'channel-cover.js','/browse.js':'browse.js','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/thumbnail-fallback.webp':'assets/thumbnail-fallback.webp','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/community':'index.html','/community.js':'community.js','/community.css':'community.css','/embed/station':'station-embed.html','/station-embed.js':'station-embed.js','/build-a-station':'index.html','/station':'index.html','/station-overlay':'station-overlay.html','/station-overlay.js':'station-overlay.js','/stations.js':'stations.js','/stations.css':'stations.css','/vendor/hls.light.min.js':'vendor/hls.light.min.js','/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/channel-cover.js':'channel-cover.js','/browse.js':'browse.js','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/thumbnail-fallback.webp':'assets/thumbnail-fallback.webp','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','webp':'image/webp','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
             headers.append(('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; media-src https: blob:; img-src 'self' https: data:; connect-src 'self' https:; frame-src https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"))
+            if path=='/embed/station':
+                headers=[(k,v.replace("frame-ancestors 'none'",'frame-ancestors https:')) if k=='Content-Security-Policy' else (k,v) for k,v in headers]
         else:
             with db() as c:
                 cookie = SimpleCookie(); cookie.load(env.get('HTTP_COOKIE',''))
@@ -189,7 +203,31 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path=='/api/stations/access':
+                if path.startswith('/api/community/'):
+                    import community
+                    if profile and owned_profile()['kids']: raise PermissionError('Communities require a standard profile')
+                    if method=='POST':
+                        if owned_profile()['kids']: raise PermissionError('Communities require a standard profile')
+                    if path=='/api/community/directory' and method=='GET':result=community.directory(c,user,q)
+                    elif path=='/api/community/channel':
+                        result=community.handle(c,user,int(body.get('station_id') or q.get('station_id',[0])[0]),method,body,q,audit,sess['email'] if sess else '')
+                    elif path=='/api/community/notifications':
+                        need()
+                        if method=='POST':c.execute('UPDATE community_notifications SET seen=1 WHERE user_id=?',(user,))
+                        elif method!='GET':raise ValueError('Unsupported notification method')
+                        result=rows(c,'SELECT n.*,s.name,s.public_id FROM community_notifications n JOIN stations s ON s.id=n.station_id WHERE n.user_id=? ORDER BY n.id DESC LIMIT 50',(user,))
+                    elif path=='/api/community/orders' and method=='GET':
+                        need();result=rows(c,'SELECT p.order_id,p.station_id,p.kind,p.applied,o.title,o.amount,o.currency,o.status FROM community_payments p JOIN market_orders o ON o.id=p.order_id WHERE o.user_id=? ORDER BY o.created DESC LIMIT 100',(user,))
+                    elif path=='/api/community/embed' and method=='GET':
+                        from stations import public
+                        result=public(c,q.get('id',[''])[0],None)
+                    else:raise LookupError('Community endpoint unavailable')
+                elif path=='/api/admin/community':
+                    admin()
+                    import community
+                    if method=='POST' and body.get('action')=='monetization' and sess['role']!='superadmin': raise PermissionError('Super administrator required for creator payment eligibility')
+                    result=community.admin(c,user,method,body,audit)
+                elif path=='/api/stations/access':
                     from stations import access
                     result=access(c,q.get('path',[''])[0],user)
                 elif path=='/api/stations/directory' and method=='GET':

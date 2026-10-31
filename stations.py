@@ -78,7 +78,7 @@ def can_preview(c,s,user):
 def public(c,public_id,user=None):
     s=c.execute('SELECT * FROM stations WHERE public_id=?',(public_id,)).fetchone()
     if not s or not active(c,s['id']): raise LookupError('Station unavailable')
-    if not can_preview(c,s,user) and not(s['approved'] and s['broadcasting']): raise LookupError('Station is off air or awaiting review')
+    if not can_preview(c,s,user) and not s['approved']: raise LookupError('Station is off air or awaiting review')
     return public_data(c,s)
 
 def authorize(c,body):
@@ -133,6 +133,9 @@ def handle(c,user,path,method,b,q,audit):
             if s['source']=='encoder' and (not engine() or not s['key_hash']): raise ValueError('Install station streaming service and generate an encoder key first')
             if s['source']=='external' and not s['external_url']: raise ValueError('Configure external HLS first')
         c.execute('UPDATE stations SET broadcasting=? WHERE id=?',(int(action=='start'),sid))
+        if action=='start':
+            from community import notify_start
+            notify_start(c,sid)
     elif action=='delete':
         c.execute('DELETE FROM stations WHERE id=?',(sid,))
     elif action=='program':
