@@ -1,0 +1,143 @@
+---
+- name: Update existing application with station controls
+  ansible.builtin.import_playbook: deploy-tv-install.yml
+
+- name: Install authenticated station publishing on the existing Media server
+  hosts: all
+  become: true
+  vars:
+    media_root: /opt/africa-media
+    media_domain: media.africandroid.world
+    media_port: 18841
+  tasks:
+    - name: Validate station settings
+      ansible.builtin.assert:
+        that:
+          - media_domain is match('^[a-z0-9][a-z0-9.-]+[a-z0-9]$')
+          - media_port | int > 1024
+          - media_port | int < 65536
+    - name: Install Debian Nginx streaming modules
+      ansible.builtin.apt:
+        name: [nginx, libnginx-mod-rtmp, libnginx-mod-stream]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+    - name: Verify existing public TLS certificate
+      ansible.builtin.stat:
+        path: '/etc/letsencrypt/live/{{ media_domain }}/{{ item }}'
+      loop: [fullchain.pem, privkey.pem]
+      register: station_certificate
+    - name: Require valid installation paths for RTMPS
+      ansible.builtin.assert:
+        that: station_certificate.results | map(attribute='stat.exists') | min
+        fail_msg: 'Create the Media HTTPS certificate before installing the RTMPS service.'
+    - name: Create station service directories
+      ansible.builtin.file:
+        path: '{{ item.path }}'
+        state: directory
+        owner: '{{ item.owner }}'
+        group: '{{ item.group }}'
+        mode: '{{ item.mode }}'
+      loop:
+        - {path: /etc/africa-media-station, owner: root, group: root, mode: '0755'}
+        - {path: /var/lib/africa-media-station, owner: www-data, group: www-data, mode: '0755'}
+        - {path: /var/lib/africa-media-station/hls, owner: www-data, group: www-data, mode: '0755'}
+        - {path: /var/log/africa-media-station, owner: www-data, group: www-data, mode: '0750'}
+        - {path: /run/africa-media-station, owner: root, group: root, mode: '0755'}
+        - {path: /etc/letsencrypt/renewal-hooks/deploy, owner: root, group: root, mode: '0755'}
+    - name: Configure isolated station engine with encrypted ingest
+      ansible.builtin.template:
+        src: templates/station-nginx.conf.j2
+        dest: /etc/africa-media-station/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+        backup: true
+        validate: '/usr/sbin/nginx -t -c %s'
+      register: station_engine_config
+    - name: Install dedicated station service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/africa-media-station.service
+        mode: '0644'
+        content: |
+          [Unit]
+          Description=Africa Media station RTMPS to HLS engine
+          After=network.target africa-media.service
+          [Service]
+          Type=simple
+          RuntimeDirectory=africa-media-station
+          ExecStart=/usr/sbin/nginx -c /etc/africa-media-station/nginx.conf -g 'daemon off;'
+          ExecReload=/bin/kill -HUP $MAINPID
+          Restart=on-failure
+          RestartSec=3
+          KillSignal=SIGQUIT
+          TimeoutStopSec=10
+          [Install]
+          WantedBy=multi-user.target
+      register: station_engine_unit
+    - name: Start station streaming service
+      ansible.builtin.systemd:
+        name: africa-media-station
+        enabled: true
+        state: "{{ 'restarted' if station_engine_config.changed or station_engine_unit.changed else 'started' }}"
+        daemon_reload: true
+    - name: Verify loopback station health
+      ansible.builtin.uri:
+        url: http://127.0.0.1:18842/health
+        return_content: true
+      register: station_health
+      until: station_health.status | default(0) == 200
+      retries: 10
+      delay: 2
+      failed_when: station_health.content | default('') != 'station-engine'
+    - name: Advertise configured publishing URL to station dashboard
+      ansible.builtin.copy:
+        dest: /etc/africa-media-station/engine.json
+        mode: '0644'
+        content: '{{ {"publish_url": "rtmps://" + media_domain + ":1936/live"} | to_json }}'
+    - name: Reload station certificate after automatic renewals
+      ansible.builtin.copy:
+        dest: /etc/letsencrypt/renewal-hooks/deploy/africa-media-station
+        mode: '0755'
+        content: |
+          #!/bin/sh
+          set -eu
+          if systemctl is-active --quiet africa-media-station; then
+            /usr/sbin/nginx -t -c /etc/africa-media-station/nginx.conf
+            systemctl reload africa-media-station
+          fi
+    - name: Rotate station error logs
+      ansible.builtin.copy:
+        dest: /etc/logrotate.d/africa-media-station
+        mode: '0644'
+        content: |
+          /var/log/africa-media-station/*.log {
+            weekly
+            rotate 4
+            compress
+            missingok
+            notifempty
+            create 0640 www-data www-data
+            sharedscripts
+            postrotate
+              systemctl kill -s USR1 --kill-who=main africa-media-station.service >/dev/null 2>&1 || true
+            endscript
+          }
+    - name: Check station interface and protected publishing callback
+      ansible.builtin.uri:
+        url: 'http://127.0.0.1:{{ media_port }}{{ item.path }}'
+        status_code: '{{ item.status }}'
+      loop:
+        - {path: /build-a-station, status: 200}
+        - {path: /stations.js, status: 200}
+        - {path: /vendor/hls.light.min.js, status: 200}
+        - {path: /station-overlay, status: 200}
+        - {path: /station-engine/authorize, status: 403}
+        - {path: /station-hls/station-999999/index.m3u8, status: 403}
+    - name: Report station deployment
+      ansible.builtin.debug:
+        msg:
+          - 'Station dashboard: https://{{ media_domain }}/build-a-station'
+          - 'OBS server: rtmps://{{ media_domain }}:1936/live. Allow inbound TCP 1936 in the host/provider firewall for publishers.'
+          - 'Generate a station key, enable broadcast and send H.264/AAC from OBS. Public stations require administrator approval.'
+          - 'The server handles live HLS delivery. Scene switching, audio mixing, manual media playout and recording run in OBS.'

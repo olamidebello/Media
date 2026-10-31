@@ -79,6 +79,13 @@
       ansible.builtin.command:
         argv: ['{{ media_root }}/.venv/bin/python', -m, py_compile, '{{ media_root }}/app.py', '{{ media_root }}/device_packages.py']
       changed_when: false
+    - name: Migrate application tables before restarting
+      ansible.builtin.command:
+        argv: ['{{ media_root }}/.venv/bin/python', '{{ media_root }}/app.py', init]
+      become_user: africa-media
+      environment:
+        MEDIA_DB: /var/lib/africa-media/media.db
+      changed_when: false
     - name: Restart Media with its existing configuration
       ansible.builtin.systemd:
         name: africa-media

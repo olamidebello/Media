@@ -8,5 +8,5 @@ async function startup({last={id:42,live:true},resume=true,kids=false,channels=[
 }
 test('startup revalidates last live channel and opens it',async()=>{const r=await startup();assert.equal(r.watched[0].item.id,42);assert.equal(r.watched[0].live,true);});
 test('missing or disabled last channel falls back without opening',async()=>{const r=await startup({channels:[]});assert.equal(r.watched.length,0);assert.match(r.notices[0],/unavailable/);});
-test('opt-out, kids, install and deep links prevent automatic restore',async()=>{for(const options of [{resume:false},{kids:true},{pathname:'/install'},{search:'?video=1'}])assert.equal((await startup(options)).watched.length,0);});
+test('opt-out, kids, install and deep links prevent automatic restore',async()=>{for(const options of [{resume:false},{kids:true},{pathname:'/install'},{pathname:'/build-a-station'},{pathname:'/station'},{search:'?video=1'}])assert.equal((await startup(options)).watched.length,0);});
 test('startup also works when app is ready before script loads',async()=>{assert.equal((await startup({ready:true})).watched.length,1);});

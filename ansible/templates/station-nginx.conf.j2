@@ -1,0 +1,52 @@
+load_module /usr/lib/nginx/modules/ngx_rtmp_module.so;
+load_module /usr/lib/nginx/modules/ngx_stream_module.so;
+user www-data;
+worker_processes 1;
+pid /run/africa-media-station/nginx.pid;
+error_log /var/log/africa-media-station/error.log warn;
+events { worker_connections 2048; }
+stream {
+    server {
+        listen 1936 ssl;
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_certificate /etc/letsencrypt/live/{{ media_domain }}/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/{{ media_domain }}/privkey.pem;
+        ssl_session_cache shared:StationTLS:10m;
+        proxy_pass 127.0.0.1:1935;
+        proxy_timeout 1h;
+    }
+}
+rtmp {
+    access_log off;
+    server {
+        listen 127.0.0.1:1935;
+        chunk_size 4096;
+        max_message 1M;
+        application live {
+            live on;
+            record off;
+            deny play all;
+            drop_idle_publisher 15s;
+            on_publish http://127.0.0.1:{{ media_port }}/station-engine/authorize;
+            on_update http://127.0.0.1:{{ media_port }}/station-engine/authorize;
+            notify_update_timeout 5s;
+            notify_update_strict on;
+            access_log off;
+            hls on;
+            hls_path /var/lib/africa-media-station/hls;
+            hls_nested on;
+            hls_fragment 2s;
+            hls_playlist_length 12s;
+            hls_fragment_naming system;
+            hls_cleanup on;
+        }
+    }
+}
+http {
+    access_log off;
+    server {
+        listen 127.0.0.1:18842;
+        location = /health { return 200 'station-engine'; }
+        location / { return 404; }
+    }
+}

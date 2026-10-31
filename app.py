@@ -40,6 +40,8 @@ def init():
         ''')
         import artwork
         artwork.init(c)
+        import stations
+        stations.init(c)
         import my_streaming
         my_streaming.init(c)
         import people, commerce
@@ -72,6 +74,37 @@ def app(env, respond):
     status = '200 OK'; headers = [('Content-Type','application/json; charset=utf-8'),('X-Content-Type-Options','nosniff'),('Referrer-Policy','same-origin'),('Cache-Control','no-store')]
     path, method = env.get('PATH_INFO','/'), env['REQUEST_METHOD']
     try:
+        if path.startswith('/station-hls/'):
+            if method not in ('GET','HEAD'): raise ValueError('GET required')
+            from stations import access, HLS
+            cookies=SimpleCookie(); cookies.load(env.get('HTTP_COOKIE',''))
+            raw=cookies['media_session'].value if 'media_session' in cookies else ''
+            with db() as c:
+                session=c.execute('SELECT s.user_id FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token=? AND s.expires>? AND u.active=1',(hashlib.sha256(raw.encode()).hexdigest(),int(time.time()))).fetchone()
+                access(c,path,session['user_id'] if session else None)
+            file=HLS/path.removeprefix('/station-hls/')
+            if not file.is_file(): raise LookupError('Encoder output not ready')
+            headers[0]=('Content-Type','application/vnd.apple.mpegurl' if file.suffix=='.m3u8' else 'video/mp2t')
+            headers.append(('Content-Length',str(file.stat().st_size)))
+            respond(status,headers)
+            if method=='HEAD': return [b'']
+            def station_chunks():
+                try:
+                    with file.open('rb') as stream:
+                        while True:
+                            chunk=stream.read(65536)
+                            if not chunk: break
+                            yield chunk
+                except FileNotFoundError: return
+            return station_chunks()
+        if path == '/station-engine/authorize':
+            if method != 'POST' or env.get('REMOTE_ADDR') not in ('127.0.0.1','::1') or env.get('HTTP_X_REAL_IP') or env.get('HTTP_X_FORWARDED_FOR'): raise PermissionError('Local station engine only')
+            length=int(env.get('CONTENT_LENGTH') or 0)
+            if not 0 < length < 16000: raise ValueError('Invalid engine request')
+            from stations import authorize
+            with db() as c: result=authorize(c,parse_qs(env['wsgi.input'].read(length).decode()))
+            respond(status,headers)
+            return [json.dumps(result).encode()]
         if path == '/api/my-streaming/ingest':
             if method != 'POST': raise ValueError('POST required')
             length = int(env.get('CONTENT_LENGTH') or 0)
@@ -114,7 +147,7 @@ def app(env, respond):
             return chunks()
         if not path.startswith('/api/'):
 
-            name = {'/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/channel-cover.js':'channel-cover.js','/browse.js':'browse.js','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/thumbnail-fallback.webp':'assets/thumbnail-fallback.webp','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
+            name = {'/build-a-station':'index.html','/station':'index.html','/station-overlay':'station-overlay.html','/station-overlay.js':'station-overlay.js','/stations.js':'stations.js','/stations.css':'stations.css','/vendor/hls.light.min.js':'vendor/hls.light.min.js','/':'index.html','/legal/terms':'legal/terms.html','/legal/privacy':'legal/privacy.html','/legal/copyright':'legal/copyright.html','/legal/contact':'legal/contact.html','/legal.css':'legal.css','/legal-contact.js':'legal-contact.js','/my-streaming':'index.html','/install':'index.html','/channel-cover.js':'channel-cover.js','/browse.js':'browse.js','/my-streaming.js':'my-streaming.js','/tv-platform.js':'tv-platform.js','/device-install.js':'device-install.js','/offline.css':'offline.css','/reconnect.js':'reconnect.js','/sw.js':'sw.js','/offline.html':'offline.html','/manifest.webmanifest':'manifest.webmanifest','/assets/thumbnail-fallback.webp':'assets/thumbnail-fallback.webp','/assets/app-icon.svg':'assets/app-icon.svg','/assets/app-icon-192.png':'assets/app-icon-192.png','/assets/app-icon-512.png':'assets/app-icon-512.png','/app.js':'app.js','/commerce.js':'commerce.js','/channel-guide.js':'channel-guide.js','/languages.js':'languages.js','/advertising.js':'advertising.js','/activity.js':'activity.js','/support.js':'support.js','/dashboard.js':'dashboard.js','/admin-console.js':'admin-console.js','/provider-viewer.js':'provider-viewer.js','/smart-tv.js':'smart-tv.js','/tv-experience.js':'tv-experience.js','/network-playback.js':'network-playback.js','/tv-ui.css':'tv-ui.css','/style.css':'style.css','/assets/africa-media-logo.png':'assets/africa-media-logo.png','/assets/africa-media-hero.png':'assets/africa-media-hero.png'}.get(path)
             if not name: raise LookupError('Not found')
             data = (ROOT/'static'/name).read_bytes()
             headers[0] = ('Content-Type',{'html':'text/html; charset=utf-8','js':'text/javascript; charset=utf-8','css':'text/css','webp':'image/webp','png':'image/png','svg':'image/svg+xml','webmanifest':'application/manifest+json'}[name.split('.')[-1]])
@@ -156,7 +189,31 @@ def app(env, respond):
                     if profile and owned_profile()['kids'] and not v['kids']: raise PermissionError('Unavailable in Kids profile')
                     return v
                 from admin_console import enabled, FEATURES
-                if path.startswith('/api/my-streaming'):
+                if path=='/api/stations/access':
+                    from stations import access
+                    result=access(c,q.get('path',[''])[0],user)
+                elif path=='/api/stations/directory' and method=='GET':
+                    if profile and owned_profile()['kids']: raise PermissionError('User stations are unavailable in Kids profiles')
+                    from stations import public_data
+                    result=[public_data(c,s) for s in c.execute('SELECT s.* FROM stations s JOIN users u ON u.id=s.owner_id WHERE s.approved=1 AND s.broadcasting=1 AND s.suspended=0 AND u.active=1 ORDER BY s.id DESC LIMIT 100')]
+                elif path=='/api/stations/public' and method=='GET':
+                    from stations import public
+                    if profile and owned_profile()['kids']: raise PermissionError('User stations are unavailable in Kids profiles')
+                    result=public(c,q.get('id',[''])[0],user)
+                elif path=='/api/stations/overlay' and method=='GET':
+                    station=c.execute('SELECT id,name,logo,lower_third,ticker,overlay_enabled FROM stations WHERE public_id=? AND suspended=0',(q.get('id',[''])[0],)).fetchone()
+                    if not station: raise LookupError('Station unavailable')
+                    result=dict(station)
+                elif path=='/api/admin/stations':
+                    admin()
+                    from stations import moderate
+                    result=moderate(c,user,method,body,audit)
+                elif path=='/api/stations':
+                    selected=owned_profile()
+                    if selected['kids']: raise PermissionError('Station management requires a standard profile')
+                    from stations import handle
+                    result=handle(c,user,path,method,body,q,audit)
+                elif path.startswith('/api/my-streaming'):
                     selected = owned_profile()
                     if selected['kids']: raise PermissionError('Cameras are unavailable in Kids profiles')
                     from my_streaming import handle

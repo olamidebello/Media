@@ -39,7 +39,7 @@
   dialog.querySelector('#tv-settings-close').onclick=()=>dialog.close();dialog.showModal();dialog.querySelector('#tv-start-last').focus();
  }
  const settings=document.createElement('button');settings.textContent='TV settings';settings.onclick=settingsView;document.querySelector('header').append(settings);
- const startup=()=>{if(location.pathname!=='/install'&&!new URLSearchParams(location.search).has('video')&&!new URLSearchParams(location.search).has('market_order'))restore();};
+ const startup=()=>{if(!['/install','/build-a-station','/station'].includes(location.pathname)&&!new URLSearchParams(location.search).has('video')&&!new URLSearchParams(location.search).has('market_order'))restore();};
  document.addEventListener('media-ready',startup);if(window.mediaReady)startup();
  document.querySelector('#profiles').addEventListener('change',()=>{++tuneRequest;stop();document.querySelector('#modal[open]')?.close();current=null;previous=null;clearTimeout(sleepTimer);sleepAt=0;});
  document.querySelector('#account').addEventListener('click',stop);
