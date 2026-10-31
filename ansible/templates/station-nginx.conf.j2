@@ -45,7 +45,7 @@ rtmp {
 http {
     access_log off;
     server {
-        listen 127.0.0.1:18842;
+        listen unix:/run/africa-media-station/health.sock;
         location = /health { return 200 'station-engine'; }
         location / { return 404; }
     }

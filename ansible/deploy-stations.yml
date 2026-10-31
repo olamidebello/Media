@@ -81,12 +81,13 @@
         enabled: true
         state: "{{ 'restarted' if station_engine_config.changed or station_engine_unit.changed else 'started' }}"
         daemon_reload: true
-    - name: Verify loopback station health
+    - name: Verify station identity through its dedicated Unix socket
       ansible.builtin.uri:
-        url: http://127.0.0.1:18842/health
+        url: http://localhost/health
+        unix_socket: /run/africa-media-station/health.sock
         return_content: true
       register: station_health
-      until: station_health.status | default(0) == 200
+      until: station_health.status | default(0) == 200 and station_health.content | default('') == 'station-engine'
       retries: 10
       delay: 2
       failed_when: station_health.content | default('') != 'station-engine'

@@ -12,7 +12,7 @@ ansible-pull -U https://github.com/olamidebello/Media.git -C main \
 
 The play backs up the SQLite database, pulls source without discarding local changes, migrates tables using the existing service account, restarts the app, and installs Debian's `libnginx-mod-rtmp` and `libnginx-mod-stream`. A separate `africa-media-station` systemd service converts authenticated RTMPS publishing to HLS. The existing public Nginx site, TLS configuration, database and account roles are retained. Existing Let's Encrypt certificates must already be present.
 
-Allow **inbound TCP 1936** in the host and provider firewall for publishers. The play does not change firewall rules. Internal ports 1935 and 18842 bind only to loopback. Viewing uses the existing HTTPS port 443. The certificate renewal hook reloads the station engine after renewals. Error logs rotate weekly; RTMP access logs are disabled to avoid storing stream keys. HLS fragments are transient, approximately a 12-second rolling playlist, with module cleanup enabled. There is no recording archive.
+Allow **inbound TCP 1936** in the host and provider firewall for publishers. The play does not change firewall rules. Internal RTMP port 1935 binds only to loopback. Engine health uses the dedicated Unix socket `/run/africa-media-station/health.sock`, so it does not reserve another TCP port or conflict with cohosted applications. Viewing uses the existing HTTPS port 443. The certificate renewal hook reloads the station engine after renewals. Error logs rotate weekly; RTMP access logs are disabled to avoid storing stream keys. HLS fragments are transient, approximately a 12-second rolling playlist, with module cleanup enabled. There is no recording archive.
 
 ## First broadcast
 
@@ -50,7 +50,7 @@ HLS playback uses native browser support when available and a locally vendored H
 systemctl status africa-media africa-media-station
 journalctl -u africa-media-station -n 60 --no-pager
 nginx -t -c /etc/africa-media-station/nginx.conf
-curl http://127.0.0.1:18842/health
+curl --unix-socket /run/africa-media-station/health.sock http://localhost/health
 ```
 
 A local FFmpeg → RTMPS → HLS smoke test verified real encoder authentication, playable playlist/segment delivery and disconnection after stopping output, using the same Nginx template with local test ports and a temporary certificate. Application tests exercise ownership, CSRF, Kids restrictions, program overlap, moderation, public-data redaction, stream-key revocation, HLS authorization and live-signal freshness. The deployment verifies engine health, assets and rejected unauthenticated access. Complete an actual OBS → RTMPS → HTTPS playback test on the deployed server before relying on it for a broadcast; local unit checks do not verify its firewall, public certificate or real encoder interoperability.
