@@ -31,6 +31,18 @@
       ansible.builtin.assert:
         that: station_certificate.results | map(attribute='stat.exists') | min
         fail_msg: 'Create the Media HTTPS certificate before installing the RTMPS service.'
+    - name: Read station service state before configuration validation
+      ansible.builtin.service_facts:
+    - name: Stop existing station engine before preparing its runtime directory
+      ansible.builtin.systemd:
+        name: africa-media-station
+        state: stopped
+      when: "'africa-media-station.service' in ansible_facts.services"
+    - name: Clear a previous station startup failure
+      ansible.builtin.command:
+        argv: [systemctl, reset-failed, africa-media-station.service]
+      changed_when: false
+      when: "'africa-media-station.service' in ansible_facts.services"
     - name: Create station service directories
       ansible.builtin.file:
         path: '{{ item.path }}'
